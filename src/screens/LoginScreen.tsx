@@ -45,11 +45,12 @@ const LoginScreen: React.FC<LoginScreenProps> = ({navigation}) => {
         email: data.email,
         password: data.password,
       };
-      
+
       showSpinner();
-      console.log(loginRequest);
+      console.log('Sending login request:', loginRequest.email);
       const apiResponse = await login(loginRequest);
-      console.log(apiResponse);
+      console.log('API response received.');
+
       if (apiResponse.result.authenticated) {
         saveEmailAndToken({
           email: apiResponse.result.email,
@@ -58,22 +59,31 @@ const LoginScreen: React.FC<LoginScreenProps> = ({navigation}) => {
         saveAuth();
         showToast({
           type: 'success',
-          text1: 'Login Successfull!',
+          text1: 'Thành công',
+          text2: 'Đăng nhập thành công!',
         });
+        // Navigate after a slight delay to allow the toast to show
         setTimeout(() => {
           navigation.navigate('MainTabs');
         }, 1500);
+      } else {
+        // Handle unauthenticated response from API even if status is 200
+        showToast({
+          type: 'error',
+          text1: 'Lỗi Đăng nhập',
+          text2: apiResponse.message || 'Tài khoản hoặc mật khẩu không đúng.',
+        });
       }
     } catch (error: any) {
-      console.log('Axios error:', JSON.stringify(error, null, 2));
+      console.log('Axios error during login:', JSON.stringify(error, null, 2));
       checkErrorFetchingData({
         error: error,
-        title: 'Login Failed',
+        title: 'Đăng nhập thất bại',
       });
     } finally {
       hideSpinner();
     }
-  }, []);
+  }, [navigation, saveAuth, showSpinner, hideSpinner]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -95,30 +105,39 @@ const LoginScreen: React.FC<LoginScreenProps> = ({navigation}) => {
               <Text style={styles.badgeText}>Cinema App</Text>
             </View>
 
-            <Text style={styles.title}>Welcome back,</Text>
+            <Text style={styles.title}>Chào mừng trở lại,</Text>
             <Text style={styles.subtitle}>
-              <Text style={styles.subtitleBold}>Sign in</Text> to enjoy the
-              latest movies
+              <Text style={styles.subtitleBold}>Đăng nhập</Text> để thưởng thức
+              phim mới nhất
             </Text>
           </View>
 
           {/* FORM CARD */}
           <View style={styles.formCard}>
+            {/* Email Input */}
             {errors.email && (
-              <Text style={styles.error}>{errors.email.message}</Text>
+              <Text style={styles.error}>
+                {errors.email.type === 'required'
+                  ? 'Email không được để trống'
+                  : 'Email không hợp lệ'}
+              </Text>
             )}
-            <View style={styles.inputContainer}>
+            <View
+              style={[
+                styles.inputContainer,
+                errors.email && styles.inputErrorBorder,
+              ]}>
               <Icon
                 name="mail-outline"
                 size={20}
-                color="#C5C5C5"
+                color={errors.email ? '#FF6B6B' : '#C5C5C5'}
                 style={styles.inputIcon}
               />
               <Controller
                 control={control}
                 name="email"
                 rules={{
-                  ...required('Email is required'),
+                  ...required('Email không được để trống'),
                   ...isEmail,
                 }}
                 render={({field}) => (
@@ -136,26 +155,31 @@ const LoginScreen: React.FC<LoginScreenProps> = ({navigation}) => {
               />
             </View>
 
+            {/* Password Input */}
             {errors.password && (
               <Text style={styles.error}>{errors.password.message}</Text>
             )}
-            <View style={styles.inputContainer}>
+            <View
+              style={[
+                styles.inputContainer,
+                errors.password && styles.inputErrorBorder,
+              ]}>
               <Icon
                 name="lock-closed-outline"
                 size={20}
-                color="#C5C5C5"
+                color={errors.password ? '#FF6B6B' : '#C5C5C5'}
                 style={styles.inputIcon}
               />
               <Controller
                 control={control}
                 name="password"
                 rules={{
-                  ...required('Password is required'),
+                  ...required('Mật khẩu không được để trống'),
                 }}
                 render={({field}) => (
                   <TextInput
                     style={[styles.input, styles.passwordInput]}
-                    placeholder="Password"
+                    placeholder="Mật khẩu"
                     placeholderTextColor="#8E8E93"
                     secureTextEntry={!showPassword}
                     value={field.value}
@@ -180,15 +204,18 @@ const LoginScreen: React.FC<LoginScreenProps> = ({navigation}) => {
             <TouchableOpacity
               onPress={() => navigation.navigate('ForgotPasswordScreen')}
               style={styles.forgotPassword}>
-              <Text style={styles.forgotPasswordText}>Forgot password?</Text>
+              <Text style={styles.forgotPasswordText}>Quên mật khẩu?</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.loginButton}
+              style={[
+                styles.loginButton,
+                isSubmitting && styles.loginButtonDisabled,
+              ]}
               onPress={handleSubmit(onSubmit)}
               disabled={isSubmitting}>
               <View style={styles.loginButtonContent}>
-                <Text style={styles.loginButtonText}>Sign in</Text>
+                <Text style={styles.loginButtonText}>Đăng nhập</Text>
                 <Icon
                   name="arrow-forward"
                   size={18}
@@ -201,10 +228,10 @@ const LoginScreen: React.FC<LoginScreenProps> = ({navigation}) => {
 
           {/* FOOTER */}
           <View style={styles.footer}>
-            <Text style={styles.footerText}>Don&apos;t have an account?</Text>
+            <Text style={styles.footerText}>Chưa có tài khoản?</Text>
             <TouchableOpacity
               onPress={() => navigation.navigate('RegisterScreen')}>
-              <Text style={styles.signUpText}> Sign up</Text>
+              <Text style={styles.signUpText}> Đăng ký</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -301,6 +328,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.45,
     shadowRadius: 30,
     elevation: 16,
+    // Ensure form is always centered vertically if content is smaller than screen
+    justifyContent: 'center',
   },
 
   inputContainer: {
@@ -314,6 +343,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.08)',
   },
+  inputErrorBorder: {
+    borderColor: '#FF6B6B',
+  },
   inputIcon: {
     marginRight: 12,
   },
@@ -321,6 +353,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 15,
     color: '#FFFFFF',
+    paddingVertical: 0, // Fix vertical alignment issue on Android
   },
   passwordInput: {
     paddingRight: 40,
@@ -352,6 +385,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.45,
     shadowRadius: 24,
     elevation: 10,
+  },
+  loginButtonDisabled: {
+    opacity: 0.6,
   },
   loginButtonContent: {
     flexDirection: 'row',
@@ -387,6 +423,8 @@ const styles = StyleSheet.create({
     color: '#FF6B6B',
     marginBottom: 6,
     fontSize: 12,
+    alignSelf: 'flex-start',
+    marginLeft: 4,
   },
 });
 

@@ -19,7 +19,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { CinemaForBooking } from '../components/CinemaForBooking';
 import { DateButtonForBooking } from '../components/DateButtonForBooking';
-import { colors } from '../constant/color';
+// import { colors } from '../constant/color'; // Replaced with local THEME
 import { defaultDateForBooking } from '../constant/variable';
 import { getCinemaForBooking } from '../services/CinemaService';
 import { ShowingTimeInRoomProps } from '../types/showingTime';
@@ -31,6 +31,16 @@ import {
 } from '../utils/function';
 
 const { width } = Dimensions.get('window');
+
+// THEME CONSTANTS EXTRACTED FROM IMAGE
+const THEME = {
+  background: '#13141F', // Dark blue-black background
+  primaryRed: '#F54B64', // Coral red
+  cardBg: '#20212D',     // Slightly lighter for cards
+  textWhite: '#FFFFFF',
+  textGray: '#8F9BB3',   // Muted blue-gray text
+  divider: 'rgba(255,255,255,0.08)',
+};
 
 interface FormData {
   movieId: number;
@@ -187,21 +197,24 @@ const ShowingTimeBookingScreen: React.FC<ShowingTimeBookingScreenProps> = ({
   }, []);
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#1a1a1a" />
+      <StatusBar barStyle="light-content" backgroundColor={THEME.background} />
 
+      {/* HEADER */}
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Icon name="arrow-back" size={24} color="#fff" />
+          <Icon name="arrow-back" size={24} color={THEME.textWhite} />
         </TouchableOpacity>
         <Text style={styles.headerTitle} ellipsizeMode="tail" numberOfLines={1}>
           {movieTitle}
         </Text>
+        <View style={{width: 34}} />
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        {/* DATE SELECTION */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Select Date</Text>
           <ScrollView
@@ -234,6 +247,7 @@ const ShowingTimeBookingScreen: React.FC<ShowingTimeBookingScreenProps> = ({
           </ScrollView>
         </View>
 
+        {/* THEATER & TIME SELECTION */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Select Theater & Time</Text>
           {tempCinemas.map(eachCinema => (
@@ -248,18 +262,25 @@ const ShowingTimeBookingScreen: React.FC<ShowingTimeBookingScreenProps> = ({
               key={eachCinema.cinemaId}
             />
           ))}
+          {tempCinemas.length === 0 && (
+             <View style={styles.emptyState}>
+                <Text style={styles.emptyStateText}>No showtimes available for this date.</Text>
+             </View>
+          )}
         </View>
       </ScrollView>
 
+      {/* BOTTOM ACTION BAR */}
       <View style={styles.bottomContainer}>
         <TouchableOpacity
           style={[
             styles.continueButton,
             {
               backgroundColor: watch('selectedTime')
-                ? colors.primary
-                : colors.lightGray,
-              opacity: watch('selectedTime') ? 1 : 0.5,
+                ? THEME.primaryRed
+                : THEME.cardBg,
+              opacity: watch('selectedTime') ? 1 : 0.6,
+              shadowOpacity: watch('selectedTime') ? 0.3 : 0,
             },
           ]}
           disabled={isSubmitting || !watch('selectedTime')}
@@ -275,51 +296,57 @@ const ShowingTimeBookingScreen: React.FC<ShowingTimeBookingScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: THEME.background,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingVertical: 15,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: THEME.background,
     width: width,
     maxWidth: width,
   },
   backButton: {
-    marginRight: 15,
+    padding: 5,
+    borderRadius: 8,
+    backgroundColor: THEME.cardBg,
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: THEME.textWhite,
     textAlign: 'center',
-    paddingRight: 50,
+    flex: 1,
+    paddingHorizontal: 10,
   },
   content: {
     flex: 1,
     paddingHorizontal: 20,
+    marginTop: 10,
   },
   section: {
     marginBottom: 30,
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: '600',
-    color: '#fff',
+    fontWeight: 'bold',
+    color: THEME.textWhite,
     marginBottom: 15,
   },
+  // Kept logic for locationContainer but updated colors just in case it's used later
   locationContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#2a2a2a',
+    backgroundColor: THEME.cardBg,
     paddingHorizontal: 15,
     paddingVertical: 12,
     borderRadius: 8,
   },
   locationText: {
     flex: 1,
-    color: '#ccc',
+    color: THEME.textGray,
     marginLeft: 10,
     fontSize: 16,
   },
@@ -329,19 +356,38 @@ const styles = StyleSheet.create({
   bottomContainer: {
     paddingHorizontal: 20,
     paddingVertical: 20,
-    backgroundColor: '#1a1a1a',
+    paddingBottom: 30, // Safe area
+    backgroundColor: THEME.background,
+    borderTopWidth: 1,
+    borderTopColor: THEME.divider,
   },
   continueButton: {
-    backgroundColor: '#FF6B35',
-    paddingVertical: 15,
-    borderRadius: 8,
+    paddingVertical: 16,
+    borderRadius: 30, // Pill shape
     alignItems: 'center',
+    shadowColor: THEME.primaryRed,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
   },
   continueButtonText: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: 'bold',
     color: '#fff',
+    letterSpacing: 0.5,
   },
+  emptyState: {
+      padding: 20,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: THEME.cardBg,
+      borderRadius: 12,
+  },
+  emptyStateText: {
+      color: THEME.textGray,
+      fontSize: 14,
+  }
 });
 
 export default ShowingTimeBookingScreen;

@@ -19,6 +19,16 @@ import {useFocusEffect} from '@react-navigation/native';
 import { searchMovies } from '../services/MovieService';
 import { checkErrorFetchingData } from '../utils/function';
 
+// THEME CONSTANTS (Consistent with previous file)
+const THEME = {
+  background: '#13141F', // Dark blue-black background
+  primaryRed: '#F54B64', // The coral red
+  cardBg: '#20212D',     // Slightly lighter for elements
+  textWhite: '#FFFFFF',
+  textGray: '#8F9BB3',
+  divider: '#2A2C3A',    // Subtle divider color
+};
+
 const MovieListScreen: React.FC<MovieListScreenProps> = ({
   route,
   navigation,
@@ -58,15 +68,23 @@ const MovieListScreen: React.FC<MovieListScreenProps> = ({
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
+      <StatusBar backgroundColor={THEME.background} barStyle="light-content" />
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon source="chevron-left" size={30} color="white" />
+        <TouchableOpacity 
+          style={styles.backButton} 
+          onPress={() => navigation.goBack()}>
+          {/* Updated Icon color to white */}
+          <Icon source="chevron-left" size={30} color={THEME.textWhite} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Choose your films</Text>
+        {/* Dummy view to balance the header if needed, or keeping it clean */}
+        <View style={{width: 34}} /> 
       </View>
 
-      <ScrollView style={styles.movieList} showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        style={styles.movieList} 
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}>
         {movies.map(eachMovie => (
           <MovieItem
             movie={eachMovie}
@@ -80,6 +98,9 @@ const MovieListScreen: React.FC<MovieListScreenProps> = ({
             showSpinner={showSpinner}
           />
         ))}
+        {movies.length === 0 && (
+            <Text style={styles.emptyText}>No movies found</Text>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -88,39 +109,45 @@ const MovieListScreen: React.FC<MovieListScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2F2F2F',
+    backgroundColor: THEME.background, // Updated to Dark Theme
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 15,
+    backgroundColor: THEME.background,
+    // Removed light border, added subtle dark border or none
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    borderBottomColor: 'transparent', 
   },
   backButton: {
     padding: 4,
+    borderRadius: 8,
+    backgroundColor: THEME.cardBg, // Added subtle background for back button
   },
+  // The 'backArrow' style was unused in JSX but referencing colors, safely ignored or updated if used later
   backArrow: {
     fontSize: 24,
-    color: '#FF8133',
+    color: THEME.textWhite,
     fontWeight: 'bold',
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#FFF',
+    fontSize: 20,
+    fontWeight: '700',
+    color: THEME.textWhite, // White text
     flex: 1,
     textAlign: 'center',
-    marginHorizontal: 16,
+    letterSpacing: 0.5,
   },
+  // Kept structure but updated colors for unused styles just in case
   menuButton: {
     padding: 4,
   },
   menuIcon: {
     fontSize: 20,
-    color: '#FF8133',
+    color: THEME.primaryRed,
   },
   filterContainer: {
     paddingHorizontal: 16,
@@ -128,18 +155,29 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   filterButton: {
-    backgroundColor: '#F5F5F5',
+    backgroundColor: THEME.cardBg,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
   },
   filterText: {
     fontSize: 14,
-    color: '#C5C5C5',
+    color: THEME.textGray,
   },
   movieList: {
     flex: 1,
+    backgroundColor: THEME.background,
   },
+  scrollContent: {
+    paddingTop: 10,
+    paddingBottom: 20,
+  },
+  emptyText: {
+      color: THEME.textGray,
+      textAlign: 'center',
+      marginTop: 50,
+      fontSize: 16,
+  }
 });
 
 export default MovieListScreen;

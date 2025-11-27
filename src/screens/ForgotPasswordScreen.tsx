@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { ForgotPasswordScreenProps } from '../types/screentypes';
-import { useCallback } from 'react';
+import {Controller, SubmitHandler, useForm} from 'react-hook-form';
+import {ForgotPasswordScreenProps} from '../types/screentypes';
+import {useCallback} from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -14,11 +14,11 @@ import {
   View,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { isEmail, required } from '../utils/validators';
-import { useSpinner } from '../context/SpinnerContext';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { sendResetPasswordCode } from '../services/AuthService';
-import { showToast, checkErrorFetchingData } from '../utils/function';
+import {isEmail, required} from '../utils/validators';
+import {useSpinner} from '../context/SpinnerContext';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {sendResetPasswordCode} from '../services/AuthService';
+import {showToast, checkErrorFetchingData} from '../utils/function';
 
 interface FormData {
   email: string;
@@ -30,74 +30,77 @@ export const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: {errors, isSubmitting},
   } = useForm<FormData>();
 
-  const { showSpinner, hideSpinner } = useSpinner();
+  const {showSpinner, hideSpinner} = useSpinner();
 
-  const onSubmit: SubmitHandler<FormData> = useCallback(async data => {
-    try {
-      showSpinner();
-      const responseData = await sendResetPasswordCode(data.email);
-      if (responseData.code === 1000) {
-        showToast({
-          type: 'success',
-          text1: 'Verification code sent successfully!',
-        });
-        setTimeout(() => {
-          navigation.navigate('ResetPasswordScreen', {
-            email: data.email,
+  const onSubmit: SubmitHandler<FormData> = useCallback(
+    async data => {
+      try {
+        showSpinner();
+        const responseData = await sendResetPasswordCode(data.email);
+        if (responseData.code === 1000) {
+          showToast({
+            type: 'success',
+            text1: 'Verification code sent successfully!',
           });
-        }, 2000);
+          setTimeout(() => {
+            navigation.navigate('ResetPasswordScreen', {
+              email: data.email,
+            });
+          }, 2000);
+        }
+      } catch (error) {
+        checkErrorFetchingData({
+          error: error,
+          title: 'Error sending verification code',
+        });
+      } finally {
+        hideSpinner();
       }
-    } catch (error) {
-      checkErrorFetchingData({
-        error: error,
-        title: 'Error sending verification code',
-      });
-    } finally {
-      hideSpinner();
-    }
-  }, []);
+    },
+    [navigation, showSpinner, hideSpinner],
+  );
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#2F2F2F" />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardView}
-      >
+        style={styles.keyboardView}>
         <ScrollView
           contentContainerStyle={styles.scrollContainer}
-          showsVerticalScrollIndicator={false}
-        >
+          showsVerticalScrollIndicator={false}>
           <View style={styles.header}>
-            <Text style={styles.title}>Forgot Password?</Text>
+            <Text style={styles.title}>Quên Mật Khẩu?</Text>
             <Text style={styles.subtitle}>
-              Enter your email address and we'll send you a verification code to
-              reset your password
+              Nhập địa chỉ email của bạn và chúng tôi sẽ gửi một mã xác thực để
+              bạn đặt lại mật khẩu.
             </Text>
           </View>
 
-          {errors.email && (
-            <Text style={styles.error}>{errors.email.message}</Text>
-          )}
+          {/* Input field and error display */}
           <View style={styles.form}>
-            <View style={styles.inputContainer}>
+            <View
+              style={[
+                styles.inputContainer,
+                errors.email && styles.inputError,
+              ]}>
               <Icon
                 name="mail-outline"
                 size={20}
-                color="#C5C5C5"
+                color={errors.email ? '#FF4444' : '#C5C5C5'}
                 style={styles.inputIcon}
               />
               <Controller
                 control={control}
                 name="email"
                 rules={{
-                  ...required('Email is required'),
+                  ...required('Email là bắt buộc'),
                   ...isEmail,
                 }}
-                render={({ field }) => (
+                render={({field}) => (
                   <TextInput
                     placeholder="Email"
                     placeholderTextColor="#C5C5C5"
@@ -111,20 +114,22 @@ export const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
                 )}
               />
             </View>
+            {errors.email && (
+              <Text style={styles.error}>{errors.email.message}</Text>
+            )}
 
             <TouchableOpacity
-              style={[styles.sendButton]}
+              style={[styles.sendButton, isSubmitting && styles.disabledButton]}
               onPress={handleSubmit(onSubmit)}
-              disabled={isSubmitting}
-            >
-              <Text style={styles.sendButtonText}>Send Verification Code</Text>
+              disabled={isSubmitting}>
+              <Text style={styles.sendButtonText}>Gửi Mã Xác Thực</Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.footer}>
-            <Text style={styles.footerText}>Remember your password? </Text>
+            <Text style={styles.footerText}>Bạn nhớ mật khẩu rồi? </Text>
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Text style={styles.signInText}>Sign In</Text>
+              <Text style={styles.signInText}>Đăng Nhập</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -182,6 +187,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     height: 56,
   },
+  inputError: {
+    borderWidth: 1,
+    borderColor: '#FF4444',
+  },
   inputIcon: {
     marginRight: 12,
   },
@@ -206,11 +215,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 8,
+    // Shadow for better depth
+    shadowColor: '#FF8133',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 6,
+  },
+  disabledButton: {
+    backgroundColor: '#A0A0A0', // Gray out when disabled/submitting
+    shadowColor: 'transparent',
+    elevation: 0,
   },
   sendButtonText: {
     color: '#FFFFFF',
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '700', // Changed to 700 for better visibility
   },
   resetButton: {
     backgroundColor: '#FF8133',
@@ -248,11 +268,14 @@ const styles = StyleSheet.create({
   signInText: {
     color: '#FF8133',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700', // Changed to 700 for better contrast
   },
   error: {
     color: '#FF4444',
-    marginBottom: 10,
+    marginBottom: 16, // Increased spacing for better readability
     fontSize: 14,
+    textAlign: 'left', // Ensure error message aligns
+    paddingLeft: 4,
+    marginTop: -10, // Adjust to position it right after the input container
   },
 });

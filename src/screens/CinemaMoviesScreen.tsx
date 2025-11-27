@@ -2,10 +2,9 @@
 
 import { useMemo, useState, useEffect } from "react";
 import { Dimensions, SafeAreaView, StatusBar, View, TouchableOpacity, Text, ScrollView, FlatList, StyleSheet } from "react-native";
-import { Icon } from "react-native-paper";
+import Icon from 'react-native-vector-icons/Ionicons';
 import { DateButtonForBooking } from "../components/DateButtonForBooking";
 import MovieItem from "../components/MovieItem";
-import { colors } from "../constant/color";
 import { defaultDateForBooking } from "../constant/variable";
 import { useSpinner } from "../context/SpinnerContext";
 import { getMoviesByCinema } from "../services/MovieService";
@@ -14,6 +13,14 @@ import { MovieListProps } from "../types/movie";
 import { CinemaMoviesScreenProps } from "../types/screentypes";
 import { showToast, checkErrorFetchingData } from "../utils/function";
 
+// THEME COLORS EXTRACTED FROM IMAGE
+const COLORS = {
+  background: '#0B0F19', // Deep dark blue/black background
+  card: '#1D212E', // Slightly lighter for buttons/cards
+  primary: '#F54B46', // Coral red
+  text: '#FFFFFF',
+  textSecondary: '#7B8299', // Muted text color
+};
 
 const {width} = Dimensions.get('window');
 
@@ -60,17 +67,24 @@ const CinemaMoviesScreen: React.FC<CinemaMoviesScreenProps> = ({
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.dark} />
+      <StatusBar barStyle="light-content" backgroundColor={COLORS.background} />
 
+      {/* Consistent Header Style */}
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" size={24} color={colors.white} />
+          <Icon name="chevron-back" size={24} color={COLORS.text} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle} ellipsizeMode="tail" numberOfLines={1}>
-          {cinemaName}
-        </Text>
+        
+        <View style={styles.headerTitleContainer}>
+            <Text style={styles.headerTitle} ellipsizeMode="tail" numberOfLines={1}>
+            {cinemaName}
+            </Text>
+        </View>
+        
+        {/* Placeholder to balance the back button */}
+        <View style={{width: 40}} />
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
@@ -98,7 +112,11 @@ const CinemaMoviesScreen: React.FC<CinemaMoviesScreenProps> = ({
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>({movies.length} movies)</Text>
+          <View style={styles.movieCountContainer}>
+             <Text style={styles.sectionTitle}>Available Movies</Text>
+             <Text style={styles.movieCountText}>({movies.length})</Text>
+          </View>
+          
           <FlatList
             data={movies}
             keyExtractor={item => item.movieId.toString()}
@@ -127,42 +145,66 @@ const CinemaMoviesScreen: React.FC<CinemaMoviesScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.dark,
+    backgroundColor: COLORS.background,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingVertical: 15,
-    backgroundColor: colors.dark,
+    marginTop: 10,
     width: width,
-    maxWidth: width,
   },
   backButton: {
-    marginRight: 15,
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: COLORS.card, // Square button style
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerTitleContainer: {
+    flex: 1,
+    paddingHorizontal: 10,
+    alignItems: 'center',
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.white,
+    fontSize: 20,
+    fontWeight: '700',
+    color: COLORS.text,
     textAlign: 'center',
-    paddingRight: 50,
   },
   content: {
     flex: 1,
     paddingHorizontal: 20,
+    marginTop: 10,
   },
   section: {
     marginBottom: 30,
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: '600',
-    color: colors.white,
+    fontWeight: '700',
+    color: COLORS.text,
     marginBottom: 15,
+  },
+  movieCountContainer: {
+      flexDirection: 'row',
+      alignItems: 'baseline',
+      marginBottom: 15,
+  },
+  movieCountText: {
+      fontSize: 16,
+      color: COLORS.textSecondary,
+      marginLeft: 8,
+      fontWeight: '500',
   },
   datesContainer: {
     flexDirection: 'row',
+    // You might need to adjust margin inside DateButtonForBooking component
+    // or wrap them in a view with margin here if needed.
+    marginLeft: -5, // Offset padding if DateButton has internal padding
   },
 });
 

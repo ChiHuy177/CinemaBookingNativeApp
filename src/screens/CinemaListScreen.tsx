@@ -1,16 +1,23 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { useState, useEffect, useCallback } from "react";
-import { Platform, UIManager, LayoutAnimation, SafeAreaView, View, TouchableOpacity, Text, ScrollView, StyleSheet } from "react-native";
-import { Icon } from "react-native-paper";
+import { Platform, UIManager, LayoutAnimation, SafeAreaView, View, TouchableOpacity, Text, ScrollView, StyleSheet, StatusBar } from "react-native";
+import Icon from 'react-native-vector-icons/Ionicons'; 
 import { CityItem } from "../components/CityItem";
-import { colors } from "../constant/color";
 import { useSpinner } from "../context/SpinnerContext";
 import { getAllCinemasForBooking } from "../services/CinemaService";
 import { CityData } from "../types/cinema";
 import { CinemaListScreenProps } from "../types/screentypes";
 import { showToast, checkErrorFetchingData } from "../utils/function";
 
+// THEME COLORS EXTRACTED FROM IMAGE
+const COLORS = {
+  background: '#0B0F19', // Deep dark blue/black background
+  card: '#1D212E', // Slightly lighter for buttons/cards
+  primary: '#F54B46', // Coral red
+  text: '#FFFFFF',
+  textSecondary: '#7B8299', // Muted text color
+};
 
 if (
   Platform.OS === 'android' &&
@@ -66,13 +73,16 @@ const CinemaListScreen: React.FC<CinemaListScreenProps> = ({navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor={COLORS.background} />
+      
+      {/* Header Area styled like the ChangePasswordScreen */}
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}>
-          <Icon source="chevron-left" size={30} color="white" />
+          <Icon name="chevron-back" size={24} color={COLORS.text} />
         </TouchableOpacity>
-
+        
         <View style={styles.headerCenter}>
           <Text style={styles.headerTitle}>Cinemas</Text>
           <Text style={styles.headerSubtitle}>Choose city to pick cinema</Text>
@@ -102,41 +112,48 @@ const CinemaListScreen: React.FC<CinemaListScreenProps> = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.dark,
+    backgroundColor: COLORS.background,
   },
   header: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center', // Aligns vertically
+    justifyContent: 'space-between',
     paddingHorizontal: 20,
-    paddingVertical: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.mediumGray,
+    paddingVertical: 15,
+    marginTop: 10,
+    // Removed borderBottomWidth to match the clean dark theme
   },
   backButton: {
-    paddingTop: 4,
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: COLORS.card, // Square button style like in image
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   headerCenter: {
     flex: 1,
     alignItems: 'center',
   },
   headerRight: {
-    width: 30,
+    width: 40, // Match back button width for perfect centering
   },
   headerTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: colors.white,
-    marginBottom: 4,
+    fontSize: 20, // Adjusted size
+    fontWeight: '700',
+    color: COLORS.text,
+    marginBottom: 2,
   },
   headerSubtitle: {
-    fontSize: 16,
-    color: colors.lightGray,
+    fontSize: 14,
+    color: COLORS.textSecondary,
+    fontWeight: '400',
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    padding: 16,
+    padding: 20,
     paddingBottom: 32,
   },
 });

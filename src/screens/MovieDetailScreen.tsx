@@ -27,6 +27,16 @@ import { showToast, checkErrorFetchingData, getAgeRatingColor, getAgeRatingFromR
 
 const {width} = Dimensions.get('window');
 
+// THEME CONSTANTS EXTRACTED FROM IMAGE
+const THEME = {
+  background: '#13141F', // Dark blue-black background
+  primaryRed: '#F54B64', // The coral red color from the "Services" button
+  cardBg: '#20212D',     // Slightly lighter for cards
+  textWhite: '#FFFFFF',
+  textGray: '#8F9BB3',   // Muted blue-gray text
+  textDarkGray: '#565E70',
+};
+
 const MovieDetailScreen: React.FC<MovieDetailScreenProps> = ({
   navigation,
   route,
@@ -70,7 +80,8 @@ const MovieDetailScreen: React.FC<MovieDetailScreenProps> = ({
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#1a1a1a" />
+      {/* Updated StatusBar color */}
+      <StatusBar barStyle="light-content" backgroundColor={THEME.background} />
 
       <View style={styles.header}>
         <TouchableOpacity
@@ -115,7 +126,7 @@ const MovieDetailScreen: React.FC<MovieDetailScreenProps> = ({
                     hideSpinner,
                   )
                 }>
-                <Icon name="heart" size={24} color="#B4263C" />
+                <Icon name="heart" size={24} color={THEME.primaryRed} />
               </TouchableOpacity>
             ) : (
               <TouchableOpacity
@@ -128,14 +139,14 @@ const MovieDetailScreen: React.FC<MovieDetailScreenProps> = ({
                     hideSpinner,
                   )
                 }>
-                <Icon name="heart-outline" size={24} color="#B4263C" />
+                <Icon name="heart-outline" size={24} color={THEME.primaryRed} />
               </TouchableOpacity>
             )}
 
             <Text style={styles.totalLikeText}> {movie?.totalLike}</Text>
           </View>
           <View style={styles.ratingContainer}>
-            <Icon name="star" size={14} color="#FF6B35" />
+            <Icon name="star" size={14} color="#FFD700" />
             <Text style={styles.rating}>{movie?.rating}/5</Text>
           </View>
         </View>
@@ -153,7 +164,7 @@ const MovieDetailScreen: React.FC<MovieDetailScreenProps> = ({
 
               {movie?.genres.map(genre => (
                 <Text style={styles.genre} key={genre.genreId}>
-                  {genre.name}
+                  • {genre.name}
                 </Text>
               ))}
             </View>
@@ -197,8 +208,10 @@ const MovieDetailScreen: React.FC<MovieDetailScreenProps> = ({
                   source={{uri: getActorImage(movieActor.actor.imageURL)}}
                   style={styles.castImage}
                 />
-                <Text style={styles.castName}>{movieActor.actor.name}</Text>
-                <Text style={styles.castCharacter}>
+                <Text style={styles.castName} numberOfLines={2}>
+                   {movieActor.actor.name}
+                </Text>
+                <Text style={styles.castCharacter} numberOfLines={1}>
                   {movieActor.characterName}
                 </Text>
               </View>
@@ -208,9 +221,9 @@ const MovieDetailScreen: React.FC<MovieDetailScreenProps> = ({
         <View style={styles.reviewsSection}>
           <Text style={styles.sectionTitle}>Reviews</Text>
           {movie?.reviews.map((eachReview, index) => (
-            <View key={index}>
+            <View key={index} style={styles.reviewWrapper}>
               <View style={styles.reviewRating}>
-                <Icon name="star" size={16} color="#FF6B35" />
+                <Icon name="star" size={16} color="#FFD700" />
                 <Text style={styles.reviewScore}>{eachReview.rating}/5</Text>
               </View>
               <View style={styles.reviewItem}>
@@ -254,18 +267,21 @@ const MovieDetailScreen: React.FC<MovieDetailScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: THEME.background, // Theme Color
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: THEME.background, // Theme Color
     marginBottom: 5,
+    paddingTop: 10,
   },
   backButton: {
     padding: 5,
+    borderRadius: 12,
+    backgroundColor: THEME.cardBg, // Slightly lighter background for button
   },
   favoriteButton: {
     padding: 5,
@@ -277,59 +293,30 @@ const styles = StyleSheet.create({
     width: width - 40,
     height: 200,
     marginHorizontal: 20,
-    borderRadius: 12,
+    borderRadius: 20, // More rounded as per design
     overflow: 'hidden',
     position: 'relative',
-    marginBottom: 10,
-  },
-  videoImage: {
-    width: '100%',
-    height: '100%',
-  },
-  videoOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.3)',
-  },
-  playButton: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: [{translateX: -20}, {translateY: -20}],
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255,255,255,0.9)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    marginBottom: 20,
+    backgroundColor: '#000',
   },
   titleSection: {
     paddingHorizontal: 20,
-    marginBottom: 5,
+    marginBottom: 10,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  mainTitle: {
-    color: '#fff',
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
   trailerLabel: {
     alignSelf: 'flex-start',
-    backgroundColor: '#000',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
+    backgroundColor: THEME.primaryRed, // Use Theme Red
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
   },
   trailerText: {
     color: '#fff',
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: 'bold',
     letterSpacing: 0.5,
   },
@@ -339,84 +326,84 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   posterContainer: {
-    marginLeft: 10,
+    marginLeft: 15,
   },
   posterImage: {
     width: 120,
     height: 180,
-    borderRadius: 8,
+    borderRadius: 16, // Soft rounded corners
   },
   movieDetails: {
     flex: 1,
     justifyContent: 'flex-start',
   },
   movieTitle: {
-    color: '#fff',
-    fontSize: 20,
-    fontWeight: 'bold',
+    color: THEME.textWhite,
+    fontSize: 24, // Bigger, bolder title
+    fontWeight: '800',
     marginBottom: 8,
+    letterSpacing: 0.5,
   },
   movieMeta: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 12,
     flexWrap: 'wrap',
     gap: 5,
   },
   duration: {
-    color: '#999',
+    color: THEME.textGray,
     fontSize: 13,
-  },
-  separator: {
-    color: '#999',
-    fontSize: 13,
-    marginHorizontal: 8,
+    fontWeight: '600',
+    marginRight: 5,
   },
   genre: {
-    color: '#999',
+    color: THEME.textGray,
     fontSize: 13,
+    fontWeight: '500',
   },
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginLeft: 12,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
   },
   rating: {
-    color: '#FF6B35',
+    color: THEME.textWhite,
     fontSize: 13,
     marginLeft: 4,
     fontWeight: 'bold',
   },
   director: {
-    color: '#999',
+    color: THEME.textDarkGray,
     fontSize: 11,
     marginBottom: 8,
-    letterSpacing: 0.3,
-  },
-  tagline: {
-    color: '#fff',
-    fontSize: 13,
-    fontWeight: 'bold',
-    marginBottom: 10,
+    fontWeight: '700',
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
   },
   description: {
-    color: '#ccc',
-    fontSize: 13,
-    lineHeight: 18,
-    marginBottom: 8,
+    color: THEME.textGray,
+    fontSize: 14,
+    lineHeight: 22, // Better readability
+    marginBottom: 12,
   },
   readMore: {
-    color: '#FF6B35',
-    fontSize: 13,
+    color: THEME.primaryRed, // Theme Red
+    fontSize: 14,
+    fontWeight: '600',
   },
   castSection: {
     paddingHorizontal: 20,
-    marginBottom: 25,
+    marginBottom: 30,
   },
   sectionTitle: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
+    color: THEME.textWhite,
+    fontSize: 20,
+    fontWeight: '700',
     marginBottom: 15,
   },
   castScrollView: {
@@ -424,52 +411,60 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
   },
   castItem: {
-    marginRight: 15,
+    marginRight: 20,
     alignItems: 'center',
-    width: 85,
+    width: 70,
   },
   castImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 25,
-    marginBottom: 6,
-    backgroundColor: '#333',
+    width: 70,
+    height: 70,
+    borderRadius: 35, // Perfectly circle
+    marginBottom: 8,
+    backgroundColor: THEME.cardBg,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
   },
   castName: {
-    color: '#fff',
-    fontSize: 11,
+    color: THEME.textWhite,
+    fontSize: 12,
     textAlign: 'center',
     marginBottom: 2,
-    fontWeight: '500',
+    fontWeight: '600',
   },
   castCharacter: {
-    color: '#999',
-    fontSize: 9,
+    color: THEME.textGray,
+    fontSize: 10,
     textAlign: 'center',
   },
   reviewsSection: {
     paddingHorizontal: 20,
-    marginBottom: 100,
+    marginBottom: 110, // Space for bottom button
+  },
+  reviewWrapper: {
+    backgroundColor: THEME.cardBg, // Card style for reviews
+    padding: 15,
+    borderRadius: 16,
+    marginBottom: 15,
   },
   reviewRating: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: 10,
   },
   reviewScore: {
-    color: '#FF6B35',
-    fontSize: 16,
+    color: THEME.textWhite,
+    fontSize: 14,
     fontWeight: 'bold',
-    marginLeft: 4,
+    marginLeft: 5,
   },
   reviewItem: {
     flexDirection: 'row',
     alignItems: 'flex-start',
   },
   reviewerImage: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     marginRight: 12,
     backgroundColor: '#333',
   },
@@ -477,14 +472,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   reviewText: {
-    color: '#ccc',
+    color: '#D1D5DB',
     fontSize: 13,
-    lineHeight: 18,
+    lineHeight: 20,
   },
   reviewDate: {
     fontSize: 11,
-    color: '#999',
-    marginTop: 4,
+    color: THEME.textDarkGray,
+    marginTop: 10,
     textAlign: 'right',
   },
   bottomContainer: {
@@ -492,42 +487,56 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: 'rgba(19, 20, 31, 0.95)', // Semi-transparent theme background
     paddingHorizontal: 20,
-    paddingVertical: 20,
-    paddingBottom: 30,
-    borderTopWidth: 1,
-    borderTopColor: '#333',
+    paddingTop: 15,
+    paddingBottom: 30, // Safe area padding
+    borderTopWidth: 0, // Removed border for cleaner look
   },
   bookButton: {
-    backgroundColor: '#FF6B35',
-    paddingVertical: 15,
-    borderRadius: 8,
+    backgroundColor: THEME.primaryRed, // Theme Red
+    paddingVertical: 18,
+    borderRadius: 30, // Pill shape like "Services" button
     alignItems: 'center',
+    shadowColor: THEME.primaryRed,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
   bookButtonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
+    letterSpacing: 0.5,
   },
   ageRating: {
-    backgroundColor: '#F0F0F0',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
+    backgroundColor: THEME.cardBg, // Darker bg for tag
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
   },
   ageText: {
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   totalLikeContainer: {
     display: 'flex',
     flexDirection: 'row',
-    gap: 1,
+    gap: 5,
     alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    padding: 5,
+    borderRadius: 20,
+    paddingRight: 10,
   },
   totalLikeText: {
-    color: '#ccc',
+    color: THEME.textWhite,
+    fontSize: 12,
+    fontWeight: '600',
   },
 });
 

@@ -7,17 +7,30 @@ import {
   TouchableOpacity,
   FlatList,
   StatusBar,
+  SafeAreaView,
+  Dimensions,
 } from 'react-native';
 
-import {Icon} from 'react-native-paper';
+import Icon from 'react-native-vector-icons/Ionicons'; // Changed to Ionicons
 import {useFocusEffect} from '@react-navigation/native';
-import { formatDate } from 'date-fns';
-import { colors } from '../constant/color';
+import { format } from 'date-fns'; // Use 'format' from date-fns
 import { useSpinner } from '../context/SpinnerContext';
 import { getCouponsByClient } from '../services/CouponService';
 import { CouponProps } from '../types/coupon';
 import { CouponListScreenProps } from '../types/screentypes';
 import { showToast, checkErrorFetchingData } from '../utils/function';
+
+// THEME COLORS CONSISTENT WITH OTHER SCREENS
+const COLORS = {
+  background: '#0B0F19', // Deep dark blue/black background
+  card: '#1D212E', // Slightly lighter for buttons/cards
+  primary: '#F54B46', // Coral red
+  text: '#FFFFFF',
+  textSecondary: '#7B8299', // Muted text color
+  success: '#10B981', // Green for active status
+};
+
+const {width} = Dimensions.get('window');
 
 const CouponListScreen: React.FC<CouponListScreenProps> = ({
   route,
@@ -33,7 +46,8 @@ const CouponListScreen: React.FC<CouponListScreenProps> = ({
       async function fetchingCoupons() {
         try {
           showSpinner();
-          const responseDate = await getCouponsByClient(clientEmail);
+          // Assuming the date property for expiry is a valid date string/number
+          const responseDate = await getCouponsByClient(clientEmail); 
           if (responseDate.code === 1000 && isActive) {
             setCoupons(responseDate.result);
           } else {
@@ -57,218 +71,246 @@ const CouponListScreen: React.FC<CouponListScreenProps> = ({
       return () => {
         isActive = false;
       };
-    }, []),
+    }, [clientEmail]),
   );
 
   const renderCouponItem = useCallback((coupon: CouponProps) => {
+    // Determine if the coupon is expired
+    const now = new Date();
+    // Safely parse the expiry date string/number
+    const expiryDate = new Date(coupon.expiryDate); 
+    const isExpired = expiryDate < now;
+    
+    // Status text and color
+    const statusText = isExpired ? 'Đã hết hạn' : 'Còn hiệu lực';
+    const statusColor = isExpired ? COLORS.textSecondary : COLORS.success;
+    const cardOpacity = isExpired ? 0.6 : 1;
+    const expiryText = format(expiryDate, 'dd/MM/yyyy');
+
     return (
       <View
         key={coupon.couponId}
-        style={[styles.couponCard, {backgroundColor: colors.mediumGray}]}>
-        <View style={styles.couponHeader}>
+        style={[
+          styles.couponCard,
+          {backgroundColor: COLORS.card, opacity: cardOpacity},
+        ]}>
+        
+        {/* Main Info Section */}
+        <View style={styles.couponMainInfo}>
+          
+          {/* Discount Column */}
           <View style={styles.discountSection}>
-            <Text style={[styles.discountAmount, {color: colors.primary}]}>
+            <Text style={[styles.discountAmount, {color: COLORS.primary}]}>
               {coupon.discountAmount.toLocaleString('vi-VN')}đ
             </Text>
-            <Text style={[styles.discountLabel, {color: colors.lightGray}]}>
-              Discount
+            <Text style={[styles.discountLabel, {color: COLORS.textSecondary}]}>
+              GIẢM GIÁ
             </Text>
           </View>
 
+          {/* Vertical Separator */}
+          <View style={styles.separator} />
+          
+          {/* Coupon Details */}
           <View style={styles.couponInfo}>
-            <Text style={[styles.couponCode, {color: colors.white}]}>
-              {coupon.code}
+            <Text style={[styles.couponCode, {color: COLORS.text}]}>
+              Mã: {coupon.code}
             </Text>
-            <Text style={[styles.expiryDate, {color: colors.lightGray}]}>
-              Expiry: {formatDate(coupon.expiryDate)}
+            <Text style={[styles.couponDescription, {color: COLORS.text}]}>
+              {coupon.description || 'Áp dụng cho mọi vé xem phim.'}
+            </Text>
+            <Text style={[styles.expiryDate, {color: COLORS.textSecondary}]}>
+              Hạn dùng: {expiryText}
             </Text>
           </View>
         </View>
 
-        <View style={styles.actionButtons}>
-          <TouchableOpacity
-            style={[
-              styles.actionButton,
-              {
-                backgroundColor: colors.green,
-              },
-            ]}>
-            <Text style={styles.statusText}>Còn hiệu lực</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.decorativeBorder}>
-          <View
-            style={[
-              styles.circle,
-              styles.leftCircle,
-              {backgroundColor: colors.dark},
-            ]}
-          />
-          <View style={styles.dashedLine} />
-          <View
-            style={[
-              styles.circle,
-              styles.rightCircle,
-              {backgroundColor: colors.dark},
-            ]}
-          />
+        {/* Footer/Action Section */}
+        <View style={styles.couponFooter}>
+            {/* Status Badge */}
+            <View style={[styles.statusBadge, {backgroundColor: isExpired ? COLORS.card : statusColor}]}>
+                <Text style={styles.statusText}>{statusText}</Text>
+            </View>
+
+            {/* Apply Button (Only visible if not expired) */}
+            {!isExpired && (
+                <TouchableOpacity style={styles.applyButton}>
+                    <Text style={styles.applyButtonText}>Áp dụng</Text>
+                </TouchableOpacity>
+            )}
         </View>
       </View>
     );
   }, []);
 
   return (
-    <View style={[styles.container, {backgroundColor: colors.dark}]}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.dark} />
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor={COLORS.background} />
+      
+      {/* Consistent Header Style */}
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}>
-          <Icon source="chevron-left" size={30} color="white" />
+          <Icon name="chevron-back" size={24} color={COLORS.text} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, {color: colors.white}]}>
-          My Coupons
+        
+        <Text style={styles.headerTitle}>
+          My Coupons ({coupons.length})
         </Text>
+        
         <View style={styles.placeholder} />
       </View>
 
+
       <FlatList
         data={coupons}
-        renderItem={item => renderCouponItem(item.item)}
+        renderItem={({item}) => renderCouponItem(item)}
         keyExtractor={item => item.couponId.toString()}
         contentContainerStyle={styles.listContainer}
         showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+                <Icon name="ticket-outline" size={60} color={COLORS.textSecondary} />
+                <Text style={styles.emptyText}>You don't have any coupons yet.</Text>
+            </View>
+        }
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: COLORS.background,
   },
+  // --- Header Styles ---
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    paddingTop: 50,
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    marginTop: 10,
+    width: width,
   },
   backButton: {
-    padding: 8,
-  },
-  backIcon: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: COLORS.card,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 20,
+    fontWeight: '700',
+    color: COLORS.text,
   },
   placeholder: {
     width: 40,
   },
-
+  // --- List & Item Styles ---
   listContainer: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
+    paddingTop: 10,
     paddingBottom: 20,
+  },
+  emptyContainer: {
+    marginTop: 50,
+    alignItems: 'center',
+    padding: 20,
+  },
+  emptyText: {
+    color: COLORS.textSecondary,
+    fontSize: 16,
+    marginTop: 10,
   },
   couponCard: {
     borderRadius: 16,
     marginBottom: 16,
-    overflow: 'hidden',
-    position: 'relative',
-  },
-  expiredCard: {
-    opacity: 0.6,
-  },
-  couponHeader: {
-    flexDirection: 'row',
     padding: 16,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 8,
+  },
+  couponMainInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingBottom: 15,
   },
   discountSection: {
     alignItems: 'center',
-    marginRight: 16,
-    minWidth: 100,
+    paddingRight: 15,
   },
   discountAmount: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 22,
+    fontWeight: '900',
     marginBottom: 4,
   },
   discountLabel: {
     fontSize: 12,
-    textAlign: 'center',
+    fontWeight: '600',
+    color: COLORS.textSecondary,
+  },
+  separator: {
+    width: 2,
+    height: '100%',
+    backgroundColor: COLORS.card, // Separator color, slightly darker than card
+    marginRight: 15,
+    // Add a subtle dashed effect if desired, but for RN simplicity, a solid line is often better
+    borderLeftWidth: 1,
+    borderLeftColor: COLORS.textSecondary + '50', // Lighter dashed line effect
   },
   couponInfo: {
     flex: 1,
   },
   couponCode: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 4,
+  },
+  couponDescription: {
+    fontSize: 14,
+    color: COLORS.textSecondary,
     marginBottom: 4,
   },
   expiryDate: {
-    fontSize: 14,
-    marginBottom: 8,
+    fontSize: 12,
+    color: COLORS.textSecondary,
+    marginTop: 5,
   },
-  statusContainer: {
-    alignItems: 'flex-start',
+  couponFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingTop: 15,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.textSecondary + '30', // Light separator
   },
   statusBadge: {
-    paddingHorizontal: 8,
+    paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: 12,
+    borderRadius: 8,
   },
   statusText: {
-    color: '#ffffff',
+    color: COLORS.text,
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
   },
-  actionButtons: {
-    flexDirection: 'row',
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-    gap: 12,
-    marginTop: 12,
-  },
-  actionButton: {
-    flex: 1,
-    paddingVertical: 12,
+  applyButton: {
+    backgroundColor: COLORS.primary,
+    paddingVertical: 8,
+    paddingHorizontal: 15,
     borderRadius: 8,
-    alignItems: 'center',
   },
-  actionButtonText: {
+  applyButtonText: {
+    color: COLORS.text,
     fontSize: 14,
-    fontWeight: '600',
-  },
-  decorativeBorder: {
-    position: 'absolute',
-    top: 80,
-    left: 0,
-    right: 0,
-    height: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  circle: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-  },
-  leftCircle: {
-    marginLeft: -10,
-  },
-  rightCircle: {
-    marginRight: -10,
-  },
-  dashedLine: {
-    flex: 1,
-    height: 1,
-    borderTopWidth: 1,
-    borderTopColor: '#555',
-    borderStyle: 'dashed',
+    fontWeight: '700',
   },
 });
 

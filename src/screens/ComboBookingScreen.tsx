@@ -10,17 +10,28 @@ import {
   StatusBar,
   ScrollView,
   SafeAreaView,
+  Dimensions,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import Icon from 'react-native-vector-icons/Ionicons'; // Changed to Ionicons
 import {ComboBookingScreenProps} from '../types/screentypes';
 
 import {ComboItem} from '../components/ComboItem';
 import {useFocusEffect} from '@react-navigation/native';
-import { colors } from '../constant/color';
 import { useSpinner } from '../context/SpinnerContext';
 import { getCombos } from '../services/ComboService';
 import { SelectedComboProps, ComboProps } from '../types/combo';
 import { showToast, checkErrorFetchingData } from '../utils/function';
+
+const {width} = Dimensions.get('window');
+
+// THEME COLORS CONSISTENT WITH OTHER SCREENS
+const COLORS = {
+  background: '#0B0F19', // Deep dark blue/black background
+  card: '#1D212E', // Slightly lighter for buttons/cards and summary bar
+  primary: '#F54B46', // Coral red
+  text: '#FFFFFF',
+  textSecondary: '#7B8299', // Muted text color
+};
 
 const ComboSelectionScreen: React.FC<ComboBookingScreenProps> = ({
   route,
@@ -121,26 +132,34 @@ const ComboSelectionScreen: React.FC<ComboBookingScreenProps> = ({
       selectedCombos: selectedCombos,
       totalPriceCombos: totalPrice,
     });
-  }, [selectedCombos]);
+  }, [selectedCombos, totalPrice, route.params, navigation]);
 
+  const grandTotal = useMemo(() => totalPrice + totalPriceSeats, [totalPrice, totalPriceSeats]);
+  
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.dark} />
-      <ScrollView
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={false}>
+      <StatusBar barStyle="light-content" backgroundColor={COLORS.background} />
+      
+      {/* Consistent Header Style */}
+      <View style={styles.headerContainer}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" size={24} color={colors.white} />
+          <Icon name="chevron-back" size={24} color={COLORS.text} />
         </TouchableOpacity>
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>🍿 Combos</Text>
-          <Text style={styles.headerSubtitle}>
-            Enjoy movies with deliciouse combos
-          </Text>
+        <View style={styles.headerCenter}>
+           <Text style={styles.headerTitleText}>Combos</Text>
+           <Text style={styles.headerSubtitle}>Snacks & Drinks</Text>
         </View>
+        <View style={{width: 40}} /> {/* Placeholder */}
+      </View>
 
+
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}>
+        
         <FlatList
           data={combos}
           renderItem={({item}) => (
@@ -156,32 +175,35 @@ const ComboSelectionScreen: React.FC<ComboBookingScreenProps> = ({
           scrollEnabled={false}
         />
 
-        <View style={{height: totalQuantity > 0 ? 120 : 20}} />
+        {/* Padding for the summary bar at the bottom */}
+        <View style={{height: 120}} />
       </ScrollView>
 
+      {/* Order Summary / Footer */}
       <View style={styles.orderSummary}>
         <View style={styles.summaryInfo}>
-          <Text style={styles.summaryText}>Tổng: {totalQuantity} combo</Text>
-
-          <Text style={styles.summaryPrice}>
-            {totalPrice.toLocaleString('vi-VN') + 'đ'}
-          </Text>
+          <Text style={styles.summaryText}>Tổng đơn hàng ({totalQuantity} Combo + {selectedSeats.length} Ghế)</Text>
+          
           <View style={styles.totalPriceSeatContainer}>
-            <Text style={styles.summaryPrice}>
-              + {totalPriceSeats.toLocaleString('vi-VN') + 'đ'}
-            </Text>
-            <Text
-              style={
-                styles.totalPriceSeat
-              }>{`( ${selectedSeats.length} Seats )`}</Text>
+             {/* Total Grand Price */}
+             <Text style={styles.grandTotalPrice}>
+               {grandTotal.toLocaleString('vi-VN') + 'đ'}
+             </Text>
+             {/* Breakdown Text */}
+             <Text style={styles.breakdownText}>
+                ({totalPriceSeats.toLocaleString('vi-VN')}đ ghế + {totalPrice.toLocaleString('vi-VN')}đ combo)
+             </Text>
           </View>
+          
         </View>
 
         <TouchableOpacity
-          style={styles.bookingButton}
-          onPress={handleBookingTicket}>
-          <Icon name="shopping-cart" size={20} color={colors.white} />
-          <Text style={styles.bookingButtonText}>Continue</Text>
+          style={[styles.bookingButton, {opacity: selectedSeats.length > 0 ? 1 : 0.5}]}
+          onPress={handleBookingTicket}
+          disabled={selectedSeats.length === 0}
+          >
+          <Text style={styles.bookingButtonText}>Tiếp tục</Text>
+          <Icon name="arrow-forward-circle-outline" size={20} color={COLORS.text} />
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -191,155 +213,106 @@ const ComboSelectionScreen: React.FC<ComboBookingScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.dark,
+    backgroundColor: COLORS.background,
   },
-  totalPriceSeatContainer: {
-    display: 'flex',
+  // --- Header Styles ---
+  headerContainer: {
     flexDirection: 'row',
-    gap: 10,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    marginTop: 10,
+    width: width,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: COLORS.card, // Square button style
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  totalPriceSeat: {
-    color: colors.white,
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 4,
+  headerCenter: {
+     flex: 1,
+     alignItems: 'center',
   },
+  headerTitleText: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: COLORS.text,
+  },
+  headerSubtitle: {
+    color: COLORS.textSecondary,
+    fontSize: 14,
+    fontWeight: '500',
+    marginTop: 2,
+  },
+  // --- Scroll Content Styles ---
   scrollView: {
     flex: 1,
   },
-  backButton: {
+  scrollContent: {
     paddingHorizontal: 20,
   },
-  header: {
-    alignItems: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderBottomWidth: 2,
-    borderBottomColor: colors.primary,
-    marginBottom: 20,
-  },
-  headerTitle: {
-    color: colors.white,
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  headerSubtitle: {
-    color: colors.lightGray,
-    fontSize: 16,
-    textAlign: 'center',
-  },
-
-  unavailableContainer: {
-    alignItems: 'center',
-    padding: 12,
-    backgroundColor: colors.dark,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: colors.red,
-  },
-  unavailableText: {
-    color: colors.red,
-    fontSize: 14,
-  },
-  selectedSection: {
-    marginHorizontal: 20,
-    marginTop: 20,
-    marginBottom: 20,
-  },
-  selectedSectionTitle: {
-    color: colors.white,
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 16,
-    paddingBottom: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.primary,
-  },
-  selectedComboItem: {
-    flexDirection: 'row',
-    backgroundColor: colors.mediumGray,
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 12,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: colors.primary,
-  },
-  selectedComboImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 8,
-    marginRight: 12,
-  },
-  selectedComboInfo: {
-    flex: 1,
-  },
-  selectedComboName: {
-    color: colors.white,
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
-  selectedComboQuantity: {
-    color: colors.lightGray,
-    fontSize: 14,
-    marginBottom: 2,
-  },
-  selectedComboPrice: {
-    color: colors.primary,
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  removeButton: {
-    padding: 8,
-  },
+  // --- Footer/Summary Styles ---
   orderSummary: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: colors.mediumGray,
-    borderTopWidth: 2,
-    borderTopColor: colors.primary,
-    padding: 20,
+    backgroundColor: COLORS.card, // Dark card color for footer
+    borderTopWidth: 0,
+    paddingHorizontal: 20,
+    paddingVertical: 15,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    elevation: 8,
+    // Improved shadow for modern look
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: -2},
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
+    shadowOffset: {width: 0, height: -5},
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
+    elevation: 10,
   },
   summaryInfo: {
     flex: 1,
   },
   summaryText: {
-    color: colors.white,
-    fontSize: 16,
-    fontWeight: 'bold',
+    color: COLORS.textSecondary,
+    fontSize: 14,
+    fontWeight: '600',
     marginBottom: 4,
   },
-  summaryPrice: {
-    color: colors.primary,
-    fontSize: 22,
-    fontWeight: 'bold',
-  },
-  bookingButton: {
-    backgroundColor: colors.primary,
-    borderRadius: 8,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
+  totalPriceSeatContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     gap: 8,
   },
+  grandTotalPrice: {
+    color: COLORS.primary, // Highlight total price
+    fontSize: 24,
+    fontWeight: '900',
+  },
+  breakdownText: {
+    color: COLORS.textSecondary,
+    fontSize: 12,
+    fontWeight: '500',
+  },
+  bookingButton: {
+    backgroundColor: COLORS.primary,
+    borderRadius: 12, // More rounded corners
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+  },
   bookingButtonText: {
-    color: colors.white,
+    color: COLORS.text,
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '700',
   },
 });
 

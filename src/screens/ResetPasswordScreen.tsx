@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import {useCallback, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {ResetPasswordScreenProps} from '../types/screentypes';
 import {Controller, SubmitHandler, useForm} from 'react-hook-form';
 import {ResetPasswordProps} from '../types/auth';
@@ -20,6 +20,17 @@ import {useSpinner} from '../context/SpinnerContext';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {resetPassword, resendResetPasswordCode} from '../services/AuthService';
 import {showToast, checkErrorFetchingData} from '../utils/function';
+
+// THEME CONSTANTS EXTRACTED FROM IMAGE
+const THEME = {
+  background: '#13141F', // Dark blue-black background
+  primaryRed: '#F54B64', // Coral red
+  cardBg: '#20212D',     // Slightly lighter for cards
+  inputBg: '#2A2C3A',    // Input background
+  textWhite: '#FFFFFF',
+  textGray: '#8F9BB3',   // Muted blue-gray text
+  borderColor: 'rgba(255,255,255,0.08)',
+};
 
 export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
   navigation,
@@ -99,9 +110,9 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#070816" />
+      <StatusBar barStyle="light-content" backgroundColor={THEME.background} />
 
-      {/* fake background blobs giống login/register */}
+      {/* Decorative Background Blobs */}
       <View style={styles.bgCircleTop} />
       <View style={styles.bgCircleBottom} />
 
@@ -116,7 +127,7 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
             <TouchableOpacity
               style={styles.backButton}
               onPress={() => navigation.goBack()}>
-              <Icon name="chevron-back" size={22} color="#FFFFFF" />
+              <Icon name="chevron-back" size={24} color={THEME.textWhite} />
             </TouchableOpacity>
           </View>
 
@@ -139,7 +150,7 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
               <Icon
                 name="shield-checkmark-outline"
                 size={20}
-                color="#C5C5C5"
+                color={THEME.textGray}
                 style={styles.inputIcon}
               />
               <Controller
@@ -151,7 +162,7 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
                 render={({field}) => (
                   <TextInput
                     placeholder="Enter verification code"
-                    placeholderTextColor="#8E8E93"
+                    placeholderTextColor={THEME.textGray}
                     keyboardType="numeric"
                     value={field.value}
                     onChangeText={field.onChange}
@@ -180,7 +191,7 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
               <Icon
                 name="lock-closed-outline"
                 size={20}
-                color="#C5C5C5"
+                color={THEME.textGray}
                 style={styles.inputIcon}
               />
               <Controller
@@ -194,7 +205,7 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
                   <TextInput
                     style={[styles.input, styles.passwordInput]}
                     placeholder="New password"
-                    placeholderTextColor="#8E8E93"
+                    placeholderTextColor={THEME.textGray}
                     secureTextEntry={!showPassword}
                     value={field.value}
                     onChangeText={field.onChange}
@@ -209,7 +220,7 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
                 <Icon
                   name={showPassword ? 'eye-outline' : 'eye-off-outline'}
                   size={20}
-                  color="#C5C5C5"
+                  color={THEME.textGray}
                 />
               </TouchableOpacity>
             </View>
@@ -221,7 +232,7 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
               <Icon
                 name="lock-closed-outline"
                 size={20}
-                color="#C5C5C5"
+                color={THEME.textGray}
                 style={styles.inputIcon}
               />
               <Controller
@@ -236,7 +247,7 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
                   <TextInput
                     style={[styles.input, styles.passwordInput]}
                     placeholder="Confirm new password"
-                    placeholderTextColor="#8E8E93"
+                    placeholderTextColor={THEME.textGray}
                     secureTextEntry={!showConfirmPassword}
                     value={field.value}
                     onChangeText={field.onChange}
@@ -255,7 +266,7 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
                     showConfirmPassword ? 'eye-outline' : 'eye-off-outline'
                   }
                   size={20}
-                  color="#C5C5C5"
+                  color={THEME.textGray}
                 />
               </TouchableOpacity>
             </View>
@@ -276,7 +287,7 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#070816',
+    backgroundColor: THEME.background,
   },
   keyboardView: {
     flex: 1,
@@ -295,8 +306,8 @@ const styles = StyleSheet.create({
     width: 260,
     height: 260,
     borderRadius: 130,
-    backgroundColor: '#20213A',
-    opacity: 0.9,
+    backgroundColor: THEME.cardBg,
+    opacity: 0.8,
   },
   bgCircleBottom: {
     position: 'absolute',
@@ -305,18 +316,19 @@ const styles = StyleSheet.create({
     width: 280,
     height: 280,
     borderRadius: 140,
-    backgroundColor: '#FF4B3A',
-    opacity: 0.25,
+    backgroundColor: THEME.primaryRed,
+    opacity: 0.15,
   },
 
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
+    marginBottom: 20,
   },
   backButton: {
-    paddingVertical: 4,
-    paddingHorizontal: 4,
-    marginBottom: 8,
+    padding: 8,
+    borderRadius: 12,
+    backgroundColor: THEME.cardBg,
   },
   header: {
     marginBottom: 24,
@@ -335,56 +347,53 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#FF4B3A',
+    backgroundColor: THEME.primaryRed,
     marginRight: 8,
   },
   badgeText: {
-    color: '#FFFFFF',
+    color: THEME.textWhite,
     fontSize: 12,
     fontWeight: '600',
   },
   title: {
     fontSize: 28,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: THEME.textWhite,
     marginBottom: 6,
   },
   subtitle: {
     fontSize: 15,
-    color: '#B0B0B5',
+    color: THEME.textGray,
     lineHeight: 22,
   },
   subtitleAccent: {
-    color: '#FFFFFF',
+    color: THEME.textWhite,
     fontWeight: '600',
   },
 
   formCard: {
-    backgroundColor: 'rgba(12, 11, 23, 0.96)',
+    backgroundColor: THEME.cardBg,
     borderRadius: 24,
     padding: 22,
     marginTop: 8,
     marginBottom: 24,
     shadowColor: '#000000',
     shadowOffset: {width: 0, height: 18},
-    shadowOpacity: 0.45,
+    shadowOpacity: 0.25,
     shadowRadius: 30,
-    elevation: 16,
+    elevation: 5,
   },
 
-  form: {
-    marginBottom: 40,
-  },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.04)',
+    backgroundColor: THEME.inputBg,
     borderRadius: 16,
     marginBottom: 16,
     paddingHorizontal: 16,
     height: 56,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
+    borderColor: THEME.borderColor,
   },
   inputIcon: {
     marginRight: 12,
@@ -392,7 +401,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 15,
-    color: '#FFFFFF',
+    color: THEME.textWhite,
   },
   passwordInput: {
     paddingRight: 40,
@@ -404,20 +413,20 @@ const styles = StyleSheet.create({
   },
 
   resetButton: {
-    backgroundColor: '#FF4B3A',
+    backgroundColor: THEME.primaryRed,
     borderRadius: 18,
     height: 56,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 8,
-    shadowColor: '#FF4B3A',
-    shadowOffset: {width: 0, height: 12},
-    shadowOpacity: 0.45,
-    shadowRadius: 24,
-    elevation: 10,
+    shadowColor: THEME.primaryRed,
+    shadowOffset: {width: 0, height: 8},
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 8,
   },
   resetButtonText: {
-    color: '#FFFFFF',
+    color: THEME.textWhite,
     fontSize: 16,
     fontWeight: '700',
     textTransform: 'uppercase',
@@ -429,18 +438,15 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   resendCodeText: {
-    color: '#FF4B3A',
+    color: THEME.primaryRed,
     fontSize: 14,
     fontWeight: '600',
   },
 
-  disabledButton: {
-    opacity: 0.6,
-  },
-
   error: {
-    color: '#FF6B6B',
+    color: '#FF453A',
     marginBottom: 8,
     fontSize: 12,
+    marginLeft: 5,
   },
 });

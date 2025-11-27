@@ -35,6 +35,17 @@ import {
   formatDateOfBirth,
 } from '../utils/function';
 
+// THEME CONSTANTS EXTRACTED FROM IMAGE
+const THEME = {
+  background: '#13141F', // Dark blue-black background
+  primaryRed: '#F54B64', // Coral red
+  cardBg: '#20212D',     // Slightly lighter for cards
+  inputBg: '#2A2C3A',    // Input background
+  textWhite: '#FFFFFF',
+  textGray: '#8F9BB3',   // Muted blue-gray text
+  borderColor: 'rgba(255,255,255,0.08)',
+};
+
 const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
   const {
     control,
@@ -94,9 +105,9 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#070816" />
+      <StatusBar barStyle="light-content" backgroundColor={THEME.background} />
 
-      {/* fake gradient blobs giống login */}
+      {/* Decorative Background Blobs */}
       <View style={styles.bgCircleTop} />
       <View style={styles.bgCircleBottom} />
 
@@ -114,7 +125,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
               style={styles.backButton}
               onPress={() => navigation.goBack()}
             >
-              <Icon name="chevron-back" size={22} color="#FFFFFF" />
+              <Icon name="chevron-back" size={24} color={THEME.textWhite} />
             </TouchableOpacity>
 
             <View style={styles.badge}>
@@ -139,7 +150,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
               <Icon
                 name="person-outline"
                 size={20}
-                color="#C5C5C5"
+                color={THEME.textGray}
                 style={styles.inputIcon}
               />
               <Controller
@@ -151,7 +162,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
                 render={({ field }) => (
                   <TextInput
                     placeholder="Name"
-                    placeholderTextColor="#8E8E93"
+                    placeholderTextColor={THEME.textGray}
                     value={field.value}
                     onChangeText={field.onChange}
                     style={styles.input}
@@ -169,7 +180,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
               <Icon
                 name="call-outline"
                 size={20}
-                color="#C5C5C5"
+                color={THEME.textGray}
                 style={styles.inputIcon}
               />
               <Controller
@@ -182,7 +193,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
                 render={({ field }) => (
                   <TextInput
                     placeholder="Phone number"
-                    placeholderTextColor="#8E8E93"
+                    placeholderTextColor={THEME.textGray}
                     value={field.value}
                     onChangeText={field.onChange}
                     style={styles.input}
@@ -201,7 +212,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
               <Icon
                 name="mail-outline"
                 size={20}
-                color="#C5C5C5"
+                color={THEME.textGray}
                 style={styles.inputIcon}
               />
               <Controller
@@ -214,7 +225,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
                 render={({ field }) => (
                   <TextInput
                     placeholder="Email"
-                    placeholderTextColor="#8E8E93"
+                    placeholderTextColor={THEME.textGray}
                     value={field.value}
                     onChangeText={field.onChange}
                     style={styles.input}
@@ -244,10 +255,10 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
                     <Icon
                       name="calendar-outline"
                       size={20}
-                      color="#C5C5C5"
+                      color={THEME.textGray}
                       style={styles.inputIcon}
                     />
-                    <Text style={styles.dateText}>
+                    <Text style={[styles.dateText, !field.value && { color: THEME.textGray }]}>
                       {field.value
                         ? formatDateOfBirth(field.value)
                         : 'Select date of birth'}
@@ -255,7 +266,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
                     <Icon
                       name="chevron-down-outline"
                       size={20}
-                      color="#C5C5C5"
+                      color={THEME.textGray}
                       style={styles.chevronIcon}
                     />
                   </TouchableOpacity>
@@ -282,7 +293,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
               <Icon
                 name="location-outline"
                 size={20}
-                color="#C5C5C5"
+                color={THEME.textGray}
                 style={styles.inputIcon}
               />
               <Controller
@@ -297,6 +308,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
                     placeholderStyle={styles.dropdownPlaceholder}
                     selectedTextStyle={styles.dropdownText}
                     itemContainerStyle={styles.dropdownItem}
+                    activeColor={THEME.inputBg}
                     search
                     searchPlaceholder="Search..."
                     inputSearchStyle={styles.dropdownSearchInput}
@@ -318,7 +330,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
               <Icon
                 name="home-outline"
                 size={20}
-                color="#C5C5C5"
+                color={THEME.textGray}
                 style={styles.inputIcon}
               />
               <Controller
@@ -330,7 +342,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
                 render={({ field }) => (
                   <TextInput
                     placeholder="Address"
-                    placeholderTextColor="#8E8E93"
+                    placeholderTextColor={THEME.textGray}
                     value={field.value}
                     onChangeText={field.onChange}
                     style={styles.input}
@@ -359,7 +371,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
                         <Icon
                           name="man-outline"
                           size={20}
-                          color={field.value ? '#FFFFFF' : '#C5C5C5'}
+                          color={field.value ? '#FFFFFF' : THEME.textGray}
                         />
                         <Text
                           style={[
@@ -380,7 +392,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
                         <Icon
                           name="woman-outline"
                           size={20}
-                          color={!field.value ? '#FFFFFF' : '#C5C5C5'}
+                          color={!field.value ? '#FFFFFF' : THEME.textGray}
                         />
                         <Text
                           style={[
@@ -404,7 +416,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
               <Icon
                 name="lock-closed-outline"
                 size={20}
-                color="#C5C5C5"
+                color={THEME.textGray}
                 style={styles.inputIcon}
               />
               <Controller
@@ -417,7 +429,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
                 render={({ field }) => (
                   <TextInput
                     placeholder="Password"
-                    placeholderTextColor="#8E8E93"
+                    placeholderTextColor={THEME.textGray}
                     value={field.value}
                     onChangeText={field.onChange}
                     style={styles.input}
@@ -434,7 +446,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
                 <Icon
                   name={showPassword ? 'eye-outline' : 'eye-off-outline'}
                   size={20}
-                  color="#C5C5C5"
+                  color={THEME.textGray}
                 />
               </TouchableOpacity>
             </View>
@@ -446,7 +458,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
               <Icon
                 name="lock-closed-outline"
                 size={20}
-                color="#C5C5C5"
+                color={THEME.textGray}
                 style={styles.inputIcon}
               />
               <Controller
@@ -460,7 +472,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
                 render={({ field }) => (
                   <TextInput
                     placeholder="Confirm password"
-                    placeholderTextColor="#8E8E93"
+                    placeholderTextColor={THEME.textGray}
                     value={field.value}
                     onChangeText={field.onChange}
                     style={styles.input}
@@ -479,7 +491,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
                     showConfirmPassword ? 'eye-outline' : 'eye-off-outline'
                   }
                   size={20}
-                  color="#C5C5C5"
+                  color={THEME.textGray}
                 />
               </TouchableOpacity>
             </View>
@@ -511,7 +523,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#070816',
+    backgroundColor: THEME.background,
   },
   keyboardView: {
     flex: 1,
@@ -530,8 +542,8 @@ const styles = StyleSheet.create({
     width: 260,
     height: 260,
     borderRadius: 130,
-    backgroundColor: '#20213A',
-    opacity: 0.9,
+    backgroundColor: THEME.cardBg, // Using Card BG for subtle blob
+    opacity: 0.8,
   },
   bgCircleBottom: {
     position: 'absolute',
@@ -540,17 +552,19 @@ const styles = StyleSheet.create({
     width: 280,
     height: 280,
     borderRadius: 140,
-    backgroundColor: '#FF4B3A',
-    opacity: 0.25,
+    backgroundColor: THEME.primaryRed,
+    opacity: 0.15,
   },
 
   header: {
     marginBottom: 24,
   },
   backButton: {
-    padding: 4,
+    padding: 8,
     marginBottom: 12,
     alignSelf: 'flex-start',
+    backgroundColor: THEME.cardBg,
+    borderRadius: 12,
   },
   badge: {
     alignSelf: 'flex-start',
@@ -566,55 +580,51 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#FF4B3A',
+    backgroundColor: THEME.primaryRed,
     marginRight: 8,
   },
   badgeText: {
-    color: '#FFFFFF',
+    color: THEME.textWhite,
     fontSize: 12,
     fontWeight: '600',
   },
   title: {
     fontSize: 28,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: THEME.textWhite,
     marginBottom: 6,
   },
   subtitle: {
     fontSize: 15,
-    color: '#B0B0B5',
+    color: THEME.textGray,
   },
   subtitleBold: {
-    color: '#FFFFFF',
+    color: THEME.textWhite,
     fontWeight: '600',
   },
 
   formCard: {
-    backgroundColor: 'rgba(12, 11, 23, 0.96)',
+    backgroundColor: THEME.cardBg,
     borderRadius: 24,
     padding: 22,
     marginBottom: 28,
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 18 },
-    shadowOpacity: 0.45,
+    shadowOpacity: 0.25,
     shadowRadius: 30,
-    elevation: 16,
-  },
-
-  form: {
-    marginBottom: 32,
+    elevation: 5,
   },
 
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.04)',
+    backgroundColor: THEME.inputBg,
     borderRadius: 16,
     marginBottom: 16,
     paddingHorizontal: 16,
     height: 56,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
+    borderColor: THEME.borderColor,
   },
   inputIcon: {
     marginRight: 12,
@@ -622,10 +632,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 15,
-    color: '#FFFFFF',
-  },
-  passwordInput: {
-    paddingRight: 40,
+    color: THEME.textWhite,
   },
   eyeIcon: {
     position: 'absolute',
@@ -635,7 +642,7 @@ const styles = StyleSheet.create({
   dateText: {
     flex: 1,
     fontSize: 15,
-    color: '#FFFFFF',
+    color: THEME.textWhite,
   },
   chevronIcon: {
     marginLeft: 8,
@@ -653,41 +660,41 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(255,255,255,0.04)',
+    backgroundColor: THEME.inputBg,
     borderRadius: 16,
     height: 56,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.06)',
+    borderColor: THEME.borderColor,
   },
   genderButtonActive: {
-    backgroundColor: '#FF4B3A',
-    borderColor: '#FF4B3A',
+    backgroundColor: THEME.primaryRed,
+    borderColor: THEME.primaryRed,
   },
   genderButtonText: {
     fontSize: 15,
-    color: '#C5C5C5',
+    color: THEME.textGray,
     marginLeft: 8,
     fontWeight: '500',
   },
   genderButtonTextActive: {
-    color: '#FFFFFF',
+    color: THEME.textWhite,
   },
 
   registerButton: {
-    backgroundColor: '#FF4B3A',
+    backgroundColor: THEME.primaryRed,
     borderRadius: 18,
     height: 56,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 8,
-    shadowColor: '#FF4B3A',
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.45,
-    shadowRadius: 24,
-    elevation: 10,
+    shadowColor: THEME.primaryRed,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 8,
   },
   registerButtonText: {
-    color: '#FFFFFF',
+    color: THEME.textWhite,
     fontSize: 16,
     fontWeight: '700',
     textTransform: 'uppercase',
@@ -701,19 +708,20 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   footerText: {
-    color: '#8E8E93',
+    color: THEME.textGray,
     fontSize: 14,
   },
   signInText: {
-    color: '#FF4B3A',
+    color: THEME.primaryRed,
     fontSize: 14,
     fontWeight: '700',
   },
 
   error: {
-    color: '#FF6B6B',
+    color: '#FF453A',
     marginBottom: 6,
     fontSize: 12,
+    marginLeft: 5,
   },
 
   dropdown: {
@@ -721,33 +729,35 @@ const styles = StyleSheet.create({
   },
   dropdownText: {
     fontSize: 15,
-    color: '#FFFFFF',
+    color: THEME.textWhite,
   },
   dropdownPlaceholder: {
     fontSize: 15,
-    color: '#8E8E93',
+    color: THEME.textGray,
   },
   dropdownContainer: {
-    backgroundColor: '#141525',
+    backgroundColor: THEME.cardBg,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#3D3D4F',
+    borderColor: THEME.borderColor,
   },
   dropdownItem: {
-    paddingVertical: 8,
+    paddingVertical: 10,
     paddingHorizontal: 12,
+    backgroundColor: THEME.cardBg,
     borderBottomWidth: 0.5,
-    borderBottomColor: '#555',
+    borderBottomColor: 'rgba(255,255,255,0.1)',
   },
   dropdownItemText: {
     fontSize: 15,
-    color: '#FFFFFF',
+    color: THEME.textWhite,
   },
   dropdownSearchInput: {
     borderRadius: 8,
-    color: '#FFFFFF',
-    backgroundColor: '#2F2F3C',
+    color: THEME.textWhite,
+    backgroundColor: THEME.inputBg,
     fontSize: 15,
+    borderWidth: 0,
   },
 });
 

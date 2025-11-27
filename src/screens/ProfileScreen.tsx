@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-native/no-inline-styles */
 import React, {useCallback, useState} from 'react';
 import {
   View,
@@ -16,12 +17,23 @@ import {navigate} from '../utils/navigation';
 import { useFocusEffect } from '@react-navigation/native';
 import { Icon } from 'react-native-paper';
 import RankBadge from '../components/RankBadge';
-import { colors, getRankColor } from '../constant/color';
+// Kept getRankColor logic, removed 'colors' object to use local THEME
+import { getRankColor } from '../constant/color';
 import { useSpinner } from '../context/SpinnerContext';
 import { logout } from '../services/AuthService';
 import { getClient } from '../services/ClientService';
 import { ClientProfileProps } from '../types/client';
 import { checkErrorFetchingData, getClientImage } from '../utils/function';
+
+// THEME CONSTANTS EXTRACTED FROM IMAGE
+const THEME = {
+  background: '#13141F', // Dark blue-black background
+  primaryRed: '#F54B64', // Coral red
+  cardBg: '#20212D',     // Slightly lighter for cards
+  textWhite: '#FFFFFF',
+  textGray: '#8F9BB3',   // Muted blue-gray text
+  borderColor: 'rgba(255,255,255,0.1)',
+};
 
 const ProfileScreen: React.FC<ProfileScreenProps> = ({navigation}) => {
   const [client, setClient] = useState<ClientProfileProps | null>(null);
@@ -60,18 +72,20 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({navigation}) => {
   );
 
   return (
-    <SafeAreaView style={[styles.container, {backgroundColor: colors.dark}]}>
-      <StatusBar backgroundColor={colors.dark} barStyle="light-content" />
+    <SafeAreaView style={styles.container}>
+      <StatusBar backgroundColor={THEME.background} barStyle="light-content" />
 
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}>
+        
+        {/* User Info Card */}
         <View
-          style={[styles.profileHeader, {backgroundColor: colors.mediumGray}]}>
+          style={styles.profileHeader}>
           <View style={styles.avatarContainer}>
             <Image
               source={{uri: getClientImage(client?.avatar || '')}}
-              style={[styles.avatar, {borderColor: colors.primary}]}
+              style={styles.avatar}
             />
             <View style={styles.rankContainer}>
               <RankBadge rankName={client?.rank.name || ''} />
@@ -79,11 +93,11 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({navigation}) => {
           </View>
 
           <View style={styles.userInfo}>
-            <Text style={[styles.userName, {color: colors.white}]}>
+            <Text style={styles.userName}>
               {client?.name}
             </Text>
             <View style={styles.pointsContainer}>
-              <Text style={[styles.pointsLabel, {color: colors.lightGray}]}>
+              <Text style={styles.pointsLabel}>
                 Loyal Points
               </Text>
               <Text
@@ -97,8 +111,9 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({navigation}) => {
           </View>
         </View>
 
+        {/* Profile Settings Section */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, {color: colors.white}]}>
+          <Text style={styles.sectionTitle}>
             Profile
           </Text>
 
@@ -122,12 +137,13 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({navigation}) => {
                 });
               }
             }}
-            style={[styles.actionButton, {backgroundColor: colors.mediumGray}]}
+            style={styles.actionButton}
             activeOpacity={0.7}>
-            <Icon source="pencil" size={24} color={colors.primary} />
-            <Text style={[styles.actionText, {color: colors.white}]}>Edit</Text>
-            <Icon source="chevron-right" size={24} color={colors.lightGray} />
+            <Icon source="pencil" size={24} color={THEME.primaryRed} />
+            <Text style={styles.actionText}>Edit Profile</Text>
+            <Icon source="chevron-right" size={24} color={THEME.textGray} />
           </TouchableOpacity>
+          
           <TouchableOpacity
             onPress={() => {
               if (client) {
@@ -136,23 +152,24 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({navigation}) => {
                 });
               }
             }}
-            style={[styles.actionButton, {backgroundColor: colors.mediumGray}]}
+            style={styles.actionButton}
             activeOpacity={0.7}>
-            <Icon source="security" size={24} color={colors.primary} />
-            <Text style={[styles.actionText, {color: colors.white}]}>
+            <Icon source="lock" size={24} color={THEME.primaryRed} />
+            <Text style={styles.actionText}>
               Change Password
             </Text>
-            <Icon source="chevron-right" size={24} color={colors.lightGray} />
+            <Icon source="chevron-right" size={24} color={THEME.textGray} />
           </TouchableOpacity>
         </View>
 
+        {/* Booking Section */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, {color: colors.white}]}>
+          <Text style={styles.sectionTitle}>
             Booking
           </Text>
 
           <TouchableOpacity
-            style={[styles.actionButton, {backgroundColor: colors.mediumGray}]}
+            style={styles.actionButton}
             activeOpacity={0.7}
             onPress={() => {
               navigate('MainTabs', {
@@ -162,15 +179,15 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({navigation}) => {
                 },
               });
             }}>
-            <Icon source="theater" size={24} color={colors.primary} />
-            <Text style={[styles.actionText, {color: colors.white}]}>
+            <Icon source="theater" size={24} color={THEME.primaryRed} />
+            <Text style={styles.actionText}>
               By Cinemas
             </Text>
-            <Icon source="chevron-right" size={24} color={colors.lightGray} />
+            <Icon source="chevron-right" size={24} color={THEME.textGray} />
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.actionButton, {backgroundColor: colors.mediumGray}]}
+            style={styles.actionButton}
             activeOpacity={0.7}
             onPress={() => {
               navigate('MainTabs', {
@@ -183,19 +200,20 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({navigation}) => {
                 },
               });
             }}>
-            <Icon source="movie-roll" size={24} color={colors.primary} />
-            <Text style={[styles.actionText, {color: colors.white}]}>
+            <Icon source="film" size={24} color={THEME.primaryRed} />
+            <Text style={styles.actionText}>
               By Films
             </Text>
-            <Icon source="chevron-right" size={24} color={colors.lightGray} />
+            <Icon source="chevron-right" size={24} color={THEME.textGray} />
           </TouchableOpacity>
         </View>
 
+        {/* Menu Section */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, {color: colors.white}]}>Menu</Text>
+          <Text style={styles.sectionTitle}>Menu</Text>
 
           <TouchableOpacity
-            style={[styles.menuItem, {backgroundColor: colors.mediumGray}]}
+            style={styles.menuItem}
             onPress={() =>
               navigate('MainTabs', {
                 screen: 'HomeStack',
@@ -205,12 +223,13 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({navigation}) => {
               })
             }
             activeOpacity={0.7}>
-            <Icon source="home" size={24} color={colors.primary} />
-            <Text style={[styles.menuText, {color: colors.white}]}>Home</Text>
-            <Icon source="chevron-right" size={24} color={colors.lightGray} />
+            <Icon source="home" size={24} color={THEME.primaryRed} />
+            <Text style={styles.menuText}>Home</Text>
+            <Icon source="chevron-right" size={24} color={THEME.textGray} />
           </TouchableOpacity>
+
           <TouchableOpacity
-            style={[styles.menuItem, {backgroundColor: colors.mediumGray}]}
+            style={styles.menuItem}
             activeOpacity={0.7}
             onPress={() =>
               navigate('MainTabs', {
@@ -220,33 +239,36 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({navigation}) => {
                 },
               })
             }>
-            <Icon source="ticket" size={24} color={colors.primary} />
-            <Text style={[styles.menuText, {color: colors.white}]}>
+            <Icon source="ticket" size={24} color={THEME.primaryRed} />
+            <Text style={styles.menuText}>
               My Tickets
             </Text>
-            <Icon source="chevron-right" size={24} color={colors.lightGray} />
+            <Icon source="chevron-right" size={24} color={THEME.textGray} />
           </TouchableOpacity>
+          
           <TouchableOpacity
-            style={[styles.menuItem, {backgroundColor: colors.mediumGray}]}
+            style={styles.menuItem}
             onPress={() =>
               navigation.navigate('CouponListScreen', {
                 clientEmail: client?.email || '',
               })
             }
             activeOpacity={0.7}>
-            <Icon source="gift" size={24} color={colors.primary} />
-            <Text style={[styles.menuText, {color: colors.white}]}>
+            <Icon source="gift" size={24} color={THEME.primaryRed} />
+            <Text style={styles.menuText}>
               Coupons
             </Text>
-            <Icon source="chevron-right" size={24} color={colors.lightGray} />
+            <Icon source="chevron-right" size={24} color={THEME.textGray} />
           </TouchableOpacity>
         </View>
+
+        {/* Logout Button */}
         <TouchableOpacity
           onPress={() => logout()}
-          style={[styles.logoutButton, {borderColor: colors.primary}]}
+          style={styles.logoutButton}
           activeOpacity={0.7}>
-          <Icon source="logout" size={24} color={colors.primary} />
-          <Text style={[styles.logoutText, {color: colors.primary}]}>
+          <Icon source="logout" size={24} color={THEME.primaryRed} />
+          <Text style={styles.logoutText}>
             Logout
           </Text>
         </TouchableOpacity>
@@ -258,6 +280,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: THEME.background,
   },
   scrollView: {
     flex: 1,
@@ -267,14 +290,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 20,
-    borderRadius: 15,
+    borderRadius: 20,
     marginTop: 20,
     marginBottom: 25,
+    backgroundColor: THEME.cardBg,
     elevation: 3,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
   },
   avatarContainer: {
     position: 'relative',
@@ -284,12 +308,14 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    borderWidth: 3,
+    borderWidth: 2,
+    borderColor: THEME.primaryRed,
+    backgroundColor: '#000',
   },
   rankContainer: {
     position: 'absolute',
-    bottom: -8,
-    right: -8,
+    bottom: -5,
+    right: -5,
   },
   userInfo: {
     flex: 1,
@@ -298,99 +324,78 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 8,
+    color: THEME.textWhite,
+    letterSpacing: 0.5,
   },
   pointsContainer: {
     flexDirection: 'column',
   },
   pointsLabel: {
-    fontSize: 14,
+    fontSize: 13,
     marginBottom: 4,
+    color: THEME.textGray,
+    fontWeight: '500',
   },
   pointsValue: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
   },
   section: {
-    marginBottom: 10,
-  },
-  demoSection: {
-    padding: 20,
-    borderRadius: 15,
+    marginBottom: 25,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 15,
+    color: THEME.textWhite,
   },
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 16,
     marginBottom: 12,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
+    backgroundColor: THEME.cardBg,
   },
   actionText: {
     fontSize: 16,
     fontWeight: '500',
     flex: 1,
     marginLeft: 15,
+    color: THEME.textWhite,
   },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 16,
     marginBottom: 12,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
+    backgroundColor: THEME.cardBg,
   },
   menuText: {
     fontSize: 16,
     fontWeight: '500',
     flex: 1,
     marginLeft: 15,
-  },
-  rankButtons: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    gap: 10,
-  },
-  rankButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 20,
-    borderWidth: 2,
-    minWidth: 80,
-    alignItems: 'center',
-    flex: 1,
-    maxWidth: '22%',
-  },
-  rankButtonText: {
-    fontSize: 12,
-    fontWeight: 'bold',
+    color: THEME.textWhite,
   },
   logoutButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
-    borderRadius: 12,
-    borderWidth: 2,
-    marginBottom: 20,
+    borderRadius: 16,
+    borderWidth: 1.5,
+    borderColor: THEME.primaryRed,
+    marginBottom: 40,
+    marginTop: 10,
+    backgroundColor: 'transparent',
   },
   logoutText: {
     fontSize: 16,
     fontWeight: 'bold',
     marginLeft: 10,
+    color: THEME.primaryRed,
   },
 });
 
