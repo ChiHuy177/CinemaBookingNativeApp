@@ -3,9 +3,9 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {BottomTabParamList} from './BottomTabParamList';
 import {MainTabsProps} from '../types/screentypes';
 import {Icon} from 'react-native-paper';
-// import {HomeStack} from './HomeStack';
-// import {FavoriteMovieScreen} from '../screens/FavoriteMovieScreen';
-// import { ProfileStack } from './ProfileStack';
+import {HomeStack} from './HomeStack';
+import {FavoriteMovieScreen} from '../screens/FavoriteMovieScreen';
+import { ProfileStack } from './ProfileStack';
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -20,7 +20,7 @@ export const MainTabs: React.FC<MainTabsProps> = () => {
           backgroundColor: '#3D3D3D',
         },
       }}>
-      {/* <Tab.Screen
+      <Tab.Screen
         name="HomeStack"
         component={HomeStack}
         options={{
@@ -30,8 +30,8 @@ export const MainTabs: React.FC<MainTabsProps> = () => {
           ),
           headerShown: false,
         }}
-      /> */}
-      {/* <Tab.Screen
+      />
+      <Tab.Screen
         name="FavoriteTab"
         component={FavoriteMovieScreen}
         options={{
@@ -41,8 +41,8 @@ export const MainTabs: React.FC<MainTabsProps> = () => {
           ),
           headerShown: false,
         }}
-      /> */}
-      {/* <Tab.Screen
+      />
+      <Tab.Screen
         name="ProfileStack"
         component={ProfileStack}
         options={{
@@ -52,8 +52,8 @@ export const MainTabs: React.FC<MainTabsProps> = () => {
           ),
           headerShown: false,
         }}
-      /> */}
-      {/*<Tab.Screen
+      />
+      {/* <Tab.Screen
         name="Setting"
         component={Home}
         options={{

@@ -8,7 +8,8 @@ import { navigationRef } from '../utils/navigation';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import { ResetPasswordScreen } from '../screens/ResetPasswordScreen';
-import { ForgotPasswordScreen } from './ForgotPasswordScreen';
+import { ForgotPasswordScreen } from '../screens/ForgotPasswordScreen';
+import { MainTabs } from './MainTabs';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -45,13 +46,13 @@ export default function StackNavigator() {
           name="ResetPasswordScreen"
           component={ResetPasswordScreen}
         />
-        {/* <Stack.Screen
+        <Stack.Screen
           options={{
             headerShown: false,
           }}
           name="MainTabs"
           component={MainTabs}
-        /> */}
+        />
       </Stack.Navigator>
       <Toast
         position="top"

@@ -82,6 +82,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
         });
       }
     } catch (error: any) {
+      console.error(error.response)
       checkErrorFetchingData({
         error,
         title: 'Register Failed',
@@ -93,7 +94,12 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#2F2F2F" />
+      <StatusBar barStyle="light-content" backgroundColor="#070816" />
+
+      {/* fake gradient blobs giống login */}
+      <View style={styles.bgCircleTop} />
+      <View style={styles.bgCircleBottom} />
+
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
@@ -102,14 +108,33 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
           contentContainerStyle={styles.scrollContainer}
           showsVerticalScrollIndicator={false}
         >
+          {/* HEADER */}
           <View style={styles.header}>
-            <Text style={styles.title}>Create Account</Text>
-            <Text style={styles.subtitle}>Sign up to get started</Text>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => navigation.goBack()}
+            >
+              <Icon name="chevron-back" size={22} color="#FFFFFF" />
+            </TouchableOpacity>
+
+            <View style={styles.badge}>
+              <View style={styles.badgeDot} />
+              <Text style={styles.badgeText}>Cinema App</Text>
+            </View>
+
+            <Text style={styles.title}>Create account</Text>
+            <Text style={styles.subtitle}>
+              Start your
+              <Text style={styles.subtitleBold}> movie journey</Text>
+            </Text>
           </View>
-          {errors.name && (
-            <Text style={styles.error}>{errors.name.message}</Text>
-          )}
-          <View style={styles.form}>
+
+          {/* FORM CARD */}
+          <View style={styles.formCard}>
+            {errors.name && (
+              <Text style={styles.error}>{errors.name.message}</Text>
+            )}
+
             <View style={styles.inputContainer}>
               <Icon
                 name="person-outline"
@@ -126,7 +151,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
                 render={({ field }) => (
                   <TextInput
                     placeholder="Name"
-                    placeholderTextColor="#C5C5C5"
+                    placeholderTextColor="#8E8E93"
                     value={field.value}
                     onChangeText={field.onChange}
                     style={styles.input}
@@ -156,12 +181,12 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
                 }}
                 render={({ field }) => (
                   <TextInput
-                    placeholder="PhoneNumber"
-                    placeholderTextColor="#C5C5C5"
+                    placeholder="Phone number"
+                    placeholderTextColor="#8E8E93"
                     value={field.value}
                     onChangeText={field.onChange}
                     style={styles.input}
-                    autoCapitalize="words"
+                    autoCapitalize="none"
                     autoCorrect={false}
                     keyboardType="phone-pad"
                   />
@@ -189,7 +214,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
                 render={({ field }) => (
                   <TextInput
                     placeholder="Email"
-                    placeholderTextColor="#C5C5C5"
+                    placeholderTextColor="#8E8E93"
                     value={field.value}
                     onChangeText={field.onChange}
                     style={styles.input}
@@ -266,7 +291,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
                 rules={{ required: 'City is required' }}
                 render={({ field }) => (
                   <Dropdown
-                    style={styles.input}
+                    style={styles.dropdown}
                     containerStyle={styles.dropdownContainer}
                     itemTextStyle={styles.dropdownItemText}
                     placeholderStyle={styles.dropdownPlaceholder}
@@ -278,7 +303,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
                     data={cities}
                     labelField="label"
                     valueField="value"
-                    placeholder="Chọn thành phố"
+                    placeholder="Select city"
                     value={field.value}
                     onChange={item => field.onChange(item.value)}
                   />
@@ -305,7 +330,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
                 render={({ field }) => (
                   <TextInput
                     placeholder="Address"
-                    placeholderTextColor="#C5C5C5"
+                    placeholderTextColor="#8E8E93"
                     value={field.value}
                     onChangeText={field.onChange}
                     style={styles.input}
@@ -392,7 +417,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
                 render={({ field }) => (
                   <TextInput
                     placeholder="Password"
-                    placeholderTextColor="#C5C5C5"
+                    placeholderTextColor="#8E8E93"
                     value={field.value}
                     onChangeText={field.onChange}
                     style={styles.input}
@@ -434,8 +459,8 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
                 }}
                 render={({ field }) => (
                   <TextInput
-                    placeholder="ConfirmPassword"
-                    placeholderTextColor="#C5C5C5"
+                    placeholder="Confirm password"
+                    placeholderTextColor="#8E8E93"
                     value={field.value}
                     onChangeText={field.onChange}
                     style={styles.input}
@@ -450,7 +475,9 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
                 style={styles.eyeIcon}
               >
                 <Icon
-                  name={showConfirmPassword ? 'eye-outline' : 'eye-off-outline'}
+                  name={
+                    showConfirmPassword ? 'eye-outline' : 'eye-off-outline'
+                  }
                   size={20}
                   color="#C5C5C5"
                 />
@@ -462,38 +489,17 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
               onPress={handleSubmit(onSubmit)}
               disabled={isSubmitting}
             >
-              <Text style={styles.registerButtonText}>Create Account</Text>
+              <Text style={styles.registerButtonText}>Create account</Text>
             </TouchableOpacity>
-
-            {/* <View style={styles.divider}>
-              <View style={styles.dividerLine} />
-              <Text style={styles.dividerText}>OR</Text>
-              <View style={styles.dividerLine} />
-            </View> */}
-
-            {/* <TouchableOpacity
-              style={styles.socialButton}
-              onPress={() => handleSocialRegister('google')}>
-              <Icon name="logo-google" size={20} color="#FFFFFF" />
-              <Text style={styles.socialButtonText}>Continue with Google</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.socialButton}
-              onPress={() => handleSocialRegister('facebook')}>
-              <Icon name="logo-facebook" size={20} color="#FFFFFF" />
-              <Text style={styles.socialButtonText}>
-                Continue with Facebook
-              </Text>
-            </TouchableOpacity> */}
           </View>
 
+          {/* FOOTER */}
           <View style={styles.footer}>
-            <Text style={styles.footerText}>Already have an account? </Text>
+            <Text style={styles.footerText}>Already have an account?</Text>
             <TouchableOpacity
               onPress={() => navigation.navigate('LoginScreen')}
             >
-              <Text style={styles.signInText}>Sign In</Text>
+              <Text style={styles.signInText}> Sign in</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -505,7 +511,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2F2F2F',
+    backgroundColor: '#070816',
   },
   keyboardView: {
     flex: 1,
@@ -513,49 +519,109 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
     paddingHorizontal: 24,
-    paddingTop: 20,
-    paddingBottom: 40,
+    paddingVertical: 32,
   },
+
+  // background blobs
+  bgCircleTop: {
+    position: 'absolute',
+    top: -120,
+    left: -60,
+    width: 260,
+    height: 260,
+    borderRadius: 130,
+    backgroundColor: '#20213A',
+    opacity: 0.9,
+  },
+  bgCircleBottom: {
+    position: 'absolute',
+    bottom: -140,
+    right: -80,
+    width: 280,
+    height: 280,
+    borderRadius: 140,
+    backgroundColor: '#FF4B3A',
+    opacity: 0.25,
+  },
+
   header: {
-    alignItems: 'center',
-    marginBottom: 32,
-    position: 'relative',
+    marginBottom: 24,
   },
   backButton: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    padding: 8,
+    padding: 4,
+    marginBottom: 12,
+    alignSelf: 'flex-start',
+  },
+  badge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 999,
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  badgeDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#FF4B3A',
+    marginRight: 8,
+  },
+  badgeText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '600',
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
+    fontSize: 28,
+    fontWeight: '700',
     color: '#FFFFFF',
-    marginBottom: 8,
-    marginTop: 40,
+    marginBottom: 6,
   },
   subtitle: {
-    fontSize: 16,
-    color: '#C5C5C5',
+    fontSize: 15,
+    color: '#B0B0B5',
   },
+  subtitleBold: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+  },
+
+  formCard: {
+    backgroundColor: 'rgba(12, 11, 23, 0.96)',
+    borderRadius: 24,
+    padding: 22,
+    marginBottom: 28,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 18 },
+    shadowOpacity: 0.45,
+    shadowRadius: 30,
+    elevation: 16,
+  },
+
   form: {
     marginBottom: 32,
   },
+
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#3D3D3D',
-    borderRadius: 12,
+    backgroundColor: 'rgba(255,255,255,0.04)',
+    borderRadius: 16,
     marginBottom: 16,
     paddingHorizontal: 16,
     height: 56,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
   },
   inputIcon: {
     marginRight: 12,
   },
   input: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 15,
     color: '#FFFFFF',
   },
   passwordInput: {
@@ -568,20 +634,15 @@ const styles = StyleSheet.create({
   },
   dateText: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 15,
     color: '#FFFFFF',
   },
   chevronIcon: {
     marginLeft: 8,
   },
+
   genderContainer: {
     marginBottom: 16,
-  },
-  genderLabel: {
-    fontSize: 16,
-    color: '#FFFFFF',
-    marginBottom: 12,
-    fontWeight: '500',
   },
   genderButtons: {
     flexDirection: 'row',
@@ -592,18 +653,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#3D3D3D',
-    borderRadius: 12,
+    backgroundColor: 'rgba(255,255,255,0.04)',
+    borderRadius: 16,
     height: 56,
-    borderWidth: 2,
-    borderColor: 'transparent',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.06)',
   },
   genderButtonActive: {
-    backgroundColor: '#FF8133',
-    borderColor: '#FF8133',
+    backgroundColor: '#FF4B3A',
+    borderColor: '#FF4B3A',
   },
   genderButtonText: {
-    fontSize: 16,
+    fontSize: 15,
     color: '#C5C5C5',
     marginLeft: 8,
     fontWeight: '500',
@@ -611,140 +672,82 @@ const styles = StyleSheet.create({
   genderButtonTextActive: {
     color: '#FFFFFF',
   },
-  checkboxContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 24,
-    paddingHorizontal: 4,
-  },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderWidth: 2,
-    borderColor: '#C5C5C5',
-    borderRadius: 4,
-    marginRight: 12,
-    marginTop: 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  checkboxChecked: {
-    backgroundColor: '#FF8133',
-    borderColor: '#FF8133',
-  },
-  termsTextContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-  },
-  termsText: {
-    color: '#C5C5C5',
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  termsLink: {
-    color: '#FF8133',
-    fontSize: 14,
-    fontWeight: '500',
-    lineHeight: 20,
-  },
+
   registerButton: {
-    backgroundColor: '#FF8133',
-    borderRadius: 12,
+    backgroundColor: '#FF4B3A',
+    borderRadius: 18,
     height: 56,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 12,
+    marginTop: 8,
+    shadowColor: '#FF4B3A',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.45,
+    shadowRadius: 24,
+    elevation: 10,
   },
   registerButtonText: {
     color: '#FFFFFF',
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  divider: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: '#3D3D3D',
-  },
-  dividerText: {
-    color: '#C5C5C5',
-    marginHorizontal: 16,
-    fontSize: 14,
-  },
-  socialButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#3D3D3D',
-    borderRadius: 12,
-    height: 56,
-    marginBottom: 12,
-  },
-  socialButtonText: {
-    color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: '500',
-    marginLeft: 12,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
   },
+
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingBottom: 20,
+    paddingBottom: 24,
   },
   footerText: {
-    color: '#C5C5C5',
-    fontSize: 16,
+    color: '#8E8E93',
+    fontSize: 14,
   },
   signInText: {
-    color: '#FF8133',
-    fontSize: 16,
-    fontWeight: '600',
+    color: '#FF4B3A',
+    fontSize: 14,
+    fontWeight: '700',
   },
-  buttonDatePicker: {
-    color: '#FF8133',
-  },
-  error: { color: 'red', marginBottom: 10 },
 
+  error: {
+    color: '#FF6B6B',
+    marginBottom: 6,
+    fontSize: 12,
+  },
+
+  dropdown: {
+    flex: 1,
+  },
   dropdownText: {
-    fontSize: 16,
+    fontSize: 15,
     color: '#FFFFFF',
   },
-
   dropdownPlaceholder: {
-    fontSize: 16,
-    color: '#C5C5C5',
+    fontSize: 15,
+    color: '#8E8E93',
   },
-
   dropdownContainer: {
-    backgroundColor: '#3D3D3D',
+    backgroundColor: '#141525',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#3D3D3D',
+    borderColor: '#3D3D4F',
   },
-
   dropdownItem: {
-    paddingVertical: 6,
-    paddingHorizontal: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
     borderBottomWidth: 0.5,
     borderBottomColor: '#555',
   },
-
   dropdownItemText: {
-    fontSize: 16,
+    fontSize: 15,
     color: '#FFFFFF',
   },
   dropdownSearchInput: {
     borderRadius: 8,
     color: '#FFFFFF',
-    backgroundColor: '#2F2F2F',
-    fontSize: 16,
+    backgroundColor: '#2F2F3C',
+    fontSize: 15,
   },
 });
 

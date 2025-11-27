@@ -19,9 +19,10 @@ import {useAuth} from '../context/AuthContext';
 import {saveEmailAndToken} from '../utils/storage';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
-import { required, isEmail } from '../utils/validators';
-import { login } from '../services/AuthService';
-import { checkErrorFetchingData, showToast } from '../utils/function';
+import {required, isEmail} from '../utils/validators';
+import {login} from '../services/AuthService';
+import {checkErrorFetchingData, showToast} from '../utils/function';
+
 interface FormData {
   email: string;
   password: string;
@@ -44,8 +45,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({navigation}) => {
         email: data.email,
         password: data.password,
       };
+      
       showSpinner();
+      console.log(loginRequest);
       const apiResponse = await login(loginRequest);
+      console.log(apiResponse);
       if (apiResponse.result.authenticated) {
         saveEmailAndToken({
           email: apiResponse.result.email,
@@ -61,6 +65,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({navigation}) => {
         }, 1500);
       }
     } catch (error: any) {
+      console.log('Axios error:', JSON.stringify(error, null, 2));
       checkErrorFetchingData({
         error: error,
         title: 'Login Failed',
@@ -72,22 +77,36 @@ const LoginScreen: React.FC<LoginScreenProps> = ({navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#2F2F2F" />
+      <StatusBar barStyle="light-content" backgroundColor="#070816" />
+      {/* fake gradient blobs */}
+      <View style={styles.bgCircleTop} />
+      <View style={styles.bgCircleBottom} />
+
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}>
         <ScrollView
           contentContainerStyle={styles.scrollContainer}
           showsVerticalScrollIndicator={false}>
+          {/* HEADER */}
           <View style={styles.header}>
-            <Text style={styles.title}>Welcome Back</Text>
-            <Text style={styles.subtitle}>Sign in to continue</Text>
+            <View style={styles.badge}>
+              <View style={styles.badgeDot} />
+              <Text style={styles.badgeText}>Cinema App</Text>
+            </View>
+
+            <Text style={styles.title}>Welcome back,</Text>
+            <Text style={styles.subtitle}>
+              <Text style={styles.subtitleBold}>Sign in</Text> to enjoy the
+              latest movies
+            </Text>
           </View>
 
-          {errors.email && (
-            <Text style={styles.error}>{errors.email.message}</Text>
-          )}
-          <View style={styles.form}>
+          {/* FORM CARD */}
+          <View style={styles.formCard}>
+            {errors.email && (
+              <Text style={styles.error}>{errors.email.message}</Text>
+            )}
             <View style={styles.inputContainer}>
               <Icon
                 name="mail-outline"
@@ -105,7 +124,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({navigation}) => {
                 render={({field}) => (
                   <TextInput
                     placeholder="Email"
-                    placeholderTextColor="#C5C5C5"
+                    placeholderTextColor="#8E8E93"
                     keyboardType="email-address"
                     value={field.value}
                     onChangeText={field.onChange}
@@ -137,7 +156,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({navigation}) => {
                   <TextInput
                     style={[styles.input, styles.passwordInput]}
                     placeholder="Password"
-                    placeholderTextColor="#C5C5C5"
+                    placeholderTextColor="#8E8E93"
                     secureTextEntry={!showPassword}
                     value={field.value}
                     onChangeText={field.onChange}
@@ -161,40 +180,31 @@ const LoginScreen: React.FC<LoginScreenProps> = ({navigation}) => {
             <TouchableOpacity
               onPress={() => navigation.navigate('ForgotPasswordScreen')}
               style={styles.forgotPassword}>
-              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+              <Text style={styles.forgotPasswordText}>Forgot password?</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.loginButton}
               onPress={handleSubmit(onSubmit)}
               disabled={isSubmitting}>
-              <Text style={styles.loginButtonText}>Sign In</Text>
+              <View style={styles.loginButtonContent}>
+                <Text style={styles.loginButtonText}>Sign in</Text>
+                <Icon
+                  name="arrow-forward"
+                  size={18}
+                  color="#FFFFFF"
+                  style={styles.loginArrowIcon}
+                />
+              </View>
             </TouchableOpacity>
-
-            {/* <View style={styles.divider}>
-              <View style={styles.dividerLine} />
-              <Text style={styles.dividerText}>OR</Text>
-              <View style={styles.dividerLine} />
-            </View>
-
-            <TouchableOpacity style={styles.socialButton}>
-              <Icon name="logo-google" size={20} color="#FFFFFF" />
-              <Text style={styles.socialButtonText}>Continue with Google</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.socialButton}>
-              <Icon name="logo-facebook" size={20} color="#FFFFFF" />
-              <Text style={styles.socialButtonText}>
-                Continue with Facebook
-              </Text>
-            </TouchableOpacity> */}
           </View>
 
+          {/* FOOTER */}
           <View style={styles.footer}>
-            <Text style={styles.footerText}>Don't have an account? </Text>
+            <Text style={styles.footerText}>Don&apos;t have an account?</Text>
             <TouchableOpacity
               onPress={() => navigation.navigate('RegisterScreen')}>
-              <Text style={styles.signUpText}>Sign Up</Text>
+              <Text style={styles.signUpText}> Sign up</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -206,50 +216,111 @@ const LoginScreen: React.FC<LoginScreenProps> = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2F2F2F',
+    backgroundColor: '#070816', // dark cinema background
   },
   keyboardView: {
     flex: 1,
   },
   scrollContainer: {
     flexGrow: 1,
-    justifyContent: 'center',
     paddingHorizontal: 24,
+    paddingVertical: 32,
+    justifyContent: 'center',
   },
+
+  /* fake gradient blobs */
+  bgCircleTop: {
+    position: 'absolute',
+    top: -120,
+    left: -60,
+    width: 260,
+    height: 260,
+    borderRadius: 130,
+    backgroundColor: '#20213A',
+    opacity: 0.9,
+  },
+  bgCircleBottom: {
+    position: 'absolute',
+    bottom: -140,
+    right: -80,
+    width: 280,
+    height: 280,
+    borderRadius: 140,
+    backgroundColor: '#FF4B3A',
+    opacity: 0.25,
+  },
+
   header: {
+    marginBottom: 32,
+  },
+  badge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 999,
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: 16,
+  },
+  badgeDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#FF4B3A',
+    marginRight: 8,
+  },
+  badgeText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '600',
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
+    fontSize: 30,
+    fontWeight: '700',
     color: '#FFFFFF',
-    marginBottom: 8,
+    marginBottom: 6,
   },
   subtitle: {
-    fontSize: 16,
-    color: '#C5C5C5',
+    fontSize: 15,
+    color: '#B0B0B5',
+    lineHeight: 22,
   },
-  form: {
-    marginBottom: 40,
+  subtitleBold: {
+    color: '#FFFFFF',
+    fontWeight: '600',
   },
+
+  formCard: {
+    backgroundColor: 'rgba(12, 11, 23, 0.96)',
+    borderRadius: 24,
+    padding: 24,
+    marginBottom: 32,
+    shadowColor: '#000000',
+    shadowOffset: {width: 0, height: 18},
+    shadowOpacity: 0.45,
+    shadowRadius: 30,
+    elevation: 16,
+  },
+
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#3D3D3D',
-    borderRadius: 12,
+    backgroundColor: 'rgba(255,255,255,0.04)',
+    borderRadius: 16,
     marginBottom: 16,
     paddingHorizontal: 16,
     height: 56,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
   },
   inputIcon: {
     marginRight: 12,
   },
   input: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 15,
     color: '#FFFFFF',
-    backgroundColor: '#3D3D3D',
   },
   passwordInput: {
     paddingRight: 40,
@@ -259,73 +330,64 @@ const styles = StyleSheet.create({
     right: 16,
     padding: 4,
   },
+
   forgotPassword: {
     alignSelf: 'flex-end',
     marginBottom: 24,
   },
   forgotPasswordText: {
-    color: '#FF8133',
-    fontSize: 14,
-    fontWeight: '500',
+    color: '#FF4B3A',
+    fontSize: 13,
+    fontWeight: '600',
   },
+
   loginButton: {
-    backgroundColor: '#FF8133',
-    borderRadius: 12,
     height: 56,
+    borderRadius: 18,
+    backgroundColor: '#FF4B3A',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 24,
+    shadowColor: '#FF4B3A',
+    shadowOffset: {width: 0, height: 12},
+    shadowOpacity: 0.45,
+    shadowRadius: 24,
+    elevation: 10,
+  },
+  loginButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   loginButtonText: {
     color: '#FFFFFF',
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  divider: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: '#3D3D3D',
-  },
-  dividerText: {
-    color: '#C5C5C5',
-    marginHorizontal: 16,
-    fontSize: 14,
-  },
-  socialButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#3D3D3D',
-    borderRadius: 12,
-    height: 56,
-    marginBottom: 12,
-  },
-  socialButtonText: {
-    color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: '500',
-    marginLeft: 12,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
   },
+  loginArrowIcon: {
+    marginLeft: 8,
+  },
+
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
   },
   footerText: {
-    color: '#C5C5C5',
-    fontSize: 16,
+    color: '#8E8E93',
+    fontSize: 14,
   },
   signUpText: {
-    color: '#FF8133',
-    fontSize: 16,
-    fontWeight: '600',
+    color: '#FF4B3A',
+    fontSize: 14,
+    fontWeight: '700',
   },
-  error: {color: 'red', marginBottom: 10},
+
+  error: {
+    color: '#FF6B6B',
+    marginBottom: 6,
+    fontSize: 12,
+  },
 });
 
 export default LoginScreen;

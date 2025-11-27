@@ -17,11 +17,9 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import {matchPassword, required, strongPassword} from '../utils/validators';
 import {useSpinner} from '../context/SpinnerContext';
-
 import {SafeAreaView} from 'react-native-safe-area-context';
-import { resetPassword, resendResetPasswordCode } from '../services/AuthService';
-import { showToast, checkErrorFetchingData } from '../utils/function';
-
+import {resetPassword, resendResetPasswordCode} from '../services/AuthService';
+import {showToast, checkErrorFetchingData} from '../utils/function';
 
 export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
   navigation,
@@ -101,27 +99,42 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#2F2F2F" />
+      <StatusBar barStyle="light-content" backgroundColor="#070816" />
+
+      {/* fake background blobs giống login/register */}
+      <View style={styles.bgCircleTop} />
+      <View style={styles.bgCircleBottom} />
+
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}>
         <ScrollView
           contentContainerStyle={styles.scrollContainer}
           showsVerticalScrollIndicator={false}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}>
-            <Icon name="arrow-back" size={24} color="#FFFFFF" />
-          </TouchableOpacity>
+          {/* HEADER */}
+          <View style={styles.headerRow}>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => navigation.goBack()}>
+              <Icon name="chevron-back" size={22} color="#FFFFFF" />
+            </TouchableOpacity>
+          </View>
 
           <View style={styles.header}>
-            <Text style={styles.title}>Reset Password</Text>
+            <View style={styles.badge}>
+              <View style={styles.badgeDot} />
+              <Text style={styles.badgeText}>Cinema App</Text>
+            </View>
+
+            <Text style={styles.title}>Reset password</Text>
             <Text style={styles.subtitle}>
-              We've sent a verification code to {email}
+              We&apos;ve sent a verification code to{' '}
+              <Text style={styles.subtitleAccent}>{email}</Text>
             </Text>
           </View>
 
-          <View style={styles.form}>
+          {/* FORM CARD */}
+          <View style={styles.formCard}>
             <View style={styles.inputContainer}>
               <Icon
                 name="shield-checkmark-outline"
@@ -138,7 +151,7 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
                 render={({field}) => (
                   <TextInput
                     placeholder="Enter verification code"
-                    placeholderTextColor="#C5C5C5"
+                    placeholderTextColor="#8E8E93"
                     keyboardType="numeric"
                     value={field.value}
                     onChangeText={field.onChange}
@@ -156,7 +169,7 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
               onPress={() => resendCode(email)}
               style={styles.resendCode}>
               <Text style={styles.resendCodeText}>
-                Didn't receive code? Resend
+                Didn&apos;t receive code? Resend
               </Text>
             </TouchableOpacity>
 
@@ -181,7 +194,7 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
                   <TextInput
                     style={[styles.input, styles.passwordInput]}
                     placeholder="New password"
-                    placeholderTextColor="#C5C5C5"
+                    placeholderTextColor="#8E8E93"
                     secureTextEntry={!showPassword}
                     value={field.value}
                     onChangeText={field.onChange}
@@ -223,7 +236,7 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
                   <TextInput
                     style={[styles.input, styles.passwordInput]}
                     placeholder="Confirm new password"
-                    placeholderTextColor="#C5C5C5"
+                    placeholderTextColor="#8E8E93"
                     secureTextEntry={!showConfirmPassword}
                     value={field.value}
                     onChangeText={field.onChange}
@@ -233,10 +246,14 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
                 )}
               />
               <TouchableOpacity
-                onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                onPress={() =>
+                  setShowConfirmPassword(!showConfirmPassword)
+                }
                 style={styles.eyeIcon}>
                 <Icon
-                  name={showConfirmPassword ? 'eye-outline' : 'eye-off-outline'}
+                  name={
+                    showConfirmPassword ? 'eye-outline' : 'eye-off-outline'
+                  }
                   size={20}
                   color="#C5C5C5"
                 />
@@ -247,7 +264,7 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
               style={styles.resetButton}
               onPress={handleSubmit(onSubmit)}
               disabled={isSubmitting}>
-              <Text style={styles.resetButtonText}>Reset Password</Text>
+              <Text style={styles.resetButtonText}>Reset password</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -259,7 +276,7 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2F2F2F',
+    backgroundColor: '#070816',
   },
   keyboardView: {
     flex: 1,
@@ -267,52 +284,115 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
     paddingHorizontal: 24,
-    paddingTop: 30,
+    paddingVertical: 32,
+  },
+
+  // background blobs
+  bgCircleTop: {
+    position: 'absolute',
+    top: -120,
+    left: -60,
+    width: 260,
+    height: 260,
+    borderRadius: 130,
+    backgroundColor: '#20213A',
+    opacity: 0.9,
+  },
+  bgCircleBottom: {
+    position: 'absolute',
+    bottom: -140,
+    right: -80,
+    width: 280,
+    height: 280,
+    borderRadius: 140,
+    backgroundColor: '#FF4B3A',
+    opacity: 0.25,
+  },
+
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
   },
   backButton: {
-    position: 'absolute',
-    top: 10,
-    left: 24,
-    zIndex: 1,
-    padding: 8,
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 40,
-    marginTop: 40,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
+    paddingVertical: 4,
+    paddingHorizontal: 4,
     marginBottom: 8,
   },
-  subtitle: {
-    fontSize: 16,
-    color: '#C5C5C5',
-    textAlign: 'center',
-    lineHeight: 24,
+  header: {
+    marginBottom: 24,
   },
+  badge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 999,
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  badgeDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#FF4B3A',
+    marginRight: 8,
+  },
+  badgeText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    marginBottom: 6,
+  },
+  subtitle: {
+    fontSize: 15,
+    color: '#B0B0B5',
+    lineHeight: 22,
+  },
+  subtitleAccent: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+  },
+
+  formCard: {
+    backgroundColor: 'rgba(12, 11, 23, 0.96)',
+    borderRadius: 24,
+    padding: 22,
+    marginTop: 8,
+    marginBottom: 24,
+    shadowColor: '#000000',
+    shadowOffset: {width: 0, height: 18},
+    shadowOpacity: 0.45,
+    shadowRadius: 30,
+    elevation: 16,
+  },
+
   form: {
     marginBottom: 40,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#3D3D3D',
-    borderRadius: 12,
+    backgroundColor: 'rgba(255,255,255,0.04)',
+    borderRadius: 16,
     marginBottom: 16,
     paddingHorizontal: 16,
     height: 56,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
   },
   inputIcon: {
     marginRight: 12,
   },
   input: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 15,
     color: '#FFFFFF',
-    backgroundColor: '#3D3D3D',
   },
   passwordInput: {
     paddingRight: 40,
@@ -322,63 +402,45 @@ const styles = StyleSheet.create({
     right: 16,
     padding: 4,
   },
-  sendButton: {
-    backgroundColor: '#FF8133',
-    borderRadius: 12,
-    height: 56,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  sendButtonText: {
-    color: '#FFFFFF',
-    fontSize: 18,
-    fontWeight: '600',
-  },
+
   resetButton: {
-    backgroundColor: '#FF8133',
-    borderRadius: 12,
+    backgroundColor: '#FF4B3A',
+    borderRadius: 18,
     height: 56,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 8,
+    shadowColor: '#FF4B3A',
+    shadowOffset: {width: 0, height: 12},
+    shadowOpacity: 0.45,
+    shadowRadius: 24,
+    elevation: 10,
   },
   resetButtonText: {
     color: '#FFFFFF',
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 16,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
   },
-  disabledButton: {
-    opacity: 0.6,
-  },
+
   resendCode: {
     alignSelf: 'center',
     marginBottom: 24,
   },
   resendCodeText: {
-    color: '#FF8133',
+    color: '#FF4B3A',
     fontSize: 14,
-    fontWeight: '500',
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 'auto',
-    paddingBottom: 40,
-  },
-  footerText: {
-    color: '#C5C5C5',
-    fontSize: 16,
-  },
-  signInText: {
-    color: '#FF8133',
-    fontSize: 16,
     fontWeight: '600',
   },
+
+  disabledButton: {
+    opacity: 0.6,
+  },
+
   error: {
-    color: '#FF4444',
-    marginBottom: 10,
-    fontSize: 14,
+    color: '#FF6B6B',
+    marginBottom: 8,
+    fontSize: 12,
   },
 });
