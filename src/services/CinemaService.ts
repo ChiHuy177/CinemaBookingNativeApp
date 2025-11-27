@@ -1,7 +1,7 @@
-import {ApiResponse} from '../../types/apiresponse';
-import {CinemaForBookingProps, CityData} from '../../types/cinema';
-import axiosInstance from '../client';
-import {CINEMA} from '../endpoints';
+import { ApiResponse } from "../types/apiResponse";
+import { CinemaForBookingProps, CityData } from "../types/cinema";
+import { CINEMA } from "../utils/endpoint";
+import axiosInstance from "./BaseService";
 
 export const getCinemaForBooking = async (
   movieId: number,

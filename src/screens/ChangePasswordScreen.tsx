@@ -17,9 +17,10 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {matchPassword, required, strongPassword} from '../utils/validators';
 import {useSpinner} from '../context/SpinnerContext';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {checkErrorFetchingData, showToast} from '../utils/functions';
-import {ChangePasswordProfileProps} from '../types/client';
-import {changePasswordClient} from '../api/services/client.service';
+import { changePasswordClient } from '../services/ClientService';
+import { ChangePasswordProfileProps } from '../types/client';
+import { showToast, checkErrorFetchingData } from '../utils/function';
+
 
 export const ChangePasswordScreen: React.FC<ChangePasswordScreenProps> = ({
   navigation,

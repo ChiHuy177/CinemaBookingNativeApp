@@ -1,7 +1,8 @@
-import {ApiResponse} from '../../types/apiresponse';
-import {CouponProps} from '../../types/coupon';
-import axiosInstance from '../client';
-import {COUPON} from '../endpoints';
+import { ApiResponse } from "../types/apiResponse";
+import { CouponProps } from "../types/coupon";
+import { COUPON } from "../utils/endpoint";
+import axiosInstance from "./BaseService";
+
 
 export const getCouponsByClient = async (
   clientEmail: string,

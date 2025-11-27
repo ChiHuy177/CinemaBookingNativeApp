@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useCallback, useMemo, useState} from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -11,26 +11,26 @@ import {
   Dimensions,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {ShowingTimeBookingScreenProps} from '../types/screentypes';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {CinemaForBookingProps} from '../types/cinema';
-import {useSpinner} from '../context/SpinnerContext';
+import { ShowingTimeBookingScreenProps } from '../types/screentypes';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { CinemaForBookingProps } from '../types/cinema';
+import { useSpinner } from '../context/SpinnerContext';
+import { useFocusEffect } from '@react-navigation/native';
+import { useForm, SubmitHandler, Controller } from 'react-hook-form';
+import { CinemaForBooking } from '../components/CinemaForBooking';
+import { DateButtonForBooking } from '../components/DateButtonForBooking';
+import { colors } from '../constant/color';
+import { defaultDateForBooking } from '../constant/variable';
+import { getCinemaForBooking } from '../services/CinemaService';
+import { ShowingTimeInRoomProps } from '../types/showingTime';
 import {
-  checkErrorFetchingData,
   filterSuitableCinemasForBooking,
-  formatDateToHourseAndMinutes,
   showToast,
-} from '../utils/functions';
-import {getCinemaForBooking} from '../api/services/cinema.service';
-import {defaultDateForBooking} from '../constants/variables';
-import {ShowingTimeInRoomProps} from '../types/showingTime';
-import {Controller, SubmitHandler, useForm} from 'react-hook-form';
-import {DateButtonForBooking} from '../components/DateButtonForBooking';
-import {CinemaForBooking} from '../components/CinemaForBooking';
-import {colors} from '../constants/colors';
-import {useFocusEffect} from '@react-navigation/native';
+  checkErrorFetchingData,
+  formatDateToHourseAndMinutes,
+} from '../utils/function';
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 interface FormData {
   movieId: number;
@@ -43,14 +43,14 @@ const ShowingTimeBookingScreen: React.FC<ShowingTimeBookingScreenProps> = ({
   route,
   navigation,
 }) => {
-  const {movieId, movieTitle} = route.params;
+  const { movieId, movieTitle } = route.params;
 
   const dates = useMemo(() => defaultDateForBooking(), [movieId]);
   const [cinemas, setCinemas] = useState<CinemaForBookingProps[]>([]);
   const [tempCinemas, setTempCinemas] = useState<CinemaForBookingProps[]>([]);
   const {
     control,
-    formState: {isSubmitting},
+    formState: { isSubmitting },
     handleSubmit,
     watch,
     setValue,
@@ -71,7 +71,7 @@ const ShowingTimeBookingScreen: React.FC<ShowingTimeBookingScreenProps> = ({
     [cinemaName: string]: number;
   }>({});
 
-  const {hideSpinner, showSpinner} = useSpinner();
+  const { hideSpinner, showSpinner } = useSpinner();
 
   useFocusEffect(
     useCallback(() => {
@@ -192,7 +192,8 @@ const ShowingTimeBookingScreen: React.FC<ShowingTimeBookingScreenProps> = ({
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => navigation.goBack()}>
+          onPress={() => navigation.goBack()}
+        >
           <Icon name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle} ellipsizeMode="tail" numberOfLines={1}>
@@ -206,11 +207,12 @@ const ShowingTimeBookingScreen: React.FC<ShowingTimeBookingScreenProps> = ({
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            style={styles.datesContainer}>
+            style={styles.datesContainer}
+          >
             <Controller
               control={control}
               name="selectedDate"
-              render={({field: {value}}) => (
+              render={({ field: { value } }) => (
                 <>
                   {dates.map(date => {
                     const isToday = date.dateKey === dates[0].dateKey;
@@ -261,7 +263,8 @@ const ShowingTimeBookingScreen: React.FC<ShowingTimeBookingScreenProps> = ({
             },
           ]}
           disabled={isSubmitting || !watch('selectedTime')}
-          onPress={handleSubmit(onSubmit)}>
+          onPress={handleSubmit(onSubmit)}
+        >
           <Text style={styles.continueButtonText}>Continue</Text>
         </TouchableOpacity>
       </View>

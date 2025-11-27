@@ -2,8 +2,9 @@ import React from 'react';
 import {SeatColumnForBookingProps, SeatRowForBookingProps} from '../types/seat';
 import {StyleSheet, Text, View} from 'react-native';
 import {SeatColumnForBooking} from './SeatColumnForBooking';
-import {colors} from '../constants/colors';
-import {SeatColumns} from '../constants/variables';
+import { colors } from '../constant/color';
+import { SeatColumns } from '../constant/variable';
+
 
 export const SeatRowForBooking = React.memo(
   ({

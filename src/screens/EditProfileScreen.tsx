@@ -10,28 +10,22 @@ import {
   StatusBar,
   Alert,
   Image,
+  SafeAreaView,
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import {CameraOptions} from 'react-native-image-picker';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-
 import {EditProfileScreenProps} from '../types/screentypes';
-import {requestCameraPermission} from '../constants/functions';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {Controller, SubmitHandler, useForm} from 'react-hook-form';
-import {EditClientProfileProps} from '../types/client';
-import {useSpinner} from '../context/SpinnerContext';
-import {
-  checkErrorFetchingData,
-  formatDateOfBirth,
-  getCitiesAPI,
-  showToast,
-} from '../utils/functions';
-import {isPhoneNumber, required} from '../utils/validators';
-import {Dropdown} from 'react-native-element-dropdown';
-import {Icon} from 'react-native-paper';
-import {updateClient} from '../api/services/client.service';
-import { colors } from '../constants/colors';
+import { useForm, SubmitHandler, Controller } from 'react-hook-form';
+import { Dropdown } from 'react-native-element-dropdown';
+import { Icon } from 'react-native-paper';
+import { colors } from '../constant/color';
+import { requestCameraPermission } from '../constant/function';
+import { useSpinner } from '../context/SpinnerContext';
+import { updateClient } from '../services/ClientService';
+import { EditClientProfileProps } from '../types/client';
+import { getCitiesAPI, checkErrorFetchingData, showToast, formatDateOfBirth } from '../utils/function';
+import { required, isPhoneNumber } from '../utils/validators';
 
 const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
   navigation,

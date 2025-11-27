@@ -1,20 +1,19 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {HomeStackParamList} from './StackParamList';
-
-import MovieListScreen from '../screens/MovieListScreen';
-import {HomeStackProps} from '../types/screentypes';
-import {SearchScreen} from '../screens/SearchScreen';
-import MovieDetailScreen from '../screens/MovieDetailScreen';
-import MovieReviewScreen from '../screens/MovieReviewScreen';
-import SeatSelectionScreen from '../screens/SeatSelectionScreen';
-import ComboBookingScreen from '../screens/ComboBookingScreen';
-import MovieTicketScreen from '../screens/MovieTicketScreen';
-import ShowingTimeBookingScreen from '../screens/ShowingTimeBookingScreen';
-import TicketDetailScreen from '../screens/TicketDetailScreen';
-import MyTicketsScreen from '../screens/MyTicketsScreen';
+import { HomeScreen } from '../screens/HomeScreen';
 import CinemaListScreen from '../screens/CinemaListScreen';
 import CinemaMoviesScreen from '../screens/CinemaMoviesScreen';
-import { HomeScreen } from '../screens/HomeScreen';
+import ComboBookingScreen from '../screens/ComboBookingScreen';
+import MovieDetailScreen from '../screens/MovieDetailScreen';
+import MovieListScreen from '../screens/MovieListScreen';
+import MovieReviewScreen from '../screens/MovieReviewScreen';
+import MovieTicketScreen from '../screens/MovieTicketScreen';
+import MyTicketsScreen from '../screens/MyTicketsScreen';
+import { SearchScreen } from '../screens/SearchScreen';
+import SeatSelectionScreen from '../screens/SeatSelectionScreen';
+import ShowingTimeBookingScreen from '../screens/ShowingTimeBookingScreen';
+import TicketDetailScreen from '../screens/TicketDetailScreen';
+import { HomeStackProps } from '../types/screentypes';
 
 const Stack = createNativeStackNavigator<HomeStackParamList>();
 

@@ -11,20 +11,15 @@ import {
   Image,
 } from 'react-native';
 import {MovieReviewScreenProps} from '../types/screentypes';
-import {colors} from '../constants/colors';
-import {
-  checkErrorFetchingData,
-  formatMinutesToHours,
-  getClientImage,
-  getPosterImage,
-  getRelativeTimeFromNow,
-  showToast,
-} from '../utils/functions';
+
 import {Icon} from 'react-native-paper';
 import {Controller, SubmitHandler, useForm} from 'react-hook-form';
 import {maxLength, minValue} from '../utils/validators';
 import {useSpinner} from '../context/SpinnerContext';
-import {addReview} from '../api/services/review.service';
+import { colors } from '../constant/color';
+import { addReview } from '../services/ReviewService';
+import { showToast, checkErrorFetchingData, getPosterImage, formatMinutesToHours, getClientImage, getRelativeTimeFromNow } from '../utils/function';
+
 
 interface FormData {
   rating: number;

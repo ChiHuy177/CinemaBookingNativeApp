@@ -9,17 +9,18 @@ import {
   TouchableOpacity,
   StatusBar,
   ScrollView,
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {ComboBookingScreenProps} from '../types/screentypes';
-import {colors} from '../constants/colors';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {ComboProps, SelectedComboProps} from '../types/combo';
-import {useSpinner} from '../context/SpinnerContext';
-import {checkErrorFetchingData, showToast} from '../utils/functions';
-import {getCombos} from '../api/services/combo.service';
+
 import {ComboItem} from '../components/ComboItem';
 import {useFocusEffect} from '@react-navigation/native';
+import { colors } from '../constant/color';
+import { useSpinner } from '../context/SpinnerContext';
+import { getCombos } from '../services/ComboService';
+import { SelectedComboProps, ComboProps } from '../types/combo';
+import { showToast, checkErrorFetchingData } from '../utils/function';
 
 const ComboSelectionScreen: React.FC<ComboBookingScreenProps> = ({
   route,

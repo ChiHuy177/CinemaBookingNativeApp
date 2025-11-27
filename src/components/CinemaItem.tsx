@@ -1,9 +1,10 @@
 import React from 'react';
 import {CinemaInCityProps} from '../types/cinema';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
-import {colors} from '../constants/colors';
+
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeStackParamList} from '../navigation/StackParamList';
+import { colors } from '../constant/color';
 
 export const CinemaItem = React.memo(
   ({

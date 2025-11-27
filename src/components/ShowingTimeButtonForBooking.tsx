@@ -1,7 +1,8 @@
 import React from 'react';
 import {ShowingTimeInRoomProps} from '../types/showingTime';
 import {StyleSheet, Text, TouchableOpacity} from 'react-native';
-import {formatDateToHourseAndMinutes} from '../utils/functions';
+import { formatDateToHourseAndMinutes } from '../utils/function';
+
 
 export const ShowingTimeButtonForBooking = React.memo(
   ({

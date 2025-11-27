@@ -1,35 +1,35 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useCallback, useMemo, useState} from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  SafeAreaView,
 } from 'react-native';
-import QRCode from 'react-native-qrcode-svg';
-import {TicketDetailScreenProps} from '../types/screentypes';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {Icon} from 'react-native-paper';
-import {colors} from '../constants/colors';
-import {checkErrorFetchingData, showToast} from '../utils/functions';
-import {TicketProps} from '../types/ticket';
-import {useFocusEffect} from '@react-navigation/native';
-import {useSpinner} from '../context/SpinnerContext';
-import {getTicket} from '../api/services/ticket.service';
-import {InfoTicketRow} from '../components/InfoTicketRow';
+import { InfoTicketRow } from '../components/InfoTicketRow';
 import dayjs from 'dayjs';
-import {navigate} from '../utils/navigation';
+import { navigate } from '../utils/navigation';
+import { useFocusEffect } from '@react-navigation/native';
+import { Icon } from 'react-native-paper';
+import QRCode from 'react-native-qrcode-svg';
+import { colors } from '../constant/color';
+import { useSpinner } from '../context/SpinnerContext';
+import { getTicket } from '../services/TicketService';
+import { TicketDetailScreenProps } from '../types/screentypes';
+import { TicketProps } from '../types/ticket';
+import { showToast, checkErrorFetchingData } from '../utils/function';
 
 const TicketDetailScreen: React.FC<TicketDetailScreenProps> = ({
   route,
   navigation,
 }) => {
-  const {ticketId, isFromBooking} = route.params;
+  const { ticketId, isFromBooking } = route.params;
 
   const [ticket, setTicket] = useState<TicketProps | null>(null);
 
-  const {showSpinner, hideSpinner} = useSpinner();
+  const { showSpinner, hideSpinner } = useSpinner();
 
   useFocusEffect(
     useCallback(() => {
@@ -79,17 +79,19 @@ const TicketDetailScreen: React.FC<TicketDetailScreenProps> = ({
             } else {
               navigation.goBack();
             }
-          }}>
+          }}
+        >
           <Icon source="chevron-left" size={30} color="white" />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, {color: colors.white}]}>
+        <Text style={[styles.headerTitle, { color: colors.white }]}>
           Ticket Detail
         </Text>
         <View style={styles.placeholder} />
       </View>
       <ScrollView
         style={styles.scrollView}
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.qrSection}>
           <Text style={styles.qrTitle}>QR Code</Text>
           <View style={styles.qrContainer}>

@@ -1,5 +1,6 @@
 import {StyleSheet, Text, View} from 'react-native';
-import {colors, getRankColor} from '../constants/colors';
+import { getRankColor, colors } from '../constant/color';
+
 
 export default function RankBadge({rankName}: {rankName: string}) {
   return (

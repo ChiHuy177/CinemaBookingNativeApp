@@ -3,12 +3,13 @@ import {useCallback, useState} from 'react';
 import {FavoriteScreenProps} from '../types/screentypes';
 import {MovieListProps} from '../types/movie';
 import {useSpinner} from '../context/SpinnerContext';
-import {checkErrorFetchingData} from '../utils/functions';
-import {getFavoriteMovies} from '../api/services/movie.service';
+
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ScrollView, StatusBar, StyleSheet, Text, View} from 'react-native';
 import MovieItem from '../components/MovieItem';
 import {useFocusEffect} from '@react-navigation/native';
+import { getFavoriteMovies } from '../services/MovieService';
+import { checkErrorFetchingData } from '../utils/function';
 
 export const FavoriteMovieScreen: React.FC<FavoriteScreenProps> = ({
   navigation,

@@ -12,17 +12,17 @@ import {
   View,
 } from 'react-native';
 import {Icon} from 'react-native-paper';
-import {colors} from '../constants/colors';
+
 import {CouponProps} from '../types/coupon';
 import {useSpinner} from '../context/SpinnerContext';
-import {
-  checkErrorFetchingData,
-  formatDate,
-  showToast,
-} from '../utils/functions';
+
 import {getEmailAndToken} from '../utils/storage';
-import {getCouponsByClient} from '../api/services/coupon.service';
+
 import {useFocusEffect} from '@react-navigation/native';
+import { formatDate } from 'date-fns';
+import { colors } from '../constant/color';
+import { getCouponsByClient } from '../services/CouponService';
+import { showToast, checkErrorFetchingData } from '../utils/function';
 
 const {width, height} = Dimensions.get('window');
 

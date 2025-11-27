@@ -1,11 +1,12 @@
 import React from 'react';
 import {StyleSheet} from 'react-native';
 import {Text, TouchableOpacity, View} from 'react-native';
-import {colors} from '../constants/colors';
+
 import {CityData} from '../types/cinema';
 import {CinemaItem} from './CinemaItem';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeStackParamList} from '../navigation/StackParamList';
+import { colors } from '../constant/color';
 
 export const CityItem = React.memo(
   ({

@@ -1,7 +1,7 @@
-import {ApiResponse} from '../../types/apiresponse';
-import {ReviewAddProps} from '../../types/review';
-import axiosInstance from '../client';
-import {REVIEW} from '../endpoints';
+import { ApiResponse } from "../types/apiResponse";
+import { ReviewAddProps } from "../types/review";
+import { REVIEW } from "../utils/endpoint";
+import axiosInstance from "./BaseService";
 
 export const addReview = async (
   data: ReviewAddProps,

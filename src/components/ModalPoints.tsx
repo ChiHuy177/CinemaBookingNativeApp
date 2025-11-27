@@ -9,14 +9,17 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {colors} from '../constants/colors';
+
 import {Icon} from 'react-native-paper';
 import React, {useCallback, useMemo, useState} from 'react';
 import {useSpinner} from '../context/SpinnerContext';
-import {checkErrorFetchingData, showToast} from '../utils/functions';
-import {getLoyalPoints} from '../api/services/client.service';
+
+
 import {getEmailAndToken} from '../utils/storage';
 import {useFocusEffect} from '@react-navigation/native';
+import { colors } from '../constant/color';
+import { getLoyalPoints } from '../services/ClientService';
+import { showToast, checkErrorFetchingData } from '../utils/function';
 
 const {width, height} = Dimensions.get('window');
 

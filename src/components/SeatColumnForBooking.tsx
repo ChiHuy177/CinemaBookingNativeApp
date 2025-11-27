@@ -1,7 +1,8 @@
 import React from 'react';
 import {SeatColumnForBookingProps} from '../types/seat';
-import {colors, getSeatColor} from '../constants/colors';
+
 import {StyleSheet, Text, TouchableOpacity} from 'react-native';
+import { getSeatColor } from '../constant/color';
 
 export const SeatColumnForBooking = React.memo(
   ({

@@ -12,14 +12,15 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {SeatSelectionScreenProps} from '../types/screentypes';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {colors} from '../constants/colors';
-import {SeatColumnForBookingProps, SeatRowForBookingProps} from '../types/seat';
-import {useSpinner} from '../context/SpinnerContext';
-import {getSeatRowsForBooking} from '../api/services/seat.service';
-import {showToast} from '../utils/functions';
-import {SeatRows} from '../constants/variables';
+
 import {SeatRowForBooking} from '../components/SeatRowForBooking';
 import {useFocusEffect} from '@react-navigation/native';
+import { colors } from '../constant/color';
+import { SeatRows } from '../constant/variable';
+import { useSpinner } from '../context/SpinnerContext';
+import { getSeatRowsForBooking } from '../services/SeatService';
+import { SeatRowForBookingProps, SeatColumnForBookingProps } from '../types/seat';
+import { showToast } from '../utils/function';
 
 const {width} = Dimensions.get('window');
 

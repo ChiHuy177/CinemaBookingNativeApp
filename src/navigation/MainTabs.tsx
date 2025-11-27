@@ -3,9 +3,10 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {BottomTabParamList} from './BottomTabParamList';
 import {MainTabsProps} from '../types/screentypes';
 import {Icon} from 'react-native-paper';
-import {HomeStack} from './HomeStack';
-import {FavoriteMovieScreen} from '../screens/FavoriteMovieScreen';
+
 import { ProfileStack } from './ProfileStack';
+import { FavoriteMovieScreen } from '../screens/FavoriteMovieScreen';
+import { HomeStack } from './HomeStack';
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
 

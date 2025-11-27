@@ -1,12 +1,8 @@
-import {ApiResponse} from '../../types/apiresponse';
-import {
-  CreateTicketProps,
-  MyTicketProps,
-  TicketCheckingProps,
-  TicketProps,
-} from '../../types/ticket';
-import axiosInstance from '../client';
-import {TICKET} from '../endpoints';
+import { ApiResponse } from "../types/apiResponse";
+import { MyTicketProps, CreateTicketProps, TicketCheckingProps, TicketProps } from "../types/ticket";
+import { TICKET } from "../utils/endpoint";
+import axiosInstance from "./BaseService";
+
 
 export const getAllTickets = async (): Promise<
   ApiResponse<MyTicketProps[]>

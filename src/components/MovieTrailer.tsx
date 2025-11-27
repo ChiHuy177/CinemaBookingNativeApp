@@ -9,7 +9,8 @@ import {
 } from 'react-native';
 import {Icon} from 'react-native-paper';
 import YoutubePlayer from 'react-native-youtube-iframe';
-import {getVideoId} from '../utils/functions';
+import { getVideoId } from '../utils/function';
+
 
 const {width} = Dimensions.get('window');
 

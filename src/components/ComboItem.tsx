@@ -2,8 +2,9 @@ import React from 'react';
 import {ComboProps, SelectedComboProps} from '../types/combo';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {colors} from '../constants/colors';
-import {getComboImgae} from '../utils/functions';
+import { colors } from '../constant/color';
+import { getComboImgae } from '../utils/function';
+
 export const ComboItem = React.memo(
   ({
     combo,

@@ -10,15 +10,17 @@ import {
   StatusBar,
 } from 'react-native';
 import {Icon} from 'react-native-paper';
-import {colors} from '../constants/colors';
+
 import {MyTicketsScreenProps} from '../types/screentypes';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {MyTicketProps} from '../types/ticket';
 import {useSpinner} from '../context/SpinnerContext';
 import {useFocusEffect} from '@react-navigation/native';
-import {checkErrorFetchingData, showToast} from '../utils/functions';
-import {getAllTickets} from '../api/services/ticket.service';
+
 import {TicketCard} from '../components/TicketCart';
+import { colors } from '../constant/color';
+import { getAllTickets } from '../services/TicketService';
+import { showToast, checkErrorFetchingData } from '../utils/function';
 
 const MyTicketsScreen: React.FC<MyTicketsScreenProps> = ({navigation}) => {
   const [activeTab, setActiveTab] = useState<'all' | 'coming' | 'past'>('all');

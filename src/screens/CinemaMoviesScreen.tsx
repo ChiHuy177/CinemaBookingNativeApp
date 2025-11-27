@@ -1,27 +1,19 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useState, useMemo, useEffect} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  StatusBar,
-  ScrollView,
-  TouchableOpacity,
-  Dimensions,
-  FlatList,
-} from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import {CinemaMoviesScreenProps} from '../types/screentypes';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {defaultDateForBooking} from '../constants/variables';
-import {MovieListProps} from '../types/movie';
-import {DateInBookingProps} from '../types/date';
-import {colors} from '../constants/colors';
-import {useSpinner} from '../context/SpinnerContext';
-import {checkErrorFetchingData, showToast} from '../utils/functions';
-import {getMoviesByCinema} from '../api/services/movie.service';
-import {DateButtonForBooking} from '../components/DateButtonForBooking';
-import MovieItem from '../components/MovieItem';
+
+import { useMemo, useState, useEffect } from "react";
+import { Dimensions, SafeAreaView, StatusBar, View, TouchableOpacity, Text, ScrollView, FlatList, StyleSheet } from "react-native";
+import { Icon } from "react-native-paper";
+import { DateButtonForBooking } from "../components/DateButtonForBooking";
+import MovieItem from "../components/MovieItem";
+import { colors } from "../constant/color";
+import { defaultDateForBooking } from "../constant/variable";
+import { useSpinner } from "../context/SpinnerContext";
+import { getMoviesByCinema } from "../services/MovieService";
+import { DateInBookingProps } from "../types/date";
+import { MovieListProps } from "../types/movie";
+import { CinemaMoviesScreenProps } from "../types/screentypes";
+import { showToast, checkErrorFetchingData } from "../utils/function";
+
 
 const {width} = Dimensions.get('window');
 

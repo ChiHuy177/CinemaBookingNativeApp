@@ -13,25 +13,23 @@ import {
   StatusBar,
 } from 'react-native';
 import {MovieTicketScreenProps} from '../types/screentypes';
-import {colors} from '../constants/colors';
+
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {Icon} from 'react-native-paper';
-import {
-  checkErrorFetchingData,
-  getComboImgae,
-  getPosterImage,
-  showToast,
-} from '../utils/functions';
-import {CouponProps} from '../types/coupon';
+import { useFocusEffect } from '@react-navigation/native';
+import { Icon } from 'react-native-paper';
 import ModalCoupon from '../components/ModalCoupon';
 import ModalPoint from '../components/ModalPoints';
-import {useSpinner} from '../context/SpinnerContext';
-import {addTicket} from '../api/services/ticket.service';
-import {CreateTicketProps} from '../types/ticket';
-import {getEmailAndToken} from '../utils/storage';
-import {ClientRankProps} from '../types/rank';
-import {getClientRank} from '../api/services/rank.service';
-import {useFocusEffect} from '@react-navigation/native';
+import { colors } from '../constant/color';
+import { useSpinner } from '../context/SpinnerContext';
+import { getClientRank } from '../services/RankService';
+import { addTicket } from '../services/TicketService';
+import { CouponProps } from '../types/coupon';
+import { ClientRankProps } from '../types/rank';
+import { CreateTicketProps } from '../types/ticket';
+import { showToast, checkErrorFetchingData, getPosterImage, getComboImgae } from '../utils/function';
+import { getEmailAndToken } from '../utils/storage';
+
+
 
 const {width} = Dimensions.get('window');
 

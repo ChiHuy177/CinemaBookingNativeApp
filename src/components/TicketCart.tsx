@@ -1,5 +1,5 @@
 import React from 'react';
-import {MyTicketProps} from '../types/ticket';
+import { MyTicketProps } from '../types/ticket';
 import {
   Pressable,
   StyleSheet,
@@ -7,11 +7,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Icon} from 'react-native-paper';
-import {colors} from '../constants/colors';
+import { Icon } from 'react-native-paper';
+
 import dayjs from 'dayjs';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {HomeStackParamList} from '../navigation/StackParamList';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { HomeStackParamList } from '../navigation/StackParamList';
+import { colors } from '../constant/color';
 
 export const TicketCard = React.memo(
   ({
@@ -31,7 +32,8 @@ export const TicketCard = React.memo(
             ticketId: ticket.ticketId,
             isFromBooking: false,
           })
-        }>
+        }
+      >
         <View style={styles.ticketCard}>
           <Text style={styles.movieTitle}>{ticket.movie.title}</Text>
           <View style={styles.dateTimeContainer}>
@@ -74,7 +76,8 @@ export const TicketCard = React.memo(
               navigation.navigate('MovieDetailScreen', {
                 movieId: ticket.movie.movieId,
               })
-            }>
+            }
+          >
             <Icon source="comment" size={16} color={colors.white} />
             <Text style={styles.reviewButtonText}>Review</Text>
           </TouchableOpacity>

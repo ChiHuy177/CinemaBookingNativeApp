@@ -16,23 +16,14 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import MovieTrailer from '../components/MovieTrailer';
 import {MovieDetailProps} from '../types/movie';
 import {useSpinner} from '../context/SpinnerContext';
-import {
-  checkErrorFetchingData,
-  formatMinutesToHours,
-  getActorImage,
-  getAgeRatingColor,
-  getAgeRatingFromRequireAge,
-  getClientImage,
-  getPosterImage,
-  getRelativeTimeFromNow,
-  showToast,
-} from '../utils/functions';
-import {movieDetailForBooking} from '../api/services/movie.service';
+
 import {
   handleAddFavoriteMovie,
   handleRemoveFavoriteMovie,
 } from '../utils/movie';
 import {useFocusEffect} from '@react-navigation/native';
+import { movieDetailForBooking } from '../services/MovieService';
+import { showToast, checkErrorFetchingData, getAgeRatingColor, getAgeRatingFromRequireAge, formatMinutesToHours, getPosterImage, getActorImage, getClientImage, getRelativeTimeFromNow } from '../utils/function';
 
 const {width} = Dimensions.get('window');
 

@@ -1,24 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useCallback, useEffect, useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  LayoutAnimation,
-  Platform,
-  UIManager,
-  TouchableOpacity,
-} from 'react-native';
-import {CinemaListScreenProps} from '../types/screentypes';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {CityData} from '../types/cinema';
-import {colors} from '../constants/colors';
-import {useSpinner} from '../context/SpinnerContext';
-import {checkErrorFetchingData, showToast} from '../utils/functions';
-import {getAllCinemasForBooking} from '../api/services/cinema.service';
-import {CityItem} from '../components/CityItem';
-import {Icon} from 'react-native-paper';
+
+import { useState, useEffect, useCallback } from "react";
+import { Platform, UIManager, LayoutAnimation, SafeAreaView, View, TouchableOpacity, Text, ScrollView, StyleSheet } from "react-native";
+import { Icon } from "react-native-paper";
+import { CityItem } from "../components/CityItem";
+import { colors } from "../constant/color";
+import { useSpinner } from "../context/SpinnerContext";
+import { getAllCinemasForBooking } from "../services/CinemaService";
+import { CityData } from "../types/cinema";
+import { CinemaListScreenProps } from "../types/screentypes";
+import { showToast, checkErrorFetchingData } from "../utils/function";
+
 
 if (
   Platform.OS === 'android' &&

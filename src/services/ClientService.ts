@@ -1,10 +1,8 @@
-import {ApiResponse} from '../../types/apiresponse';
-import {
-  ChangePasswordProfileProps,
-  ClientProfileProps,
-} from '../../types/client';
-import axiosInstance from '../client';
-import {CLIENT} from '../endpoints';
+import { ApiResponse } from "../types/apiResponse";
+import { ClientProfileProps, ChangePasswordProfileProps } from "../types/client";
+import { CLIENT } from "../utils/endpoint";
+import axiosInstance from "./BaseService";
+
 
 export const getClient = async (): Promise<ApiResponse<ClientProfileProps>> => {
   const response = await axiosInstance.get(CLIENT.GET_CLIENT);

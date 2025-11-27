@@ -1,7 +1,8 @@
-import {ApiResponse} from '../../types/apiresponse';
-import {SeatRowForBookingProps} from '../../types/seat';
-import axiosInstance from '../client';
-import {SEAT} from '../endpoints';
+import { ApiResponse } from "../types/apiResponse";
+import { SeatRowForBookingProps } from "../types/seat";
+import { SEAT } from "../utils/endpoint";
+import axiosInstance from "./BaseService";
+
 
 export const getSeatRowsForBooking = async (
   showingTimeId: number,

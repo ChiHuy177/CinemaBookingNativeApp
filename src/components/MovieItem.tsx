@@ -1,18 +1,14 @@
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {MovieListProps} from '../types/movie';
-import {
-  formatDate,
-  formatMinutesToHours,
-  getAgeRatingColor,
-  getAgeRatingFromRequireAge,
-  getPosterImage,
-} from '../utils/functions';
+
 import {Icon} from 'react-native-paper';
 import {useState} from 'react';
 import {
   handleAddFavoriteMovie,
   handleRemoveFavoriteMovie,
 } from '../utils/movie';
+import { formatDate } from 'date-fns';
+import { getPosterImage, getAgeRatingColor, getAgeRatingFromRequireAge, formatMinutesToHours } from '../utils/function';
 
 export default function MovieItem({
   movie,

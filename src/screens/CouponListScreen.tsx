@@ -8,18 +8,16 @@ import {
   FlatList,
   StatusBar,
 } from 'react-native';
-import {CouponListScreenProps} from '../types/screentypes';
-import {colors} from '../constants/colors';
-import {
-  checkErrorFetchingData,
-  formatDate,
-  showToast,
-} from '../utils/functions';
-import {CouponProps} from '../types/coupon';
-import {useSpinner} from '../context/SpinnerContext';
-import {getCouponsByClient} from '../api/services/coupon.service';
+
 import {Icon} from 'react-native-paper';
 import {useFocusEffect} from '@react-navigation/native';
+import { formatDate } from 'date-fns';
+import { colors } from '../constant/color';
+import { useSpinner } from '../context/SpinnerContext';
+import { getCouponsByClient } from '../services/CouponService';
+import { CouponProps } from '../types/coupon';
+import { CouponListScreenProps } from '../types/screentypes';
+import { showToast, checkErrorFetchingData } from '../utils/function';
 
 const CouponListScreen: React.FC<CouponListScreenProps> = ({
   route,

@@ -1,7 +1,7 @@
-import {ApiResponse} from '../../types/apiresponse';
-import {ClientRankProps} from '../../types/rank';
-import axiosInstance from '../client';
-import {RANK} from '../endpoints';
+import { ApiResponse } from "../types/apiResponse";
+import { ClientRankProps } from "../types/rank";
+import { RANK } from "../utils/endpoint";
+import axiosInstance from "./BaseService";
 
 export const getClientRank = async (
   clientEmail: string,

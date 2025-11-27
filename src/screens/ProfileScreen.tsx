@@ -11,16 +11,17 @@ import {
 } from 'react-native';
 import {ProfileScreenProps} from '../types/screentypes';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {logout} from '../api/services/auth.service';
-import {ClientProfileProps} from '../types/client';
-import {checkErrorFetchingData, getClientImage} from '../utils/functions';
-import {useFocusEffect} from '@react-navigation/native';
-import {useSpinner} from '../context/SpinnerContext';
-import {getClient} from '../api/services/client.service';
-import RankBadge from '../components/RankBadge';
-import {Icon} from 'react-native-paper';
-import {colors, getRankColor} from '../constants/colors';
+
 import {navigate} from '../utils/navigation';
+import { useFocusEffect } from '@react-navigation/native';
+import { Icon } from 'react-native-paper';
+import RankBadge from '../components/RankBadge';
+import { colors, getRankColor } from '../constant/color';
+import { useSpinner } from '../context/SpinnerContext';
+import { logout } from '../services/AuthService';
+import { getClient } from '../services/ClientService';
+import { ClientProfileProps } from '../types/client';
+import { checkErrorFetchingData, getClientImage } from '../utils/function';
 
 const ProfileScreen: React.FC<ProfileScreenProps> = ({navigation}) => {
   const [client, setClient] = useState<ClientProfileProps | null>(null);
