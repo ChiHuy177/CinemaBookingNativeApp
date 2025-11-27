@@ -13,13 +13,15 @@ import { MovieListProps } from "../types/movie";
 import { CinemaMoviesScreenProps } from "../types/screentypes";
 import { showToast, checkErrorFetchingData } from "../utils/function";
 
-// THEME COLORS EXTRACTED FROM IMAGE
-const COLORS = {
-  background: '#0B0F19', // Deep dark blue/black background
-  card: '#1D212E', // Slightly lighter for buttons/cards
-  primary: '#F54B46', // Coral red
-  text: '#FFFFFF',
-  textSecondary: '#7B8299', // Muted text color
+// THEME CONSTANTS MATCHING PREVIOUS SCREENS
+const THEME = {
+  background: '#10111D', // Dark cinematic background
+  cardBg: '#1F2130',     // Input/Card background
+  accent: '#FF3B30',     // Bright Red/Coral accent
+  textWhite: '#FFFFFF',
+  textGray: '#8F90A6',   // Muted gray
+  textPlaceholder: '#5C5E6F',
+  error: '#FF3B30',
 };
 
 const {width} = Dimensions.get('window');
@@ -67,14 +69,17 @@ const CinemaMoviesScreen: React.FC<CinemaMoviesScreenProps> = ({
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={COLORS.background} />
+      <StatusBar barStyle="light-content" backgroundColor={THEME.background} />
+
+      {/* Decorative Glow */}
+      <View style={styles.topGlow} />
 
       {/* Consistent Header Style */}
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}>
-          <Icon name="chevron-back" size={24} color={COLORS.text} />
+          <Icon name="arrow-back" size={24} color={THEME.textWhite} />
         </TouchableOpacity>
         
         <View style={styles.headerTitleContainer}>
@@ -89,11 +94,13 @@ const CinemaMoviesScreen: React.FC<CinemaMoviesScreenProps> = ({
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Select Date</Text>
+          <Text style={styles.sectionTitle}>SELECT DATE</Text>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            style={styles.datesContainer}>
+            style={styles.datesContainer}
+            contentContainerStyle={{paddingRight: 20}} // Add padding to end of scroll
+          >
             {dates.map(date => {
               const isToday = date.dateKey === dates[0].dateKey;
               const isSelected = selectedDate.dateKey === date.dateKey;
@@ -113,8 +120,10 @@ const CinemaMoviesScreen: React.FC<CinemaMoviesScreenProps> = ({
 
         <View style={styles.section}>
           <View style={styles.movieCountContainer}>
-             <Text style={styles.sectionTitle}>Available Movies</Text>
-             <Text style={styles.movieCountText}>({movies.length})</Text>
+             <Text style={styles.sectionTitle}>AVAILABLE MOVIES</Text>
+             <View style={styles.badge}>
+                <Text style={styles.badgeText}>{movies.length}</Text>
+             </View>
           </View>
           
           <FlatList
@@ -145,7 +154,18 @@ const CinemaMoviesScreen: React.FC<CinemaMoviesScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: THEME.background,
+  },
+  topGlow: {
+    position: 'absolute',
+    top: -100,
+    left: -50,
+    width: width,
+    height: 300,
+    backgroundColor: THEME.accent,
+    opacity: 0.05,
+    borderRadius: 150,
+    transform: [{ scaleX: 1.5 }],
   },
   header: {
     flexDirection: 'row',
@@ -159,8 +179,8 @@ const styles = StyleSheet.create({
   backButton: {
     width: 40,
     height: 40,
-    borderRadius: 12,
-    backgroundColor: COLORS.card, // Square button style
+    borderRadius: 20, // Circular
+    backgroundColor: 'rgba(255,255,255,0.1)', // Glassmorphism
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -170,41 +190,50 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: COLORS.text,
+    fontSize: 18,
+    fontWeight: '800', // Extra bold
+    color: THEME.textWhite,
     textAlign: 'center',
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
   },
   content: {
     flex: 1,
-    paddingHorizontal: 20,
     marginTop: 10,
   },
   section: {
     marginBottom: 30,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '700',
-    color: COLORS.text,
+    color: THEME.textWhite,
     marginBottom: 15,
+    marginLeft: 20, // Align with padding
+    letterSpacing: 1,
+    textTransform: 'uppercase',
   },
   movieCountContainer: {
       flexDirection: 'row',
-      alignItems: 'baseline',
+      alignItems: 'center',
       marginBottom: 15,
   },
-  movieCountText: {
-      fontSize: 16,
-      color: COLORS.textSecondary,
+  badge: {
+      backgroundColor: 'rgba(255, 59, 48, 0.2)',
+      paddingHorizontal: 8,
+      paddingVertical: 2,
+      borderRadius: 8,
       marginLeft: 8,
-      fontWeight: '500',
+      marginBottom: 15, // Align with title margin
+  },
+  badgeText: {
+      color: THEME.accent,
+      fontSize: 14,
+      fontWeight: '700',
   },
   datesContainer: {
     flexDirection: 'row',
-    // You might need to adjust margin inside DateButtonForBooking component
-    // or wrap them in a view with margin here if needed.
-    marginLeft: -5, // Offset padding if DateButton has internal padding
+    paddingLeft: 20, // Initial padding
   },
 });
 

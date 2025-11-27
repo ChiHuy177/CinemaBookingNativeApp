@@ -9,33 +9,36 @@ import {
   ScrollView,
   Dimensions,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import Icon from 'react-native-vector-icons/Ionicons'; // Switched to Ionicons
 import {SeatSelectionScreenProps} from '../types/screentypes';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
 import {SeatRowForBooking} from '../components/SeatRowForBooking';
 import {useFocusEffect} from '@react-navigation/native';
-// import { colors } from '../constant/color'; // Replaced with local THEME
-import { SeatRows } from '../constant/variable';
-import { useSpinner } from '../context/SpinnerContext';
-import { getSeatRowsForBooking } from '../services/SeatService';
-import { SeatRowForBookingProps, SeatColumnForBookingProps } from '../types/seat';
-import { showToast } from '../utils/function';
+import {SeatRows} from '../constant/variable';
+import {useSpinner} from '../context/SpinnerContext';
+import {getSeatRowsForBooking} from '../services/SeatService';
+import {SeatRowForBookingProps, SeatColumnForBookingProps} from '../types/seat';
+import {showToast} from '../utils/function';
+import Toast from 'react-native-toast-message';
 
 const {width} = Dimensions.get('window');
 
-// THEME CONSTANTS EXTRACTED FROM IMAGE
+// --- CINEMATIC DARK THEME CONFIGURATION ---
 const THEME = {
-  background: '#13141F', // Dark blue-black background
-  primaryRed: '#F54B64', // Coral red
-  cardBg: '#20212D',     // Slightly lighter for cards
+  background: '#10111D', // Deep Cinematic Blue/Black
+  cardBg: '#1C1D2E', // Slightly lighter panel
+  primaryRed: '#FF3B30', // Neon/Cinematic Red
   textWhite: '#FFFFFF',
-  textGray: '#8F9BB3',   // Muted blue-gray text
-  divider: 'rgba(255,255,255,0.08)',
+  textGray: '#A0A0B0',
+  textDarkGray: '#5C5D6F',
+  glass: 'rgba(255, 255, 255, 0.08)',
+  border: 'rgba(255, 255, 255, 0.05)',
+  shadowColor: '#FF3B30',
   // Seat Colors
   seatAvailable: '#3D3E4E',
   seatTaken: '#1A1B25',
-  seatVip: '#FFD700',    // Gold
+  seatVip: '#FFD700', // Gold
   seatSweetBox: '#E056FD', // Purple/Pink
 };
 
@@ -63,10 +66,16 @@ const SeatSelectionScreen: React.FC<SeatSelectionScreenProps> = ({
           } else {
             showToast({
               type: 'error',
-              text1: responseData.message || 'Failed to fetch seats',
+              text1: 'Seat Error',
+              text2: responseData.message || 'Failed to load seats layout.',
             });
           }
         } catch (error) {
+             Toast.show({
+              type: 'error',
+              text1: 'Seat Error',
+              text2: 'An unexpected error occurred while fetching seats.',
+            });
         } finally {
           hideSpinner();
         }
@@ -261,93 +270,99 @@ const SeatSelectionScreen: React.FC<SeatSelectionScreenProps> = ({
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={THEME.background} />
-      
-      {/* HEADER */}
+
+      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
-          style={styles.backButton}
+          style={styles.glassButton}
           onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" size={24} color={THEME.textWhite} />
+          <Icon name="chevron-back" size={24} color={THEME.textWhite} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Select Seats</Text>
-        <View style={{width: 34}} /> 
+        <View style={{width: 40}} /> 
       </View>
 
-      {/* MOVIE INFO CARD */}
-      <View style={styles.movieInfo}>
+      {/* Movie Info Card */}
+      <View style={styles.movieInfoCard}>
         <Text style={styles.movieTitle}>{movieParam.movieTitle}</Text>
-        <View style={styles.movieDetails}>
-          <View style={styles.detailItem}>
-            <Icon name="location-on" size={14} color={THEME.textGray} />
-            <Text style={styles.detailValue}>{cinemaName}</Text>
+        <View style={styles.movieMeta}>
+          <View style={styles.metaItem}>
+            <Icon name="location-outline" size={14} color={THEME.primaryRed} />
+            <Text style={styles.metaText}>{cinemaName}</Text>
           </View>
-          <View style={styles.detailItem}>
-             <Icon name="calendar-today" size={14} color={THEME.textGray} />
-            <Text style={styles.detailValue}>{date}</Text>
+          <View style={styles.metaItem}>
+             <Icon name="calendar-outline" size={14} color={THEME.textGray} />
+            <Text style={styles.metaText}>{date}</Text>
           </View>
-          <View style={styles.detailItem}>
-            <Icon name="access-time" size={14} color={THEME.textGray} />
-            <Text style={styles.detailValue}>{time}</Text>
+          <View style={styles.metaItem}>
+            <Icon name="time-outline" size={14} color={THEME.textGray} />
+            <Text style={styles.metaText}>{time}</Text>
           </View>
         </View>
       </View>
 
-      {/* SCREEN VISUAL */}
+      {/* Screen Visual */}
       <View style={styles.screenContainer}>
-        <View style={styles.screen} />
+        <View style={styles.screenLine} />
+        <View style={styles.screenGlow} />
         <Text style={styles.screenText}>SCREEN</Text>
       </View>
 
-      {/* SEATS GRID */}
+      {/* Seats Grid */}
       <ScrollView
         style={styles.seatsScrollView}
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{paddingBottom: 20}}>
         <View style={styles.seatsGrid}>{renderRows(handleSeatPress)}</View>
         <View style={styles.seatNumbers}>{coloumnsBase}</View>
       </ScrollView>
 
-      {/* LEGEND / ANNOTATION */}
+      {/* Legend */}
       <View style={styles.legendContainer}>
         <View style={styles.legendRow}>
             <View style={styles.legendItem}>
                 <View
-                    style={[styles.legendSeat, {backgroundColor: THEME.primaryRed}]}
+                    style={[styles.legendBox, {backgroundColor: THEME.primaryRed}]}
                 />
                 <Text style={styles.legendText}>Selected</Text>
             </View>
             <View style={styles.legendItem}>
                 <View
-                    style={[styles.legendSeat, {backgroundColor: THEME.seatAvailable}]}
+                    style={[styles.legendBox, {backgroundColor: THEME.seatAvailable}]}
                 />
-                <Text style={styles.legendText}>Normal</Text>
+                <Text style={styles.legendText}>Available</Text>
             </View>
             <View style={styles.legendItem}>
-                <View style={[styles.legendSeat, {backgroundColor: THEME.seatVip}]} />
+                <View style={[styles.legendBox, {backgroundColor: THEME.seatVip}]} />
                 <Text style={styles.legendText}>VIP</Text>
             </View>
         </View>
 
         <View style={styles.legendRow}>
             <View style={styles.legendItem}>
-                <View style={[styles.legendSeat, {backgroundColor: THEME.seatSweetBox}]} />
+                <View style={[styles.legendBox, {backgroundColor: THEME.seatSweetBox}]} />
                 <Text style={styles.legendText}>Sweet Box</Text>
             </View>
             <View style={styles.legendItem}>
-                <View style={[styles.legendSeat, {backgroundColor: THEME.seatTaken}]} />
+                <View style={[styles.legendBox, {backgroundColor: THEME.seatTaken}]} />
                 <Text style={styles.legendText}>Taken</Text>
             </View>
         </View>
       </View>
 
-      {/* BOTTOM ACTION BAR */}
-      <View style={styles.bottomSection}>
-        <View style={styles.selectionInfo}>
-          <Text style={styles.selectedSeatsText}>
-            <Text style={{color: THEME.textGray}}>Selected: </Text>
-            {displaySelectedSeats || 'None'}
+      {/* Bottom Action Bar */}
+      <View style={styles.bottomBar}>
+        <View style={styles.priceContainer}>
+          <Text style={styles.selectionLabel}>
+             {displaySelectedSeats ? 'Selected Seats:' : 'Select seats'}
           </Text>
-          <Text style={styles.totalText}>
-            {totalPrice.toLocaleString('vi-VN') + 'đ'}
+          {displaySelectedSeats ? (
+              <Text style={styles.selectedSeatsText} numberOfLines={1}>
+                {displaySelectedSeats}
+              </Text>
+          ) : null}
+          <Text style={styles.totalPrice}>
+            {totalPrice.toLocaleString('vi-VN')} đ
           </Text>
         </View>
 
@@ -357,8 +372,10 @@ const SeatSelectionScreen: React.FC<SeatSelectionScreenProps> = ({
             selectedSeats.length === 0 && styles.disabledButton,
           ]}
           disabled={selectedSeats.length === 0}
+          activeOpacity={0.8}
           onPress={() => handleSubmitSelectedSeats()}>
-          <Text style={styles.continueButtonText}>Continue</Text>
+          <Text style={styles.continueText}>Confirm</Text>
+          <Icon name="arrow-forward" size={20} color="#FFF" style={{marginLeft: 5}} />
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -377,168 +394,201 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 15,
   },
-  backButton: {
-    padding: 6,
-    borderRadius: 8,
-    backgroundColor: THEME.cardBg,
+  glassButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: THEME.glass,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: THEME.border,
   },
   headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 18,
+    fontWeight: '700',
     color: THEME.textWhite,
   },
-  movieInfo: {
+
+  // Movie Info
+  movieInfoCard: {
     marginHorizontal: 20,
-    marginBottom: 10,
+    marginBottom: 20,
     padding: 16,
     borderRadius: 16,
     backgroundColor: THEME.cardBg,
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
+    borderWidth: 1,
+    borderColor: THEME.border,
   },
   movieTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     color: THEME.textWhite,
-    marginBottom: 12,
+    marginBottom: 10,
     letterSpacing: 0.5,
   },
-  movieDetails: {
+  movieMeta: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     flexWrap: 'wrap',
-    gap: 10,
+    gap: 12,
   },
-  detailItem: {
+  metaItem: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
   },
-  detailValue: {
-    fontSize: 13,
+  metaText: {
+    fontSize: 12,
     color: THEME.textGray,
     fontWeight: '500',
   },
+
+  // Screen
   screenContainer: {
     alignItems: 'center',
-    marginTop: 20,
     marginBottom: 20,
+    position: 'relative',
+    height: 30,
+    justifyContent: 'flex-end',
   },
-  screen: {
-    width: width * 0.8,
+  screenLine: {
+    width: width * 0.85,
     height: 4,
-    backgroundColor: THEME.primaryRed, // Screen line glow
-    borderRadius: 4,
-    marginBottom: 8,
-    shadowColor: THEME.primaryRed,
-    shadowOffset: {width: 0, height: 0},
-    shadowOpacity: 0.8,
-    shadowRadius: 10,
+    backgroundColor: THEME.primaryRed,
+    borderRadius: 2,
+    marginBottom: 5,
+    zIndex: 2,
+  },
+  screenGlow: {
+      position: 'absolute',
+      top: 0,
+      width: width * 0.85,
+      height: 40,
+      backgroundColor: THEME.primaryRed,
+      opacity: 0.15,
+      borderTopLeftRadius: 100,
+      borderTopRightRadius: 100,
+      transform: [{scaleY: -1}], // Flip to make it look like light projection
+      zIndex: 1,
   },
   screenText: {
     fontSize: 10,
-    color: THEME.textGray,
-    letterSpacing: 4,
-    fontWeight: 'bold',
+    color: THEME.textDarkGray,
+    letterSpacing: 3,
+    fontWeight: '700',
+    marginTop: 5,
   },
+
+  // Seats
   seatsScrollView: {
     flex: 1,
     paddingHorizontal: 10,
-    marginBottom: 10,
   },
   seatsGrid: {
-    paddingBottom: 10,
+    alignItems: 'center',
   },
   seatNumbers: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 30,
+    justifyContent: 'center',
     marginTop: 10,
-    marginBottom: 20,
+    marginBottom: 10,
+    paddingHorizontal: 30,
+    gap: 6, // Approximate gap based on SeatRow implementation
   },
   seatNumberText: {
     fontSize: 10,
-    color: THEME.textGray,
-    width: 22,
+    color: THEME.textDarkGray,
+    width: 20, // Should match seat width roughly
     textAlign: 'center',
   },
+
+  // Legend
   legendContainer: {
       paddingHorizontal: 20,
       paddingVertical: 15,
-      backgroundColor: THEME.cardBg,
-      borderTopLeftRadius: 20,
-      borderTopRightRadius: 20,
+      backgroundColor: 'rgba(255,255,255,0.03)',
+      marginHorizontal: 20,
+      borderRadius: 16,
+      marginBottom: 10,
   },
   legendRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 10,
+    marginBottom: 8,
   },
   legendItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: '30%', // Grid layout
+    width: '32%', 
   },
-  legendSeat: {
-    width: 14,
-    height: 14,
+  legendBox: {
+    width: 16,
+    height: 16,
     borderRadius: 4,
     marginRight: 8,
   },
   legendText: {
-    fontSize: 12,
+    fontSize: 11,
     color: THEME.textGray,
   },
-  bottomSection: {
+
+  // Bottom Bar
+  bottomBar: {
     paddingHorizontal: 20,
-    paddingBottom: 30, // Safe area
+    paddingBottom: 30,
     paddingTop: 15,
     backgroundColor: THEME.background,
     borderTopWidth: 1,
-    borderTopColor: THEME.divider,
+    borderTopColor: THEME.border,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  selectionInfo: {
+  priceContainer: {
     flex: 1,
-    marginRight: 10,
+    marginRight: 15,
+  },
+  selectionLabel: {
+      fontSize: 11,
+      color: THEME.textGray,
   },
   selectedSeatsText: {
-    fontSize: 13,
-    color: THEME.textWhite,
-    marginBottom: 4,
-    fontWeight: '600',
+      fontSize: 13,
+      color: THEME.textWhite,
+      fontWeight: '600',
+      marginBottom: 2,
   },
-  totalText: {
+  totalPrice: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: '800',
     color: THEME.primaryRed,
+    textShadowColor: 'rgba(255, 59, 48, 0.3)',
+    textShadowOffset: {width: 0, height: 0},
+    textShadowRadius: 8,
   },
   continueButton: {
+    flexDirection: 'row',
     backgroundColor: THEME.primaryRed,
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 30, // Pill shape
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    borderRadius: 24,
     alignItems: 'center',
-    shadowColor: THEME.primaryRed,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    shadowColor: THEME.shadowColor,
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    elevation: 6,
   },
   disabledButton: {
     backgroundColor: THEME.cardBg,
-    opacity: 0.5,
     shadowOpacity: 0,
+    elevation: 0,
   },
-  continueButtonText: {
+  continueText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#FFF',
+    letterSpacing: 0.5,
   },
 });
 

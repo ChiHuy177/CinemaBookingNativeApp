@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { useState, useEffect, useCallback } from "react";
-import { Platform, UIManager, LayoutAnimation, SafeAreaView, View, TouchableOpacity, Text, ScrollView, StyleSheet, StatusBar } from "react-native";
+import { Platform, UIManager, LayoutAnimation, SafeAreaView, View, TouchableOpacity, Text, ScrollView, StyleSheet, StatusBar, Dimensions } from "react-native";
 import Icon from 'react-native-vector-icons/Ionicons'; 
 import { CityItem } from "../components/CityItem";
 import { useSpinner } from "../context/SpinnerContext";
@@ -10,13 +10,17 @@ import { CityData } from "../types/cinema";
 import { CinemaListScreenProps } from "../types/screentypes";
 import { showToast, checkErrorFetchingData } from "../utils/function";
 
-// THEME COLORS EXTRACTED FROM IMAGE
-const COLORS = {
-  background: '#0B0F19', // Deep dark blue/black background
-  card: '#1D212E', // Slightly lighter for buttons/cards
-  primary: '#F54B46', // Coral red
-  text: '#FFFFFF',
-  textSecondary: '#7B8299', // Muted text color
+const { width } = Dimensions.get('window');
+
+// THEME CONSTANTS MATCHING PREVIOUS SCREENS
+const THEME = {
+  background: '#10111D', // Dark cinematic background
+  cardBg: '#1F2130',     // Input/Card background
+  accent: '#FF3B30',     // Bright Red/Coral accent
+  textWhite: '#FFFFFF',
+  textGray: '#8F90A6',   // Muted gray
+  textPlaceholder: '#5C5E6F',
+  error: '#FF3B30',
 };
 
 if (
@@ -73,18 +77,21 @@ const CinemaListScreen: React.FC<CinemaListScreenProps> = ({navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={COLORS.background} />
+      <StatusBar barStyle="light-content" backgroundColor={THEME.background} />
+      
+      {/* Decorative Glow */}
+      <View style={styles.topGlow} />
       
       {/* Header Area styled like the ChangePasswordScreen */}
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}>
-          <Icon name="chevron-back" size={24} color={COLORS.text} />
+          <Icon name="arrow-back" size={24} color={THEME.textWhite} />
         </TouchableOpacity>
         
         <View style={styles.headerCenter}>
-          <Text style={styles.headerTitle}>Cinemas</Text>
+          <Text style={styles.headerTitle}>CINEMAS</Text>
           <Text style={styles.headerSubtitle}>Choose city to pick cinema</Text>
         </View>
 
@@ -112,7 +119,18 @@ const CinemaListScreen: React.FC<CinemaListScreenProps> = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: THEME.background,
+  },
+  topGlow: {
+    position: 'absolute',
+    top: -100,
+    left: -50,
+    width: width,
+    height: 300,
+    backgroundColor: THEME.accent,
+    opacity: 0.05,
+    borderRadius: 150,
+    transform: [{ scaleX: 1.5 }],
   },
   header: {
     flexDirection: 'row',
@@ -121,13 +139,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 15,
     marginTop: 10,
-    // Removed borderBottomWidth to match the clean dark theme
   },
   backButton: {
     width: 40,
     height: 40,
-    borderRadius: 12,
-    backgroundColor: COLORS.card, // Square button style like in image
+    borderRadius: 20, // Circular
+    backgroundColor: 'rgba(255,255,255,0.1)', // Glassmorphism effect
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -139,15 +156,17 @@ const styles = StyleSheet.create({
     width: 40, // Match back button width for perfect centering
   },
   headerTitle: {
-    fontSize: 20, // Adjusted size
-    fontWeight: '700',
-    color: COLORS.text,
-    marginBottom: 2,
+    fontSize: 18,
+    fontWeight: '800', // Extra bold
+    color: THEME.textWhite,
+    marginBottom: 4,
+    letterSpacing: 1,
+    textTransform: 'uppercase',
   },
   headerSubtitle: {
-    fontSize: 14,
-    color: COLORS.textSecondary,
-    fontWeight: '400',
+    fontSize: 13,
+    color: THEME.textGray,
+    fontWeight: '500',
   },
   scrollView: {
     flex: 1,

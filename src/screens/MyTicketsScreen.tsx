@@ -8,8 +8,9 @@ import {
   ScrollView,
   TouchableOpacity,
   StatusBar,
+  // Dimensions,
 } from 'react-native';
-import {Icon} from 'react-native-paper';
+import Icon from 'react-native-vector-icons/Ionicons'; // Switched to Ionicons
 
 import {MyTicketsScreenProps} from '../types/screentypes';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -18,18 +19,22 @@ import {useSpinner} from '../context/SpinnerContext';
 import {useFocusEffect} from '@react-navigation/native';
 
 import {TicketCard} from '../components/TicketCart';
-// import { colors } from '../constant/color'; // Replaced with local THEME
-import { getAllTickets } from '../services/TicketService';
-import { showToast, checkErrorFetchingData } from '../utils/function';
+import {getAllTickets} from '../services/TicketService';
+import {showToast, checkErrorFetchingData} from '../utils/function';
 
-// THEME CONSTANTS EXTRACTED FROM IMAGE
+// const {width} = Dimensions.get('window');
+
+// --- CINEMATIC DARK THEME CONFIGURATION ---
 const THEME = {
-  background: '#13141F', // Dark blue-black background
-  primaryRed: '#F54B64', // Coral red
-  cardBg: '#20212D',     // Slightly lighter for cards/tabs
+  background: '#10111D', // Deep Cinematic Blue/Black
+  cardBg: '#1C1D2E', // Slightly lighter panel
+  primaryRed: '#FF3B30', // Neon/Cinematic Red
   textWhite: '#FFFFFF',
-  textGray: '#8F9BB3',   // Muted blue-gray text
-  tabInactive: 'transparent',
+  textGray: '#A0A0B0',
+  textDarkGray: '#5C5D6F',
+  glass: 'rgba(255, 255, 255, 0.08)',
+  border: 'rgba(255, 255, 255, 0.05)',
+  activeTabShadow: '#FF3B30',
 };
 
 const MyTicketsScreen: React.FC<MyTicketsScreenProps> = ({navigation}) => {
@@ -74,11 +79,19 @@ const MyTicketsScreen: React.FC<MyTicketsScreenProps> = ({navigation}) => {
           const responseData = await getAllTickets();
           if (responseData.code === 1000 && isActive) {
             setTickets(responseData.result);
-            setFilteredTickets(responseData.result);
+            // Re-apply filter based on current active tab
+            if (activeTab === 'all') {
+                 setFilteredTickets(responseData.result);
+            } else {
+                 // Trigger the filter logic again or just default to all for safety on refresh
+                 setFilteredTickets(responseData.result); 
+                 setActiveTab('all');
+            }
           } else {
             showToast({
               type: 'error',
-              text1: responseData.message,
+              text1: 'Error',
+              text2: responseData.message,
             });
           }
         } catch (error) {
@@ -102,72 +115,87 @@ const MyTicketsScreen: React.FC<MyTicketsScreenProps> = ({navigation}) => {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={THEME.background} />
 
+      {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity 
-          style={styles.backButton}
+        <TouchableOpacity
+          style={styles.glassButton}
           onPress={() => navigation.goBack()}>
-          <Icon source="chevron-left" size={28} color={THEME.textWhite} />
+          <Icon name="chevron-back" size={24} color={THEME.textWhite} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>My Tickets</Text>
-        <View style={{width: 40}} />
+        <View style={{width: 40}} /> 
       </View>
 
-      <View style={styles.tabContainer}>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'all' && styles.activeTab]}
-          onPress={() => handlePickTab('all')}>
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === 'all' && styles.activeTabText,
-            ]}>
-            All
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'coming' && styles.activeTab]}
-          onPress={() => handlePickTab('coming')}>
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === 'coming' && styles.activeTabText,
-            ]}>
-            Coming
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'past' && styles.activeTab]}
-          onPress={() => handlePickTab('past')}>
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === 'past' && styles.activeTabText,
-            ]}>
-            Past
-          </Text>
-        </TouchableOpacity>
+      {/* Custom Tab Bar */}
+      <View style={styles.tabWrapper}>
+        <View style={styles.tabContainer}>
+            <TouchableOpacity
+            style={[styles.tab, activeTab === 'all' && styles.activeTab]}
+            activeOpacity={0.7}
+            onPress={() => handlePickTab('all')}>
+            <Text
+                style={[
+                styles.tabText,
+                activeTab === 'all' && styles.activeTabText,
+                ]}>
+                All
+            </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+            style={[styles.tab, activeTab === 'coming' && styles.activeTab]}
+            activeOpacity={0.7}
+            onPress={() => handlePickTab('coming')}>
+            <Text
+                style={[
+                styles.tabText,
+                activeTab === 'coming' && styles.activeTabText,
+                ]}>
+                Upcoming
+            </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+            style={[styles.tab, activeTab === 'past' && styles.activeTab]}
+            activeOpacity={0.7}
+            onPress={() => handlePickTab('past')}>
+            <Text
+                style={[
+                styles.tabText,
+                activeTab === 'past' && styles.activeTabText,
+                ]}>
+                History
+            </Text>
+            </TouchableOpacity>
+        </View>
       </View>
 
+      {/* Content List */}
       <ScrollView
         style={styles.ticketsList}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.ticketsContainer}>
+        
         {filteredTickets.map(ticket => (
-          <TicketCard
-            key={ticket.ticketId}
-            ticket={ticket}
-            navigation={navigation}
-          />
+          <View key={ticket.ticketId} style={styles.ticketWrapper}>
+            <TicketCard
+              ticket={ticket}
+              navigation={navigation}
+            />
+          </View>
         ))}
 
         {filteredTickets.length === 0 && (
-            <View style={styles.emptyState}>
-                <Icon source="ticket-outline" size={60} color={THEME.cardBg} />
-                <Text style={styles.emptyStateText}>No tickets found</Text>
-                <Text style={styles.emptyStateSubtext}>
-                    You haven't booked any movies in this category yet.
-                </Text>
+          <View style={styles.emptyState}>
+            <View style={styles.emptyIconContainer}>
+                <Icon name="ticket-outline" size={50} color={THEME.textDarkGray} />
+                <View style={styles.emptyIconGlow} />
             </View>
+            <Text style={styles.emptyStateText}>No tickets found</Text>
+            <Text style={styles.emptyStateSubtext}>
+               You haven't booked any movies in this category yet.
+            </Text>
+          </View>
         )}
       </ScrollView>
     </SafeAreaView>
@@ -179,87 +207,115 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: THEME.background,
   },
+  
+  // Header
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingVertical: 15,
     backgroundColor: THEME.background,
+    marginBottom: 10,
   },
-  backButton: {
-    padding: 6,
-    borderRadius: 10,
-    backgroundColor: THEME.cardBg,
+  glassButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: THEME.glass,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: THEME.border,
   },
   headerTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
+    fontSize: 20,
+    fontWeight: '700',
     color: THEME.textWhite,
+    letterSpacing: 0.5,
+  },
+
+  // Tabs
+  tabWrapper: {
+      paddingHorizontal: 20,
+      marginBottom: 20,
   },
   tabContainer: {
     flexDirection: 'row',
-    backgroundColor: THEME.cardBg, // Dark card background for tab container
-    marginHorizontal: 20,
-    borderRadius: 30, // Pill shape
+    backgroundColor: THEME.cardBg,
+    borderRadius: 25,
     padding: 5,
-    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: THEME.border,
   },
   tab: {
     flex: 1,
-    paddingVertical: 12,
+    paddingVertical: 10,
     alignItems: 'center',
-    borderRadius: 25, // Inner pill shape
+    borderRadius: 20,
   },
   activeTab: {
-    backgroundColor: THEME.primaryRed, // Coral Red
-    shadowColor: THEME.primaryRed,
-    shadowOffset: { width: 0, height: 2 },
+    backgroundColor: THEME.primaryRed,
+    shadowColor: THEME.activeTabShadow,
+    shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowRadius: 8,
+    elevation: 5,
   },
   tabText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '600',
     color: THEME.textGray,
   },
   activeTabText: {
-    color: THEME.textWhite,
+    color: '#FFF',
     fontWeight: 'bold',
   },
+
+  // List
   ticketsList: {
     flex: 1,
   },
   ticketsContainer: {
     paddingHorizontal: 20,
-    paddingBottom: 20,
+    paddingBottom: 40,
   },
-  // Kept logic for these styles even if unused in provided snippet, updated colors
-  upcomingInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: THEME.cardBg,
-    borderRadius: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+  ticketWrapper: {
+      marginBottom: 15,
+      // Note: TicketCard internal styling should handle the card look, 
+      // but if not, we assume it fits the theme or you might need to style the component itself.
   },
-  upcomingText: {
-    fontSize: 12,
-    color: THEME.primaryRed,
-    marginLeft: 8,
-  },
+
+  // Empty State
   emptyState: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 60,
-    marginTop: 20,
+    paddingVertical: 80,
+  },
+  emptyIconContainer: {
+      width: 100,
+      height: 100,
+      borderRadius: 50,
+      backgroundColor: THEME.cardBg,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 20,
+      position: 'relative',
+      borderWidth: 1,
+      borderColor: THEME.border,
+  },
+  emptyIconGlow: {
+      position: 'absolute',
+      width: 80,
+      height: 80,
+      borderRadius: 40,
+      backgroundColor: THEME.primaryRed,
+      opacity: 0.1,
   },
   emptyStateText: {
     fontSize: 18,
     fontWeight: 'bold',
     color: THEME.textWhite,
-    marginTop: 16,
     marginBottom: 8,
   },
   emptyStateSubtext: {
@@ -267,6 +323,7 @@ const styles = StyleSheet.create({
     color: THEME.textGray,
     textAlign: 'center',
     paddingHorizontal: 40,
+    lineHeight: 20,
   },
 });
 

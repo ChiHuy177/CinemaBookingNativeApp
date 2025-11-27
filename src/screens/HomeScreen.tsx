@@ -17,19 +17,28 @@ import {MovieMainHomeProps} from '../types/movie';
 import {useSpinner} from '../context/SpinnerContext';
 
 import {HomeScreenProps} from '../types/screentypes';
-import {Icon} from 'react-native-paper';
+import Icon from 'react-native-vector-icons/Ionicons'; // Switched to Ionicons
 
 import {useFocusEffect} from '@react-navigation/native';
 import {
   showToast,
   checkErrorFetchingData,
   getPosterImage,
-}
-// Removed the redundant import path (../utils/function) to assume it's correctly mapped in React Native environment
-from '../utils/function';
+} from '../utils/function';
 import {movieMainHome} from '../services/MovieService';
 
 const {width} = Dimensions.get('window');
+
+// THEME CONSTANTS MATCHING PREVIOUS SCREENS
+const THEME = {
+  background: '#10111D', // Dark cinematic background
+  cardBg: '#1F2130',     // Input/Card background
+  accent: '#FF3B30',     // Bright Red/Coral accent
+  textWhite: '#FFFFFF',
+  textGray: '#8F90A6',   // Muted gray
+  textPlaceholder: '#5C5E6F',
+  error: '#FF3B30',
+};
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
   const [activeSlide, setActiveSlide] = useState(0);
@@ -61,14 +70,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
           } else {
             showToast({
               type: 'error',
-              text1: 'Lỗi', // Localized the toast message
-              text2: responseData.message || 'Không thể tải phim',
+              text1: 'Error',
+              text2: responseData.message || 'Unable to load movies',
             });
           }
         } catch (error) {
           checkErrorFetchingData({
             error: error,
-            title: 'Lỗi khi tải phim trang chủ', // Localized the error title
+            title: 'Error fetching home movies',
           });
         } finally {
           hideSpinner();
@@ -90,9 +99,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
             movieId: item.movieId,
           })
         }
-        style={{width}} // Explicitly setting width for correct paging
+        style={{width: width - 40, marginHorizontal: 20}} // Adjusted width for better card look
       >
-        <View key={item.movieId} style={styles.topShowSlide}>
+        <View style={styles.topShowSlide}>
           <Image
             source={{uri: getPosterImage(item.posterURL)}}
             style={styles.topShowImage}
@@ -105,6 +114,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
               ellipsizeMode="tail">
               {item.title}
             </Text>
+            <View style={styles.watchNowBtn}>
+                <Text style={styles.watchNowText}>BOOK NOW</Text>
+            </View>
           </View>
         </View>
       </Pressable>
@@ -128,6 +140,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
             style={styles.movieImage}
             onError={() => console.error('Error loading image for Movie Card:', item.posterURL)}
           />
+          <View style={styles.movieInfoOverlay}>
+             <Text style={styles.movieTitleSmall} numberOfLines={1}>{item.title}</Text>
+          </View>
         </TouchableOpacity>
       );
     },
@@ -151,7 +166,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
             key={index}
             style={[
               styles.dot,
-              {backgroundColor: index === activeSlide ? '#FF8133' : '#666'}, // Changed active color to theme orange
+              {
+                  backgroundColor: index === activeSlide ? THEME.accent : 'rgba(255,255,255,0.2)',
+                  width: index === activeSlide ? 20 : 8 // Animated width effect simulation
+              },
             ]}
           />
         ))}
@@ -162,79 +180,112 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <StatusBar backgroundColor="#1a1a1a" barStyle="light-content" />
+      <StatusBar backgroundColor={THEME.background} barStyle="light-content" />
+      
+      {/* Decorative Glow */}
+      <View style={styles.topGlow} />
+
       <SafeAreaView style={styles.safeArea}>
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-          {/* Header and Search/Tickets Icons */}
-          <View style={styles.searchContainer}>
-            <Text style={styles.sectionTitle}>Phim Nổi Bật</Text>
-            <View style={styles.iconHeaderContainer}>
-              <Pressable
-                style={styles.iconButton}
-                onPress={() => navigation.navigate('MyTicketsScreen')}>
-                <Icon source="ticket-confirmation" size={28} color="#FF8133" />
-              </Pressable>
-              <Pressable
-                style={styles.iconButton}
-                onPress={() => navigation.navigate('SearchScreen')}>
-                <Icon source="search-web" size={28} color="#FF8133" />
-              </Pressable>
+          {/* Header */}
+          <View style={styles.headerContainer}>
+             <View>
+                 <Text style={styles.greetingText}>Welcome back,</Text>
+                 <Text style={styles.appNameText}>CINEMA TICKET</Text>
+             </View>
+             <View style={styles.iconHeaderContainer}>
+                <TouchableOpacity
+                    style={styles.iconButton}
+                    onPress={() => navigation.navigate('SearchScreen')}>
+                    <Icon name="search-outline" size={24} color={THEME.textWhite} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.iconButton}
+                    onPress={() => navigation.navigate('MyTicketsScreen')}>
+                    <Icon name="ticket-outline" size={24} color={THEME.accent} />
+                </TouchableOpacity>
             </View>
           </View>
 
           {/* Top Shows Carousel */}
           <View style={styles.topShowsContainer}>
+             <Text style={styles.sectionTitle}>FEATURED</Text>
             {topShows.length > 0 ? (
               <>
                 <ScrollView
                   horizontal
                   pagingEnabled
                   showsHorizontalScrollIndicator={false}
+                  decelerationRate="fast"
+                  snapToInterval={width} // Snap to width
+                  contentContainerStyle={{ paddingRight: 0 }} 
                   onMomentumScrollEnd={event => {
                     const slideIndex = Math.round(
                       event.nativeEvent.contentOffset.x / width,
                     );
                     setActiveSlide(slideIndex);
                   }}>
-                  {topShows.map(renderTopShow)}
+                  {/* Wrapper to align single card in center of screen width if needed, but here sticking to simple paging */}
+                  <View style={{flexDirection: 'row'}}> 
+                    {topShows.map(item => (
+                         <View key={item.movieId} style={{width: width, alignItems: 'center'}}>
+                            {renderTopShow(item)}
+                         </View>
+                    ))}
+                  </View>
                 </ScrollView>
                 {renderDots()}
               </>
             ) : (
               // Empty state for Top Shows
               <View style={styles.emptyCarousel}>
-                <Text style={styles.emptyText}>Đang tải phim...</Text>
+                <Text style={styles.emptyText}>Loading movies...</Text>
               </View>
             )}
           </View>
 
           {/* Now Showing Section */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Đang Chiếu</Text>
+            <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>NOW SHOWING</Text>
+                <TouchableOpacity onPress={() => {}}>
+                    <Text style={styles.seeAllText}>See All</Text>
+                </TouchableOpacity>
+            </View>
+            
             {nowShowing.length > 0 ? (
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 <View style={styles.moviesList}>{renderNowShowing}</View>
               </ScrollView>
             ) : (
               <Text style={styles.emptySectionText}>
-                Hiện chưa có phim nào đang chiếu.
+                No movies now showing.
               </Text>
             )}
           </View>
 
           {/* Coming Soon Section */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Sắp Chiếu</Text>
+             <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>COMING SOON</Text>
+                <TouchableOpacity onPress={() => {}}>
+                    <Text style={styles.seeAllText}>See All</Text>
+                </TouchableOpacity>
+            </View>
             {comingSoon.length > 0 ? (
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 <View style={styles.moviesList}>{renderComingSoon}</View>
               </ScrollView>
             ) : (
               <Text style={styles.emptySectionText}>
-                Chưa có thông tin về phim sắp chiếu.
+                No coming soon movies.
               </Text>
             )}
           </View>
+          
+          {/* Bottom Padding */}
+          <View style={{height: 80}} />
+
         </ScrollView>
       </SafeAreaView>
     </View>
@@ -244,130 +295,187 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a1a', // Dark theme background
+    backgroundColor: THEME.background,
+  },
+  topGlow: {
+    position: 'absolute',
+    top: -100,
+    left: -50,
+    width: width,
+    height: 300,
+    backgroundColor: THEME.accent,
+    opacity: 0.05,
+    borderRadius: 150,
+    transform: [{ scaleX: 1.5 }],
   },
   safeArea: {
     flex: 1,
   },
-  iconHeaderContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    gap: 15, // Increased gap for better spacing
-    alignItems: 'center',
-    marginRight: 10,
+  headerContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: 24,
+      paddingTop: 10,
+      paddingBottom: 20,
   },
-  searchContainer: {
-    display: 'flex',
+  greetingText: {
+      color: THEME.textGray,
+      fontSize: 14,
+      fontWeight: '500',
+  },
+  appNameText: {
+      color: THEME.textWhite,
+      fontSize: 20,
+      fontWeight: '800',
+      letterSpacing: 0.5,
+  },
+  iconHeaderContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20, // Added padding to align with section titles
-    paddingTop: 10,
-    marginBottom: 20,
+    gap: 12,
   },
   iconButton: {
-    // Removed marginRight: 10 as gap handles spacing
-    padding: 5, // Increased touch area
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   content: {
     flex: 1,
   },
+  
+  // Top Shows
   topShowsContainer: {
-    position: 'relative',
-    marginBottom: 40,
+    marginBottom: 35,
   },
   topShowSlide: {
-    width: width,
-    height: 300,
-    position: 'relative',
-    // Added border radius for visual appeal
-    borderRadius: 15,
+    width: '100%',
+    height: 220, // Slightly reduced height for better proportions
+    borderRadius: 24,
     overflow: 'hidden',
+    position: 'relative',
+    shadowColor: THEME.accent,
+    shadowOffset: {width: 0, height: 10},
+    shadowOpacity: 0.25,
+    shadowRadius: 15,
+    elevation: 10,
+    backgroundColor: THEME.cardBg,
   },
   topShowImage: {
     width: '100%',
     height: '100%',
-    resizeMode: 'cover', // Changed to cover for better filling
+    resizeMode: 'cover',
   },
   topShowOverlay: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    // Using a simple semi-transparent black overlay instead of CSS linear-gradient string
-    backgroundColor: 'rgba(0,0,0,0.6)', 
-    padding: 12,
+    height: '100%',
+    justifyContent: 'flex-end',
+    padding: 20,
+    backgroundColor: 'rgba(0,0,0,0.3)', // Basic darken
   },
   topShowTitle: {
     color: '#fff',
-    fontSize: 22, // Increased font size
-    fontWeight: 'bold',
-    textShadowColor: 'rgba(0, 0, 0, 0.75)', // Added text shadow for visibility
-    textShadowOffset: {width: 1, height: 1},
-    textShadowRadius: 3,
+    fontSize: 24,
+    fontWeight: '800',
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: {width: 0, height: 2},
+    textShadowRadius: 4,
+    marginBottom: 8,
+    maxWidth: '80%',
+  },
+  watchNowBtn: {
+      backgroundColor: THEME.accent,
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderRadius: 12,
+      alignSelf: 'flex-start',
+  },
+  watchNowText: {
+      color: '#FFF',
+      fontWeight: '700',
+      fontSize: 12,
   },
   dotsContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    position: 'absolute',
-    bottom: -20,
-    left: 0,
-    right: 0,
+    alignItems: 'center',
+    marginTop: 20,
   },
   dot: {
-    width: 8,
     height: 8,
     borderRadius: 4,
     marginHorizontal: 4,
   },
+
+  // Sections
   section: {
     marginBottom: 30,
   },
+  sectionHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: 24,
+      marginBottom: 16,
+  },
   sectionTitle: {
-    color: '#fff',
-    fontSize: 22, // Increased font size for titles
-    fontWeight: '700', // Bold
-    marginLeft: 20,
-    marginBottom: 15,
+    color: THEME.textWhite,
+    fontSize: 16,
+    fontWeight: '700',
+    letterSpacing: 1,
+  },
+  seeAllText: {
+      color: THEME.accent,
+      fontSize: 13,
+      fontWeight: '600',
   },
   moviesList: {
     flexDirection: 'row',
-    paddingLeft: 20,
+    paddingLeft: 24,
     paddingRight: 10,
   },
   movieCard: {
-    marginRight: 15,
-    borderRadius: 12,
+    marginRight: 16,
+    borderRadius: 16,
+    width: 140,
     overflow: 'hidden',
-    // Added shadow to movie cards
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 4},
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
-    elevation: 8,
+    backgroundColor: THEME.cardBg,
   },
   movieImage: {
-    width: 120, // Adjusted width for better fit on small screens
-    height: 180, // Adjusted height
+    width: 140,
+    height: 200,
     resizeMode: 'cover',
-    borderRadius: 12,
+    borderRadius: 16,
+  },
+  movieInfoOverlay: {
+      padding: 10,
+  },
+  movieTitleSmall: {
+      color: THEME.textWhite,
+      fontSize: 14,
+      fontWeight: '600',
   },
   emptySectionText: {
-    color: '#999',
-    fontSize: 16,
-    marginLeft: 20,
-    paddingBottom: 10,
+    color: THEME.textGray,
+    fontSize: 14,
+    marginLeft: 24,
+    fontStyle: 'italic',
   },
   emptyCarousel: {
-    height: 300,
+    height: 220,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#2A2A2A',
+    backgroundColor: THEME.cardBg,
     marginHorizontal: 20,
-    borderRadius: 15,
+    borderRadius: 24,
   },
   emptyText: {
-    color: '#fff',
-    fontSize: 18,
+    color: THEME.textGray,
+    fontSize: 16,
   },
 });

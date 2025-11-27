@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback, useMemo, useState } from 'react';
+/* eslint-disable react-native/no-inline-styles */
+import React, {useCallback, useMemo, useState} from 'react';
 import {
   View,
   Text,
@@ -8,39 +9,45 @@ import {
   TouchableOpacity,
   SafeAreaView,
   StatusBar,
+ // Dimensions,
 } from 'react-native';
-import { InfoTicketRow } from '../components/InfoTicketRow'; // Assuming this component handles its own text color or accepts props. If it relies on global colors, it might look slightly different, but the container will be themed.
 import dayjs from 'dayjs';
-import { navigate } from '../utils/navigation';
-import { useFocusEffect } from '@react-navigation/native';
-import { Icon } from 'react-native-paper';
-import QRCode from 'react-native-qrcode-svg';
-// import { colors } from '../constant/color'; // Replaced with local THEME
-import { useSpinner } from '../context/SpinnerContext';
-import { getTicket } from '../services/TicketService';
-import { TicketDetailScreenProps } from '../types/screentypes';
-import { TicketProps } from '../types/ticket';
-import { showToast, checkErrorFetchingData } from '../utils/function';
+import Icon from 'react-native-vector-icons/Ionicons'; // Switched to Ionicons
+import QRCode from 'react-native-qrcode-svg'; // Uncommented for functionality
 
-// THEME CONSTANTS EXTRACTED FROM IMAGE
+import {navigate} from '../utils/navigation';
+import {useFocusEffect} from '@react-navigation/native';
+import {useSpinner} from '../context/SpinnerContext';
+import {getTicket} from '../services/TicketService';
+import {TicketDetailScreenProps} from '../types/screentypes';
+import {TicketProps} from '../types/ticket';
+import {showToast, checkErrorFetchingData} from '../utils/function';
+
+// const {width} = Dimensions.get('window');
+
+// --- CINEMATIC DARK THEME CONFIGURATION ---
 const THEME = {
-  background: '#13141F', // Dark blue-black background
-  primaryRed: '#F54B64', // Coral red
-  cardBg: '#20212D',     // Slightly lighter for cards
+  background: '#10111D', // Deep Cinematic Blue/Black
+  cardBg: '#1C1D2E', // Slightly lighter panel
+  primaryRed: '#FF3B30', // Neon/Cinematic Red
   textWhite: '#FFFFFF',
-  textGray: '#8F9BB3',   // Muted blue-gray text
-  divider: 'rgba(255,255,255,0.08)',
+  textGray: '#A0A0B0',
+  textDarkGray: '#5C5D6F',
+  glass: 'rgba(255, 255, 255, 0.08)',
+  border: 'rgba(255, 255, 255, 0.05)',
+  successGreen: '#34C759',
+  shadowColor: '#FF3B30',
 };
 
 const TicketDetailScreen: React.FC<TicketDetailScreenProps> = ({
   route,
   navigation,
 }) => {
-  const { ticketId, isFromBooking } = route.params;
+  const {ticketId, isFromBooking} = route.params;
 
   const [ticket, setTicket] = useState<TicketProps | null>(null);
 
-  const { showSpinner, hideSpinner } = useSpinner();
+  const {showSpinner, hideSpinner} = useSpinner();
 
   useFocusEffect(
     useCallback(() => {
@@ -55,7 +62,8 @@ const TicketDetailScreen: React.FC<TicketDetailScreenProps> = ({
           } else {
             showToast({
               type: 'error',
-              text1: responseData.message,
+              text1: 'Error',
+              text2: responseData.message,
             });
           }
         } catch (error) {
@@ -68,6 +76,10 @@ const TicketDetailScreen: React.FC<TicketDetailScreenProps> = ({
         }
       }
       fetchingTicket();
+      
+      return () => {
+          isActive = false;
+      }
     }, []),
   );
 
@@ -78,11 +90,11 @@ const TicketDetailScreen: React.FC<TicketDetailScreenProps> = ({
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={THEME.background} />
-      
-      {/* HEADER */}
+
+      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
-          style={styles.backButton}
+          style={styles.glassButton}
           onPress={() => {
             if (isFromBooking) {
               navigate('MainTabs', {
@@ -94,142 +106,193 @@ const TicketDetailScreen: React.FC<TicketDetailScreenProps> = ({
             } else {
               navigation.goBack();
             }
-          }}
-        >
-          <Icon source="chevron-left" size={28} color={THEME.textWhite} />
+          }}>
+          <Icon name="chevron-back" size={24} color={THEME.textWhite} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>
-          Ticket Detail
-        </Text>
-        <View style={styles.placeholder} />
+        <Text style={styles.headerTitle}>Ticket Details</Text>
+        <View style={{width: 40}} /> 
       </View>
 
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
-      >
+        contentContainerStyle={{paddingBottom: 40}}>
+        
         {/* QR CODE SECTION */}
         <View style={styles.qrSection}>
-          <Text style={styles.qrTitle}>Scan QR Code</Text>
+          <Text style={styles.qrLabel}>SCAN FOR ENTRY</Text>
           <View style={styles.qrContainer}>
             {ticket && (
               <QRCode
                 value={verificationUrl}
                 size={180}
-                backgroundColor="white"
+                backgroundColor="transparent"
                 color="black"
               />
             )}
+            {/* Corner Markers for "Scanner" Look */}
+            <View style={[styles.cornerMarker, styles.topLeft]} />
+            <View style={[styles.cornerMarker, styles.topRight]} />
+            <View style={[styles.cornerMarker, styles.bottomLeft]} />
+            <View style={[styles.cornerMarker, styles.bottomRight]} />
           </View>
-          <Text style={styles.ticketCode}>Code: <Text style={{fontWeight: 'bold', color: THEME.textWhite}}>{ticket?.ticketCode}</Text></Text>
+          
+          <View style={styles.codeContainer}>
+             <Text style={styles.codeLabel}>TICKET ID</Text>
+             <Text style={styles.ticketCode}>{ticket?.ticketCode}</Text>
+          </View>
+          
+          {/* Decorative Glow */}
+          <View style={styles.qrGlow} />
         </View>
 
         {/* MOVIE INFO SECTION */}
-        <View style={styles.infoSection}>
-          <Text style={styles.sectionHeader}>Movie Information</Text>
-          <View style={styles.row}>
-             <Text style={styles.label}>Cinema</Text>
-             <Text style={styles.value}>{ticket?.cinemaName || ''}</Text>
+        <View style={styles.sectionContainer}>
+          <View style={styles.sectionHeaderRow}>
+             <Text style={styles.sectionTitle}>Movie Details</Text>
+             <Icon name="film-outline" size={18} color={THEME.textGray} />
           </View>
-          <View style={styles.divider} />
           
-          <View style={styles.row}>
-             <Text style={styles.label}>Date & Time</Text>
-             <Text style={styles.value}>{dayjs(ticket?.showingTime.startTime).format('YYYY/MM/DD - HH:mm')}</Text>
+          <View style={styles.infoRow}>
+            <View style={styles.labelGroup}>
+                <Icon name="location-outline" size={16} color={THEME.textDarkGray} />
+                <Text style={styles.label}>Cinema</Text>
+            </View>
+            <Text style={styles.value}>{ticket?.cinemaName || ''}</Text>
           </View>
+          
           <View style={styles.divider} />
 
-          <View style={styles.row}>
-             <Text style={styles.label}>Seats</Text>
-             <Text style={[styles.value, {color: THEME.primaryRed, fontWeight: 'bold'}]}>
-                {ticket?.seats.map(eachSeat => eachSeat.row + eachSeat.column).join(', ') || ''}
-             </Text>
+          <View style={styles.infoRow}>
+            <View style={styles.labelGroup}>
+                <Icon name="calendar-outline" size={16} color={THEME.textDarkGray} />
+                <Text style={styles.label}>Date & Time</Text>
+            </View>
+            <Text style={styles.value}>
+              {dayjs(ticket?.showingTime.startTime).format('MMM DD, YYYY • HH:mm')}
+            </Text>
+          </View>
+
+          <View style={styles.divider} />
+
+          <View style={styles.infoRow}>
+            <View style={styles.labelGroup}>
+                <Icon name="grid-outline" size={16} color={THEME.textDarkGray} />
+                <Text style={styles.label}>Seats</Text>
+            </View>
+            <Text style={[styles.value, styles.highlightValue]}>
+              {ticket?.seats.map(eachSeat => eachSeat.row + eachSeat.column).join(', ') || ''}
+            </Text>
           </View>
         </View>
 
         {/* COMBOS SECTION */}
         {ticket?.combos && ticket?.combos.length > 0 && (
-          <View style={styles.infoSection}>
-            <Text style={styles.sectionHeader}>Combos</Text>
+          <View style={styles.sectionContainer}>
+            <View style={styles.sectionHeaderRow}>
+                <Text style={styles.sectionTitle}>Snacks & Drinks</Text>
+                <Icon name="fast-food-outline" size={18} color={THEME.textGray} />
+            </View>
             {ticket.combos.map((combo, index) => (
-              <View key={combo.comboId} style={[
-                  styles.comboItemContainer, 
-                  index !== ticket.combos.length - 1 && styles.borderBottom
-              ]}>
-                <Text style={styles.comboItem}>{combo.name}</Text>
-                <Text style={[styles.comboItem, {fontWeight: 'bold'}]}>x{combo.quantity}</Text>
+              <View
+                key={combo.comboId}
+                style={[
+                  styles.comboRow,
+                  index !== ticket.combos.length - 1 && styles.borderBottom,
+                ]}>
+                <Text style={styles.comboName}>{combo.name}</Text>
+                <Text style={styles.comboQty}>x{combo.quantity}</Text>
               </View>
             ))}
           </View>
         )}
 
-        {/* PRICE INFO SECTION */}
-        <View style={styles.infoSection}>
-          <Text style={styles.sectionHeader}>Payment Detail</Text>
-          <View style={styles.row}>
-            <Text style={styles.label}>Seat Price</Text>
-            <Text style={styles.value}>{ticket?.totalPriceSeats.toLocaleString()}đ</Text>
-          </View>
+        {/* PAYMENT DETAILS */}
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Payment Summary</Text>
           
-          <View style={styles.row}>
-            <Text style={styles.label}>Combo Price</Text>
-            <Text style={styles.value}>{ticket?.totalPriceCombos.toLocaleString()}đ</Text>
+          <View style={styles.paymentRow}>
+            <Text style={styles.paymentLabel}>Seats Total</Text>
+            <Text style={styles.paymentValue}>
+              {ticket?.totalPriceSeats.toLocaleString()} đ
+            </Text>
+          </View>
+
+          <View style={styles.paymentRow}>
+            <Text style={styles.paymentLabel}>Combos Total</Text>
+            <Text style={styles.paymentValue}>
+              {ticket?.totalPriceCombos.toLocaleString()} đ
+            </Text>
           </View>
 
           {ticket?.coupon && (
-             <View style={styles.row}>
-                <Text style={styles.label}>Coupon ({ticket.coupon.code})</Text>
-                <Text style={[styles.value, {color: THEME.primaryRed}]}>-{ticket.coupon.discountAmount.toLocaleString()}đ</Text>
-             </View>
+            <View style={styles.paymentRow}>
+              <Text style={styles.paymentLabel}>Coupon ({ticket.coupon.code})</Text>
+              <Text style={styles.discountValue}>
+                -{ticket.coupon.discountAmount.toLocaleString()} đ
+              </Text>
+            </View>
           )}
 
-          <View style={styles.row}>
-            <Text style={styles.label}>Rank Discount</Text>
-            <Text style={[styles.value, {color: THEME.primaryRed}]}>
-                {ticket?.totalRankDiscount ? `-${ticket.totalRankDiscount.toLocaleString()}đ` : '0đ'}
+          {ticket?.totalRankDiscount ? (
+             <View style={styles.paymentRow}>
+                <Text style={styles.paymentLabel}>Rank Discount</Text>
+                <Text style={styles.discountValue}>
+                    -{ticket.totalRankDiscount.toLocaleString()} đ
+                </Text>
+            </View>
+          ) : null}
+
+          {ticket?.loyalPointsUsed ? (
+              <View style={styles.paymentRow}>
+                <Text style={styles.paymentLabel}>Points Used</Text>
+                <Text style={styles.discountValue}>
+                    -{ticket.loyalPointsUsed.toLocaleString()} đ
+                </Text>
+            </View>
+          ) : null}
+
+          <View style={styles.dashedDivider} />
+
+          <View style={styles.totalRow}>
+            <Text style={styles.totalLabel}>Total Paid</Text>
+            <Text style={styles.totalValue}>
+              {ticket?.totalPrice.toLocaleString()} đ
             </Text>
           </View>
+        </View>
 
-          <View style={styles.row}>
-            <Text style={styles.label}>Loyal Points Used</Text>
-            <Text style={[styles.value, {color: THEME.primaryRed}]}>
-                {ticket?.loyalPointsUsed ? `-${ticket.loyalPointsUsed.toLocaleString()}đ` : '0đ'}
-            </Text>
-          </View>
-
-          <View style={[styles.divider, {backgroundColor: THEME.textGray}]} />
+        {/* TICKET STATUS */}
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Status</Text>
           
-          <View style={styles.row}>
-            <Text style={[styles.label, {fontSize: 16, fontWeight: 'bold', color: THEME.textWhite}]}>Total</Text>
-            <Text style={[styles.value, {fontSize: 20, fontWeight: 'bold', color: THEME.primaryRed}]}>
-                {ticket?.totalPrice.toLocaleString()}đ
+          <View style={styles.infoRow}>
+            <Text style={styles.label}>Booked On</Text>
+            <Text style={styles.value}>
+               {dayjs(ticket?.createdAt).format('MMM DD, HH:mm')}
             </Text>
+          </View>
+
+          <View style={styles.divider} />
+
+          <View style={styles.infoRow}>
+            <Text style={styles.label}>Current Status</Text>
+            {ticket?.usedAt ? (
+              <View style={styles.statusBadgeUsed}>
+                <Icon name="checkmark-circle" size={14} color={THEME.textGray} />
+                <Text style={styles.statusTextUsed}>
+                  Used: {dayjs(ticket?.usedAt).format('MM/DD HH:mm')}
+                </Text>
+              </View>
+            ) : (
+              <View style={styles.statusBadgeActive}>
+                <Icon name="ticket" size={14} color={THEME.successGreen} />
+                <Text style={styles.statusTextActive}>VALID</Text>
+              </View>
+            )}
           </View>
         </View>
 
-        {/* STATUS SECTION */}
-        <View style={[styles.infoSection, {marginBottom: 30}]}>
-          <Text style={styles.sectionHeader}>Ticket Status</Text>
-          <View style={styles.row}>
-             <Text style={styles.label}>Booked At</Text>
-             <Text style={styles.value}>{dayjs(ticket?.createdAt).format('YYYY/MM/DD - HH:mm')}</Text>
-          </View>
-          <View style={styles.divider} />
-          <View style={styles.row}>
-             <Text style={styles.label}>Status</Text>
-             {ticket?.usedAt ? (
-                <View style={styles.statusContainer}>
-                    <Icon source="check-circle" size={16} color={THEME.textGray}/>
-                    <Text style={styles.usedText}>Used: {dayjs(ticket?.usedAt).format('MM/DD HH:mm')}</Text>
-                </View>
-              ) : (
-                <View style={styles.statusContainer}>
-                    <Icon source="ticket-confirmation" size={18} color={THEME.primaryRed}/>
-                    <Text style={styles.activeText}>ACTIVE</Text>
-                </View>
-              )}
-          </View>
-        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -240,6 +303,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: THEME.background,
   },
+  
+  // Header
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -247,116 +312,247 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 15,
     backgroundColor: THEME.background,
+    borderBottomWidth: 1,
+    borderBottomColor: THEME.border,
   },
-  backButton: {
-    padding: 6,
-    borderRadius: 8,
-    backgroundColor: THEME.cardBg,
+  glassButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: THEME.glass,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: THEME.border,
   },
   headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 18,
+    fontWeight: '700',
     color: THEME.textWhite,
+    letterSpacing: 0.5,
   },
-  placeholder: {
-    width: 40,
-  },
+  
   scrollView: {
     flex: 1,
     paddingHorizontal: 20,
   },
+
+  // QR Section
   qrSection: {
     alignItems: 'center',
-    paddingVertical: 25,
-    backgroundColor: THEME.cardBg,
-    marginTop: 20,
-    borderRadius: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 5,
+    marginTop: 25,
+    marginBottom: 25,
+    position: 'relative',
   },
-  qrTitle: {
-    color: THEME.textWhite,
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 20,
+  qrLabel: {
+    color: THEME.textGray,
+    fontSize: 12,
+    fontWeight: '700',
+    letterSpacing: 2,
+    marginBottom: 15,
   },
   qrContainer: {
-    backgroundColor: 'white',
+    backgroundColor: '#FFF',
     padding: 15,
-    borderRadius: 16,
-    marginBottom: 15,
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  // Markers
+  cornerMarker: {
+      position: 'absolute',
+      width: 20,
+      height: 20,
+      borderColor: THEME.primaryRed,
+      borderWidth: 3,
+  },
+  topLeft: { top: 0, left: 0, borderRightWidth: 0, borderBottomWidth: 0, borderTopLeftRadius: 10 },
+  topRight: { top: 0, right: 0, borderLeftWidth: 0, borderBottomWidth: 0, borderTopRightRadius: 10 },
+  bottomLeft: { bottom: 0, left: 0, borderRightWidth: 0, borderTopWidth: 0, borderBottomLeftRadius: 10 },
+  bottomRight: { bottom: 0, right: 0, borderLeftWidth: 0, borderTopWidth: 0, borderBottomRightRadius: 10 },
+
+  qrGlow: {
+      position: 'absolute',
+      top: '20%',
+      left: '10%',
+      width: '80%',
+      height: 200,
+      backgroundColor: THEME.primaryRed,
+      opacity: 0.15,
+      borderRadius: 100,
+      zIndex: -1,
+      transform: [{scale: 1.2}],
+  },
+  codeContainer: {
+      marginTop: 15,
+      alignItems: 'center',
+  },
+  codeLabel: {
+      fontSize: 10,
+      color: THEME.textDarkGray,
+      letterSpacing: 1,
   },
   ticketCode: {
-    color: THEME.textGray,
-    fontSize: 14,
-    marginTop: 5,
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: THEME.textWhite,
+      letterSpacing: 1,
+      textShadowColor: THEME.primaryRed,
+      textShadowOffset: {width: 0, height: 0},
+      textShadowRadius: 10,
   },
-  infoSection: {
+
+  // Sections
+  sectionContainer: {
     backgroundColor: THEME.cardBg,
-    marginTop: 20,
     borderRadius: 20,
-    paddingHorizontal: 20,
-    paddingVertical: 20,
+    padding: 20,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: THEME.border,
   },
-  sectionHeader: {
-    color: THEME.textWhite,
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 15,
-  },
-  row: {
+  sectionHeaderRow: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      paddingVertical: 8,
+      marginBottom: 15,
   },
-  label: {
-      color: THEME.textGray,
-      fontSize: 14,
+  sectionTitle: {
+    color: THEME.textWhite,
+    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 15, // Default if no icon row
   },
-  value: {
-      color: THEME.textWhite,
-      fontSize: 14,
-      fontWeight: '500',
-      textAlign: 'right',
-  },
-  divider: {
-    height: 1,
-    backgroundColor: THEME.divider,
-    marginVertical: 5,
-  },
-  comboItemContainer: {
-    paddingVertical: 8,
+  
+  // Info Rows
+  infoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingVertical: 5,
+  },
+  labelGroup: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+  },
+  label: {
+    color: THEME.textGray,
+    fontSize: 14,
+  },
+  value: {
+    color: THEME.textWhite,
+    fontSize: 14,
+    fontWeight: '500',
+    textAlign: 'right',
+    flex: 1,
+    marginLeft: 15,
+  },
+  highlightValue: {
+      color: THEME.primaryRed,
+      fontWeight: 'bold',
+  },
+  divider: {
+    height: 1,
+    backgroundColor: THEME.border,
+    marginVertical: 10,
+  },
+  dashedDivider: {
+    height: 1,
+    backgroundColor: THEME.border,
+    marginVertical: 12,
+    borderStyle: 'dashed',
+    borderWidth: 1,
+    borderColor: THEME.border,
+  },
+
+  // Combos
+  comboRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 8,
   },
   borderBottom: {
-      borderBottomWidth: 1,
-      borderBottomColor: THEME.divider,
+    borderBottomWidth: 1,
+    borderBottomColor: THEME.border,
   },
-  comboItem: {
+  comboName: {
     color: THEME.textWhite,
     fontSize: 14,
   },
-  statusContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 5,
-  },
-  activeText: {
-    color: THEME.primaryRed,
+  comboQty: {
+    color: THEME.textGray,
     fontSize: 14,
     fontWeight: 'bold',
   },
-  usedText: {
-    color: THEME.textGray,
-    fontSize: 14,
+
+  // Payment
+  paymentRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 8,
+  },
+  paymentLabel: {
+      color: THEME.textGray,
+      fontSize: 14,
+  },
+  paymentValue: {
+      color: THEME.textWhite,
+      fontSize: 14,
+      fontWeight: '500',
+  },
+  discountValue: {
+      color: THEME.successGreen,
+      fontSize: 14,
+      fontWeight: '500',
+  },
+  totalRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginTop: 5,
+  },
+  totalLabel: {
+      color: THEME.textWhite,
+      fontSize: 16,
+      fontWeight: 'bold',
+  },
+  totalValue: {
+      color: THEME.primaryRed,
+      fontSize: 20,
+      fontWeight: 'bold',
+  },
+
+  // Status
+  statusBadgeActive: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: 'rgba(52, 199, 89, 0.15)',
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      borderRadius: 8,
+      gap: 5,
+  },
+  statusTextActive: {
+      color: THEME.successGreen,
+      fontWeight: 'bold',
+      fontSize: 12,
+  },
+  statusBadgeUsed: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: 'rgba(255,255,255,0.05)',
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      borderRadius: 8,
+      gap: 5,
+  },
+  statusTextUsed: {
+      color: THEME.textGray,
+      fontSize: 12,
   }
 });
 

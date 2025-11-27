@@ -5,11 +5,25 @@ import {MovieListProps} from '../types/movie';
 import {useSpinner} from '../context/SpinnerContext';
 
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {ScrollView, StatusBar, StyleSheet, Text, View} from 'react-native';
+import {ScrollView, StatusBar, StyleSheet, Text, View, Dimensions, TouchableOpacity} from 'react-native';
 import MovieItem from '../components/MovieItem';
 import {useFocusEffect} from '@react-navigation/native';
 import {getFavoriteMovies} from '../services/MovieService';
 import {checkErrorFetchingData} from '../utils/function';
+import Icon from 'react-native-vector-icons/Ionicons';
+
+const { width } = Dimensions.get('window');
+
+// THEME CONSTANTS MATCHING PREVIOUS SCREENS
+const THEME = {
+  background: '#10111D', // Dark cinematic background
+  cardBg: '#1F2130',     // Input/Card background
+  accent: '#FF3B30',     // Bright Red/Coral accent
+  textWhite: '#FFFFFF',
+  textGray: '#8F90A6',   // Muted gray
+  textPlaceholder: '#5C5E6F',
+  error: '#FF3B30',
+};
 
 export const FavoriteMovieScreen: React.FC<FavoriteScreenProps> = ({
   navigation,
@@ -50,24 +64,46 @@ export const FavoriteMovieScreen: React.FC<FavoriteScreenProps> = ({
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor="#2F2F2F" barStyle="light-content" />
+      <StatusBar backgroundColor={THEME.background} barStyle="light-content" />
+      
+      {/* Decorative Glow */}
+      <View style={styles.topGlow} />
+      
+      {/* Header */}
       <View style={styles.header}>
-        {/* Header content. Assuming this is a tab screen, so no back button is added here. */}
-        <Text style={styles.headerTitle}>Phim Yêu Thích</Text>
+        <View style={styles.headerIconContainer}>
+            <Icon name="heart" size={24} color={THEME.accent} />
+        </View>
+        <View>
+            <Text style={styles.headerTitle}>FAVORITE MOVIES</Text>
+            <Text style={styles.headerSubtitle}>Your personal collection</Text>
+        </View>
       </View>
 
       {isListEmpty ? (
         <View style={styles.emptyStateContainer}>
+          <View style={styles.emptyIconContainer}>
+             <Icon name="heart-dislike-outline" size={60} color={THEME.textPlaceholder} />
+          </View>
           <Text style={styles.emptyStateText}>
-            Bạn chưa thêm bộ phim yêu thích nào.
+            No favorite movies yet.
           </Text>
           <Text style={styles.emptyStateSubText}>
-            Tìm kiếm và nhấn vào biểu tượng trái tim để thêm phim!
+            Search and tap the heart icon to add movies to your collection!
           </Text>
-          {/*  - A relevant image for an empty favorite list could be added here if allowed. */}
+          <TouchableOpacity 
+            style={styles.browseButton}
+            onPress={() => navigation.navigate('HomeStack', { screen: 'HomeScreen' } as any)}
+          >
+             <Text style={styles.browseButtonText}>Browse Movies</Text>
+          </TouchableOpacity>
         </View>
       ) : (
-        <ScrollView style={styles.movieList} showsVerticalScrollIndicator={false}>
+        <ScrollView 
+            style={styles.movieList} 
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.movieListContent}
+        >
           {movies.map(eachMovie => (
             <MovieItem
               movie={eachMovie}
@@ -93,52 +129,105 @@ export const FavoriteMovieScreen: React.FC<FavoriteScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2F2F2F', // Dark background for the whole screen
+    backgroundColor: THEME.background,
+  },
+  topGlow: {
+    position: 'absolute',
+    top: -100,
+    left: -50,
+    width: width,
+    height: 300,
+    backgroundColor: THEME.accent,
+    opacity: 0.05,
+    borderRadius: 150,
+    transform: [{ scaleX: 1.5 }],
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center', // Center the title better
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#444444', // Darker border color for dark theme
+    paddingHorizontal: 24,
+    paddingVertical: 20,
+    marginTop: 10,
+  },
+  headerIconContainer: {
+      width: 48,
+      height: 48,
+      borderRadius: 16,
+      backgroundColor: 'rgba(255, 59, 48, 0.1)',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 16,
+      borderWidth: 1,
+      borderColor: 'rgba(255, 59, 48, 0.2)',
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: '700',
-    color: 'white',
-    // The previous text alignment was managed by flex: 1 and margin, but here we center it directly.
+    fontWeight: '800',
+    color: THEME.textWhite,
+    letterSpacing: 0.5,
+    marginBottom: 4,
   },
+  headerSubtitle: {
+      fontSize: 14,
+      color: THEME.textGray,
+      fontWeight: '500',
+  },
+  
   movieList: {
     flex: 1,
-    paddingHorizontal: 16, // Added padding for better list appearance
   },
-  // --- New styles for Empty State ---
+  movieListContent: {
+      paddingHorizontal: 20,
+      paddingBottom: 20,
+  },
+
+  // Empty State Styles
   emptyStateContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 30,
+    marginTop: -50, // Visual adjustment
+  },
+  emptyIconContainer: {
+      width: 120,
+      height: 120,
+      borderRadius: 60,
+      backgroundColor: 'rgba(255,255,255,0.03)',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 24,
+      borderWidth: 1,
+      borderColor: 'rgba(255,255,255,0.05)',
   },
   emptyStateText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#CCCCCC', // Light gray color
-    marginBottom: 8,
+    fontSize: 20,
+    fontWeight: '700',
+    color: THEME.textWhite,
+    marginBottom: 12,
     textAlign: 'center',
   },
   emptyStateSubText: {
     fontSize: 14,
-    color: '#888888', // Medium gray color
+    color: THEME.textGray,
     textAlign: 'center',
+    lineHeight: 22,
+    marginBottom: 32,
   },
-  // The following styles are unused in the final JSX but were in the original, keeping them for reference/future use, but simplifying the list.
-  // backButton: { padding: 4, },
-  // backArrow: { fontSize: 24, color: '#FF8133', fontWeight: 'bold', },
-  // menuButton: { padding: 4, },
-  // menuIcon: { fontSize: 20, color: '#FF8133', },
-  // filterContainer: { paddingHorizontal: 16, paddingVertical: 8, alignItems: 'flex-end', },
-  // filterButton: { backgroundColor: '#F5F5F5', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, },
-  // filterText: { fontSize: 14, color: '#C5C5C5', },
+  browseButton: {
+      backgroundColor: THEME.accent,
+      paddingHorizontal: 24,
+      paddingVertical: 12,
+      borderRadius: 24,
+      shadowColor: THEME.accent,
+      shadowOffset: {width: 0, height: 4},
+      shadowOpacity: 0.3,
+      shadowRadius: 8,
+      elevation: 6,
+  },
+  browseButtonText: {
+      color: THEME.textWhite,
+      fontSize: 14,
+      fontWeight: '700',
+  },
 });

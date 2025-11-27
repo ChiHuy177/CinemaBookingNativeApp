@@ -10,6 +10,7 @@ import {
   Platform,
   ScrollView,
   TextInput,
+  Dimensions,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {LoginScreenProps} from '../types/screentypes';
@@ -22,6 +23,8 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {required, isEmail} from '../utils/validators';
 import {login} from '../services/AuthService';
 import {checkErrorFetchingData, showToast} from '../utils/function';
+
+const { width } = Dimensions.get('window');
 
 interface FormData {
   email: string;
@@ -59,8 +62,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({navigation}) => {
         saveAuth();
         showToast({
           type: 'success',
-          text1: 'Thành công',
-          text2: 'Đăng nhập thành công!',
+          text1: 'Success',
+          text2: 'Login successful!',
         });
         // Navigate after a slight delay to allow the toast to show
         setTimeout(() => {
@@ -70,15 +73,15 @@ const LoginScreen: React.FC<LoginScreenProps> = ({navigation}) => {
         // Handle unauthenticated response from API even if status is 200
         showToast({
           type: 'error',
-          text1: 'Lỗi Đăng nhập',
-          text2: apiResponse.message || 'Tài khoản hoặc mật khẩu không đúng.',
+          text1: 'Login Error',
+          text2: apiResponse.message || 'Incorrect email or password.',
         });
       }
     } catch (error: any) {
       console.log('Axios error during login:', JSON.stringify(error, null, 2));
       checkErrorFetchingData({
         error: error,
-        title: 'Đăng nhập thất bại',
+        title: 'Login Failed',
       });
     } finally {
       hideSpinner();
@@ -87,126 +90,132 @@ const LoginScreen: React.FC<LoginScreenProps> = ({navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#070816" />
-      {/* fake gradient blobs */}
-      <View style={styles.bgCircleTop} />
-      <View style={styles.bgCircleBottom} />
-
+      <StatusBar barStyle="light-content" backgroundColor="#10111D" />
+      
+      {/* Decorative Background Elements based on reference style */}
+      <View style={styles.topGlow} />
+      
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}>
         <ScrollView
           contentContainerStyle={styles.scrollContainer}
-          showsVerticalScrollIndicator={false}>
-          {/* HEADER */}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled">
+          
+          {/* HEADER SECTION */}
           <View style={styles.header}>
-            <View style={styles.badge}>
-              <View style={styles.badgeDot} />
-              <Text style={styles.badgeText}>Cinema App</Text>
+            <View style={styles.iconContainer}>
+              <Icon name="film-outline" size={40} color="#FF3B30" />
             </View>
-
-            <Text style={styles.title}>Chào mừng trở lại,</Text>
-            <Text style={styles.subtitle}>
-              <Text style={styles.subtitleBold}>Đăng nhập</Text> để thưởng thức
-              phim mới nhất
+            <Text style={styles.appName}>CINEMA TICKET</Text>
+            <Text style={styles.welcomeText}>
+              Welcome back, Let's book your movie!
             </Text>
           </View>
 
-          {/* FORM CARD */}
-          <View style={styles.formCard}>
+          {/* FORM SECTION */}
+          <View style={styles.formContainer}>
             {/* Email Input */}
-            {errors.email && (
-              <Text style={styles.error}>
-                {errors.email.type === 'required'
-                  ? 'Email không được để trống'
-                  : 'Email không hợp lệ'}
-              </Text>
-            )}
-            <View
-              style={[
-                styles.inputContainer,
-                errors.email && styles.inputErrorBorder,
-              ]}>
-              <Icon
-                name="mail-outline"
-                size={20}
-                color={errors.email ? '#FF6B6B' : '#C5C5C5'}
-                style={styles.inputIcon}
-              />
-              <Controller
-                control={control}
-                name="email"
-                rules={{
-                  ...required('Email không được để trống'),
-                  ...isEmail,
-                }}
-                render={({field}) => (
-                  <TextInput
-                    placeholder="Email"
-                    placeholderTextColor="#8E8E93"
-                    keyboardType="email-address"
-                    value={field.value}
-                    onChangeText={field.onChange}
-                    style={styles.input}
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                  />
-                )}
-              />
+            <View style={styles.inputWrapper}>
+              <Text style={styles.label}>Email Address</Text>
+              <View
+                style={[
+                  styles.inputContainer,
+                  errors.email && styles.inputErrorBorder,
+                ]}>
+                <Icon
+                  name="mail"
+                  size={20}
+                  color={errors.email ? '#FF3B30' : '#5C5E6F'}
+                  style={styles.inputIcon}
+                />
+                <Controller
+                  control={control}
+                  name="email"
+                  rules={{
+                    ...required('Email is required'),
+                    ...isEmail,
+                  }}
+                  render={({field}) => (
+                    <TextInput
+                      placeholder="example@gmail.com"
+                      placeholderTextColor="#5C5E6F"
+                      keyboardType="email-address"
+                      value={field.value}
+                      onChangeText={field.onChange}
+                      style={styles.input}
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                    />
+                  )}
+                />
+              </View>
+              {errors.email && (
+                <Text style={styles.errorText}>
+                  {errors.email.type === 'required'
+                    ? 'Email is required'
+                    : 'Invalid email address'}
+                </Text>
+              )}
             </View>
 
             {/* Password Input */}
-            {errors.password && (
-              <Text style={styles.error}>{errors.password.message}</Text>
-            )}
-            <View
-              style={[
-                styles.inputContainer,
-                errors.password && styles.inputErrorBorder,
-              ]}>
-              <Icon
-                name="lock-closed-outline"
-                size={20}
-                color={errors.password ? '#FF6B6B' : '#C5C5C5'}
-                style={styles.inputIcon}
-              />
-              <Controller
-                control={control}
-                name="password"
-                rules={{
-                  ...required('Mật khẩu không được để trống'),
-                }}
-                render={({field}) => (
-                  <TextInput
-                    style={[styles.input, styles.passwordInput]}
-                    placeholder="Mật khẩu"
-                    placeholderTextColor="#8E8E93"
-                    secureTextEntry={!showPassword}
-                    value={field.value}
-                    onChangeText={field.onChange}
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                  />
-                )}
-              />
-
-              <TouchableOpacity
-                onPress={() => setShowPassword(!showPassword)}
-                style={styles.eyeIcon}>
+            <View style={styles.inputWrapper}>
+              <Text style={styles.label}>Password</Text>
+              <View
+                style={[
+                  styles.inputContainer,
+                  errors.password && styles.inputErrorBorder,
+                ]}>
                 <Icon
-                  name={showPassword ? 'eye-outline' : 'eye-off-outline'}
+                  name="lock-closed"
                   size={20}
-                  color="#C5C5C5"
+                  color={errors.password ? '#FF3B30' : '#5C5E6F'}
+                  style={styles.inputIcon}
                 />
-              </TouchableOpacity>
+                <Controller
+                  control={control}
+                  name="password"
+                  rules={{
+                    ...required('Password is required'),
+                  }}
+                  render={({field}) => (
+                    <TextInput
+                      style={styles.input}
+                      placeholder="••••••••"
+                      placeholderTextColor="#5C5E6F"
+                      secureTextEntry={!showPassword}
+                      value={field.value}
+                      onChangeText={field.onChange}
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                    />
+                  )}
+                />
+                <TouchableOpacity
+                  onPress={() => setShowPassword(!showPassword)}
+                  style={styles.eyeIcon}>
+                  <Icon
+                    name={showPassword ? 'eye' : 'eye-off'}
+                    size={20}
+                    color="#5C5E6F"
+                  />
+                </TouchableOpacity>
+              </View>
+              {errors.password && (
+                <Text style={styles.errorText}>{errors.password.message}</Text>
+              )}
             </View>
 
+            {/* Forgot Password */}
             <TouchableOpacity
               onPress={() => navigation.navigate('ForgotPasswordScreen')}
-              style={styles.forgotPassword}>
-              <Text style={styles.forgotPasswordText}>Quên mật khẩu?</Text>
+              style={styles.forgotPasswordContainer}>
+              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
             </TouchableOpacity>
 
+            {/* Login Button */}
             <TouchableOpacity
               style={[
                 styles.loginButton,
@@ -214,24 +223,22 @@ const LoginScreen: React.FC<LoginScreenProps> = ({navigation}) => {
               ]}
               onPress={handleSubmit(onSubmit)}
               disabled={isSubmitting}>
-              <View style={styles.loginButtonContent}>
-                <Text style={styles.loginButtonText}>Đăng nhập</Text>
-                <Icon
-                  name="arrow-forward"
-                  size={18}
-                  color="#FFFFFF"
-                  style={styles.loginArrowIcon}
-                />
-              </View>
+              {isSubmitting ? (
+                <Text style={styles.loginButtonText}>Processing...</Text>
+              ) : (
+                <>
+                  <Text style={styles.loginButtonText}>Login</Text>
+                  <Icon name="arrow-forward" size={20} color="#FFF" style={{marginLeft: 8}} />
+                </>
+              )}
             </TouchableOpacity>
           </View>
 
           {/* FOOTER */}
           <View style={styles.footer}>
-            <Text style={styles.footerText}>Chưa có tài khoản?</Text>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('RegisterScreen')}>
-              <Text style={styles.signUpText}> Đăng ký</Text>
+            <Text style={styles.footerText}>Don't have an account?</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('RegisterScreen')}>
+              <Text style={styles.signUpText}>Sign up now</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -243,7 +250,18 @@ const LoginScreen: React.FC<LoginScreenProps> = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#070816', // dark cinema background
+    backgroundColor: '#10111D', // Dark cinematic background (Matched reference)
+  },
+  topGlow: {
+    position: 'absolute',
+    top: -100,
+    left: -50,
+    width: width,
+    height: 300,
+    backgroundColor: '#FF3B30',
+    opacity: 0.08,
+    borderRadius: 150,
+    transform: [{ scaleX: 1.5 }],
   },
   keyboardView: {
     flex: 1,
@@ -251,100 +269,67 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
     paddingHorizontal: 24,
-    paddingVertical: 32,
+    paddingVertical: 20,
     justifyContent: 'center',
   },
-
-  /* fake gradient blobs */
-  bgCircleTop: {
-    position: 'absolute',
-    top: -120,
-    left: -60,
-    width: 260,
-    height: 260,
-    borderRadius: 130,
-    backgroundColor: '#20213A',
-    opacity: 0.9,
-  },
-  bgCircleBottom: {
-    position: 'absolute',
-    bottom: -140,
-    right: -80,
-    width: 280,
-    height: 280,
-    borderRadius: 140,
-    backgroundColor: '#FF4B3A',
-    opacity: 0.25,
-  },
-
+  
+  // Header Styles
   header: {
-    marginBottom: 32,
+    alignItems: 'center',
+    marginBottom: 40,
   },
-  badge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 999,
-    backgroundColor: 'rgba(255,255,255,0.06)',
-    flexDirection: 'row',
+  iconContainer: {
+    width: 80,
+    height: 80,
+    backgroundColor: 'rgba(255, 59, 48, 0.1)',
+    borderRadius: 40,
+    justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 59, 48, 0.3)',
   },
-  badgeDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#FF4B3A',
-    marginRight: 8,
-  },
-  badgeText: {
+  appName: {
+    fontSize: 24,
+    fontWeight: '800',
     color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '600',
+    letterSpacing: 1,
+    marginBottom: 8,
+    textTransform: 'uppercase',
   },
-  title: {
-    fontSize: 30,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    marginBottom: 6,
-  },
-  subtitle: {
-    fontSize: 15,
-    color: '#B0B0B5',
-    lineHeight: 22,
-  },
-  subtitleBold: {
-    color: '#FFFFFF',
-    fontWeight: '600',
+  welcomeText: {
+    fontSize: 14,
+    color: '#8F90A6',
+    textAlign: 'center',
   },
 
-  formCard: {
-    backgroundColor: 'rgba(12, 11, 23, 0.96)',
-    borderRadius: 24,
-    padding: 24,
-    marginBottom: 32,
-    shadowColor: '#000000',
-    shadowOffset: {width: 0, height: 18},
-    shadowOpacity: 0.45,
-    shadowRadius: 30,
-    elevation: 16,
-    // Ensure form is always centered vertically if content is smaller than screen
-    justifyContent: 'center',
+  // Form Styles
+  formContainer: {
+    marginBottom: 20,
   },
-
+  inputWrapper: {
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 14,
+    color: '#FFFFFF',
+    fontWeight: '600',
+    marginBottom: 8,
+    marginLeft: 4,
+  },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.04)',
+    backgroundColor: '#1F2130', // Card color from reference
     borderRadius: 16,
-    marginBottom: 16,
-    paddingHorizontal: 16,
     height: 56,
+    paddingHorizontal: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
+    borderColor: 'transparent',
   },
   inputErrorBorder: {
-    borderColor: '#FF6B6B',
+    borderColor: '#FF3B30',
+    borderWidth: 1,
   },
   inputIcon: {
     marginRight: 12,
@@ -353,78 +338,70 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 15,
     color: '#FFFFFF',
-    paddingVertical: 0, // Fix vertical alignment issue on Android
-  },
-  passwordInput: {
-    paddingRight: 40,
+    height: '100%',
   },
   eyeIcon: {
-    position: 'absolute',
-    right: 16,
-    padding: 4,
+    padding: 8,
   },
-
-  forgotPassword: {
+  errorText: {
+    color: '#FF3B30',
+    fontSize: 12,
+    marginTop: 6,
+    marginLeft: 4,
+  },
+  
+  forgotPasswordContainer: {
     alignSelf: 'flex-end',
-    marginBottom: 24,
+    marginBottom: 32,
   },
   forgotPasswordText: {
-    color: '#FF4B3A',
-    fontSize: 13,
+    color: '#FF3B30', // Accent color
+    fontSize: 14,
     fontWeight: '600',
   },
 
+  // Button Styles
   loginButton: {
-    height: 56,
-    borderRadius: 18,
-    backgroundColor: '#FF4B3A',
+    height: 58,
+    borderRadius: 29, // Fully rounded (Pill shape)
+    backgroundColor: '#FF3B30', // The bright red from the reference
+    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#FF4B3A',
-    shadowOffset: {width: 0, height: 12},
-    shadowOpacity: 0.45,
-    shadowRadius: 24,
-    elevation: 10,
+    shadowColor: '#FF3B30',
+    shadowOffset: {width: 0, height: 8},
+    shadowOpacity: 0.3,
+    shadowRadius: 15,
+    elevation: 8,
   },
   loginButtonDisabled: {
-    opacity: 0.6,
-  },
-  loginButtonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    opacity: 0.7,
+    backgroundColor: '#3A3A3A',
   },
   loginButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-  },
-  loginArrowIcon: {
-    marginLeft: 8,
+    letterSpacing: 0.5,
   },
 
+  // Footer Styles
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
+    marginTop: 10,
     alignItems: 'center',
   },
   footerText: {
-    color: '#8E8E93',
+    color: '#8F90A6',
     fontSize: 14,
   },
   signUpText: {
-    color: '#FF4B3A',
+    color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '700',
-  },
-
-  error: {
-    color: '#FF6B6B',
-    marginBottom: 6,
-    fontSize: 12,
-    alignSelf: 'flex-start',
-    marginLeft: 4,
+    marginLeft: 6,
+    textDecorationLine: 'underline',
   },
 });
 

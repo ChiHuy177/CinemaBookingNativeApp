@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback, useMemo, useState } from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import {
   View,
   Text,
@@ -8,21 +8,20 @@ import {
   TouchableOpacity,
   ScrollView,
   StatusBar,
-  Dimensions,
+  // Dimensions,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import { ShowingTimeBookingScreenProps } from '../types/screentypes';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { CinemaForBookingProps } from '../types/cinema';
-import { useSpinner } from '../context/SpinnerContext';
-import { useFocusEffect } from '@react-navigation/native';
-import { useForm, SubmitHandler, Controller } from 'react-hook-form';
-import { CinemaForBooking } from '../components/CinemaForBooking';
-import { DateButtonForBooking } from '../components/DateButtonForBooking';
-// import { colors } from '../constant/color'; // Replaced with local THEME
-import { defaultDateForBooking } from '../constant/variable';
-import { getCinemaForBooking } from '../services/CinemaService';
-import { ShowingTimeInRoomProps } from '../types/showingTime';
+import Icon from 'react-native-vector-icons/Ionicons'; // Switched to Ionicons
+import {ShowingTimeBookingScreenProps} from '../types/screentypes';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {CinemaForBookingProps} from '../types/cinema';
+import {useSpinner} from '../context/SpinnerContext';
+import {useFocusEffect} from '@react-navigation/native';
+import {useForm, SubmitHandler, Controller} from 'react-hook-form';
+import {CinemaForBooking} from '../components/CinemaForBooking';
+import {DateButtonForBooking} from '../components/DateButtonForBooking';
+import {defaultDateForBooking} from '../constant/variable';
+import {getCinemaForBooking} from '../services/CinemaService';
+import {ShowingTimeInRoomProps} from '../types/showingTime';
 import {
   filterSuitableCinemasForBooking,
   showToast,
@@ -30,16 +29,19 @@ import {
   formatDateToHourseAndMinutes,
 } from '../utils/function';
 
-const { width } = Dimensions.get('window');
+// const {width} = Dimensions.get('window');
 
-// THEME CONSTANTS EXTRACTED FROM IMAGE
+// --- CINEMATIC DARK THEME CONFIGURATION ---
 const THEME = {
-  background: '#13141F', // Dark blue-black background
-  primaryRed: '#F54B64', // Coral red
-  cardBg: '#20212D',     // Slightly lighter for cards
+  background: '#10111D', // Deep Cinematic Blue/Black
+  cardBg: '#1C1D2E', // Slightly lighter panel
+  primaryRed: '#FF3B30', // Neon/Cinematic Red
   textWhite: '#FFFFFF',
-  textGray: '#8F9BB3',   // Muted blue-gray text
-  divider: 'rgba(255,255,255,0.08)',
+  textGray: '#A0A0B0',
+  textDarkGray: '#5C5D6F',
+  glass: 'rgba(255, 255, 255, 0.08)',
+  border: 'rgba(255, 255, 255, 0.05)',
+  shadowColor: '#FF3B30',
 };
 
 interface FormData {
@@ -53,14 +55,14 @@ const ShowingTimeBookingScreen: React.FC<ShowingTimeBookingScreenProps> = ({
   route,
   navigation,
 }) => {
-  const { movieId, movieTitle } = route.params;
+  const {movieId, movieTitle} = route.params;
 
   const dates = useMemo(() => defaultDateForBooking(), [movieId]);
   const [cinemas, setCinemas] = useState<CinemaForBookingProps[]>([]);
   const [tempCinemas, setTempCinemas] = useState<CinemaForBookingProps[]>([]);
   const {
     control,
-    formState: { isSubmitting },
+    formState: {isSubmitting},
     handleSubmit,
     watch,
     setValue,
@@ -81,7 +83,7 @@ const ShowingTimeBookingScreen: React.FC<ShowingTimeBookingScreenProps> = ({
     [cinemaName: string]: number;
   }>({});
 
-  const { hideSpinner, showSpinner } = useSpinner();
+  const {hideSpinner, showSpinner} = useSpinner();
 
   useFocusEffect(
     useCallback(() => {
@@ -116,7 +118,8 @@ const ShowingTimeBookingScreen: React.FC<ShowingTimeBookingScreenProps> = ({
           } else {
             showToast({
               type: 'error',
-              text1: responseData.message,
+              text1: 'Data Error',
+              text2: responseData.message,
             });
           }
         } catch (error) {
@@ -143,7 +146,7 @@ const ShowingTimeBookingScreen: React.FC<ShowingTimeBookingScreenProps> = ({
         cinemas,
         new Date(dateKey),
       );
-      console.log(filteredCinemas);
+      // console.log(filteredCinemas); // Keep clean for prod
       setTempCinemas(filteredCinemas);
       setExpandedCinemas(
         Object.fromEntries(filteredCinemas.map(cinema => [cinema.name, true])),
@@ -195,37 +198,43 @@ const ShowingTimeBookingScreen: React.FC<ShowingTimeBookingScreenProps> = ({
       showingTimeId: data.selectedTime?.showingTimeId || 0,
     });
   }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={THEME.background} />
 
-      {/* HEADER */}
+      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Icon name="arrow-back" size={24} color={THEME.textWhite} />
+          style={styles.glassButton}
+          onPress={() => navigation.goBack()}>
+          <Icon name="chevron-back" size={24} color={THEME.textWhite} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle} ellipsizeMode="tail" numberOfLines={1}>
+        <Text
+          style={styles.headerTitle}
+          ellipsizeMode="tail"
+          numberOfLines={1}>
           {movieTitle}
         </Text>
-        <View style={{width: 34}} />
+        <View style={{width: 40}} /> 
       </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* DATE SELECTION */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Select Date</Text>
+      <ScrollView
+        style={styles.content}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{paddingBottom: 20}}>
+        
+        {/* Date Selection */}
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionHeader}>Select Date</Text>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            style={styles.datesContainer}
-          >
+            contentContainerStyle={styles.datesScrollContent}>
             <Controller
               control={control}
               name="selectedDate"
-              render={({ field: { value } }) => (
+              render={({field: {value}}) => (
                 <>
                   {dates.map(date => {
                     const isToday = date.dateKey === dates[0].dateKey;
@@ -247,9 +256,13 @@ const ShowingTimeBookingScreen: React.FC<ShowingTimeBookingScreenProps> = ({
           </ScrollView>
         </View>
 
-        {/* THEATER & TIME SELECTION */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Select Theater & Time</Text>
+        {/* Theaters List */}
+        <View style={styles.sectionContainer}>
+          <View style={styles.theaterHeaderRow}>
+            <Text style={styles.sectionHeader}>Cinemas & Showtimes</Text>
+            <Icon name="options-outline" size={20} color={THEME.textGray} />
+          </View>
+          
           {tempCinemas.map(eachCinema => (
             <CinemaForBooking
               cinema={eachCinema}
@@ -262,16 +275,25 @@ const ShowingTimeBookingScreen: React.FC<ShowingTimeBookingScreenProps> = ({
               key={eachCinema.cinemaId}
             />
           ))}
+
           {tempCinemas.length === 0 && (
-             <View style={styles.emptyState}>
-                <Text style={styles.emptyStateText}>No showtimes available for this date.</Text>
-             </View>
+            <View style={styles.emptyContainer}>
+              <View style={styles.emptyIconCircle}>
+                 <Icon name="calendar-outline" size={40} color={THEME.textDarkGray} />
+              </View>
+              <Text style={styles.emptyText}>
+                No showtimes found for this date.
+              </Text>
+              <Text style={styles.emptySubText}>
+                  Please select another date.
+              </Text>
+            </View>
           )}
         </View>
       </ScrollView>
 
-      {/* BOTTOM ACTION BAR */}
-      <View style={styles.bottomContainer}>
+      {/* Bottom Bar */}
+      <View style={styles.bottomBar}>
         <TouchableOpacity
           style={[
             styles.continueButton,
@@ -280,13 +302,14 @@ const ShowingTimeBookingScreen: React.FC<ShowingTimeBookingScreenProps> = ({
                 ? THEME.primaryRed
                 : THEME.cardBg,
               opacity: watch('selectedTime') ? 1 : 0.6,
-              shadowOpacity: watch('selectedTime') ? 0.3 : 0,
+              shadowOpacity: watch('selectedTime') ? 0.4 : 0,
             },
           ]}
           disabled={isSubmitting || !watch('selectedTime')}
-          onPress={handleSubmit(onSubmit)}
-        >
-          <Text style={styles.continueButtonText}>Continue</Text>
+          activeOpacity={0.8}
+          onPress={handleSubmit(onSubmit)}>
+          <Text style={styles.continueText}>Select Seats</Text>
+          {watch('selectedTime') && <Icon name="arrow-forward" size={20} color="#FFF" style={{marginLeft: 8}} />}
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -305,89 +328,117 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 15,
     backgroundColor: THEME.background,
-    width: width,
-    maxWidth: width,
+    borderBottomWidth: 1,
+    borderBottomColor: THEME.border,
   },
-  backButton: {
-    padding: 5,
-    borderRadius: 8,
-    backgroundColor: THEME.cardBg,
+  glassButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: THEME.glass,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: THEME.border,
   },
   headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 18,
+    fontWeight: '700',
     color: THEME.textWhite,
     textAlign: 'center',
     flex: 1,
-    paddingHorizontal: 10,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 20,
-    marginTop: 10,
-  },
-  section: {
-    marginBottom: 30,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: THEME.textWhite,
-    marginBottom: 15,
-  },
-  // Kept logic for locationContainer but updated colors just in case it's used later
-  locationContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: THEME.cardBg,
     paddingHorizontal: 15,
-    paddingVertical: 12,
-    borderRadius: 8,
-  },
-  locationText: {
-    flex: 1,
-    color: THEME.textGray,
-    marginLeft: 10,
-    fontSize: 16,
-  },
-  datesContainer: {
-    flexDirection: 'row',
-  },
-  bottomContainer: {
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    paddingBottom: 30, // Safe area
-    backgroundColor: THEME.background,
-    borderTopWidth: 1,
-    borderTopColor: THEME.divider,
-  },
-  continueButton: {
-    paddingVertical: 16,
-    borderRadius: 30, // Pill shape
-    alignItems: 'center',
-    shadowColor: THEME.primaryRed,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  continueButtonText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
     letterSpacing: 0.5,
   },
-  emptyState: {
-      padding: 20,
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: THEME.cardBg,
-      borderRadius: 12,
+  
+  content: {
+    flex: 1,
+    marginTop: 10,
   },
-  emptyStateText: {
+  
+  // Sections
+  sectionContainer: {
+    marginBottom: 25,
+  },
+  sectionHeader: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: THEME.textWhite,
+    marginBottom: 15,
+    paddingHorizontal: 20,
+  },
+  theaterHeaderRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingRight: 20,
+  },
+
+  // Date Scroll
+  datesScrollContent: {
+    paddingHorizontal: 20,
+    gap: 12,
+  },
+  
+  // Empty State
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 30,
+    backgroundColor: THEME.cardBg,
+    marginHorizontal: 20,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: THEME.border,
+    marginTop: 10,
+  },
+  emptyIconCircle: {
+      width: 80,
+      height: 80,
+      borderRadius: 40,
+      backgroundColor: 'rgba(255,255,255,0.03)',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 15,
+  },
+  emptyText: {
+    color: THEME.textWhite,
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 5,
+  },
+  emptySubText: {
       color: THEME.textGray,
-      fontSize: 14,
-  }
+      fontSize: 13,
+  },
+
+  // Bottom Bar
+  bottomBar: {
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    paddingBottom: 30,
+    backgroundColor: THEME.background,
+    borderTopWidth: 1,
+    borderTopColor: THEME.border,
+  },
+  continueButton: {
+    flexDirection: 'row',
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: THEME.shadowColor,
+    shadowOffset: {width: 0, height: 8},
+    shadowRadius: 16,
+    elevation: 8,
+  },
+  continueText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FFF',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+  },
 });
 
 export default ShowingTimeBookingScreen;

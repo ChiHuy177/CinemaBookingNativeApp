@@ -12,7 +12,7 @@ import {
   SafeAreaView,
   Dimensions,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons'; // Changed to Ionicons
+import Icon from 'react-native-vector-icons/Ionicons';
 import {ComboBookingScreenProps} from '../types/screentypes';
 
 import {ComboItem} from '../components/ComboItem';
@@ -24,13 +24,15 @@ import { showToast, checkErrorFetchingData } from '../utils/function';
 
 const {width} = Dimensions.get('window');
 
-// THEME COLORS CONSISTENT WITH OTHER SCREENS
-const COLORS = {
-  background: '#0B0F19', // Deep dark blue/black background
-  card: '#1D212E', // Slightly lighter for buttons/cards and summary bar
-  primary: '#F54B46', // Coral red
-  text: '#FFFFFF',
-  textSecondary: '#7B8299', // Muted text color
+// THEME CONSTANTS MATCHING PREVIOUS SCREENS
+const THEME = {
+  background: '#10111D', // Dark cinematic background
+  cardBg: '#1F2130',     // Input/Card background
+  accent: '#FF3B30',     // Bright Red/Coral accent
+  textWhite: '#FFFFFF',
+  textGray: '#8F90A6',   // Muted gray
+  textPlaceholder: '#5C5E6F',
+  error: '#FF3B30',
 };
 
 const ComboSelectionScreen: React.FC<ComboBookingScreenProps> = ({
@@ -138,20 +140,23 @@ const ComboSelectionScreen: React.FC<ComboBookingScreenProps> = ({
   
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={COLORS.background} />
+      <StatusBar barStyle="light-content" backgroundColor={THEME.background} />
       
-      {/* Consistent Header Style */}
-      <View style={styles.headerContainer}>
+      {/* Decorative Glow */}
+      <View style={styles.topGlow} />
+      
+      {/* Header */}
+      <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}>
-          <Icon name="chevron-back" size={24} color={COLORS.text} />
+          <Icon name="arrow-back" size={24} color={THEME.textWhite} />
         </TouchableOpacity>
-        <View style={styles.headerCenter}>
-           <Text style={styles.headerTitleText}>Combos</Text>
+        <View style={styles.headerTitleContainer}>
+           <Text style={styles.headerTitle}>COMBOS</Text>
            <Text style={styles.headerSubtitle}>Snacks & Drinks</Text>
         </View>
-        <View style={{width: 40}} /> {/* Placeholder */}
+        <View style={{width: 40}} /> 
       </View>
 
 
@@ -176,22 +181,20 @@ const ComboSelectionScreen: React.FC<ComboBookingScreenProps> = ({
         />
 
         {/* Padding for the summary bar at the bottom */}
-        <View style={{height: 120}} />
+        <View style={{height: 140}} />
       </ScrollView>
 
       {/* Order Summary / Footer */}
       <View style={styles.orderSummary}>
         <View style={styles.summaryInfo}>
-          <Text style={styles.summaryText}>Tổng đơn hàng ({totalQuantity} Combo + {selectedSeats.length} Ghế)</Text>
+          <Text style={styles.summaryText}>Order Total ({totalQuantity} Combos + {selectedSeats.length} Seats)</Text>
           
           <View style={styles.totalPriceSeatContainer}>
-             {/* Total Grand Price */}
              <Text style={styles.grandTotalPrice}>
                {grandTotal.toLocaleString('vi-VN') + 'đ'}
              </Text>
-             {/* Breakdown Text */}
              <Text style={styles.breakdownText}>
-                ({totalPriceSeats.toLocaleString('vi-VN')}đ ghế + {totalPrice.toLocaleString('vi-VN')}đ combo)
+                ({totalPriceSeats.toLocaleString('vi-VN')}đ seats + {totalPrice.toLocaleString('vi-VN')}đ combos)
              </Text>
           </View>
           
@@ -202,8 +205,8 @@ const ComboSelectionScreen: React.FC<ComboBookingScreenProps> = ({
           onPress={handleBookingTicket}
           disabled={selectedSeats.length === 0}
           >
-          <Text style={styles.bookingButtonText}>Tiếp tục</Text>
-          <Icon name="arrow-forward-circle-outline" size={20} color={COLORS.text} />
+          <Text style={styles.bookingButtonText}>Continue</Text>
+          <Icon name="arrow-forward" size={20} color="#FFF" />
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -213,10 +216,21 @@ const ComboSelectionScreen: React.FC<ComboBookingScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: THEME.background,
   },
-  // --- Header Styles ---
-  headerContainer: {
+  topGlow: {
+    position: 'absolute',
+    top: -100,
+    left: -50,
+    width: width,
+    height: 300,
+    backgroundColor: THEME.accent,
+    opacity: 0.05,
+    borderRadius: 150,
+    transform: [{ scaleX: 1.5 }],
+  },
+  // Header
+  header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -228,89 +242,100 @@ const styles = StyleSheet.create({
   backButton: {
     width: 40,
     height: 40,
-    borderRadius: 12,
-    backgroundColor: COLORS.card, // Square button style
+    borderRadius: 20, // Circular
+    backgroundColor: 'rgba(255,255,255,0.1)', // Glassmorphism
     justifyContent: 'center',
     alignItems: 'center',
   },
-  headerCenter: {
+  headerTitleContainer: {
      flex: 1,
      alignItems: 'center',
   },
-  headerTitleText: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: COLORS.text,
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: THEME.textWhite,
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
   },
   headerSubtitle: {
-    color: COLORS.textSecondary,
-    fontSize: 14,
+    color: THEME.textGray,
+    fontSize: 13,
     fontWeight: '500',
     marginTop: 2,
   },
-  // --- Scroll Content Styles ---
+  // Content
   scrollView: {
     flex: 1,
   },
   scrollContent: {
     paddingHorizontal: 20,
+    paddingTop: 10,
   },
-  // --- Footer/Summary Styles ---
+  // Footer
   orderSummary: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: COLORS.card, // Dark card color for footer
-    borderTopWidth: 0,
-    paddingHorizontal: 20,
-    paddingVertical: 15,
+    backgroundColor: '#1F2130', // Card Bg
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingHorizontal: 24,
+    paddingVertical: 20,
+    paddingBottom: 30, // Extra padding for safety
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    // Improved shadow for modern look
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: -5},
-    shadowOpacity: 0.5,
-    shadowRadius: 10,
-    elevation: 10,
+    shadowOffset: {width: 0, height: -10},
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 20,
   },
   summaryInfo: {
     flex: 1,
+    marginRight: 10,
   },
   summaryText: {
-    color: COLORS.textSecondary,
-    fontSize: 14,
+    color: THEME.textGray,
+    fontSize: 12,
     fontWeight: '600',
     marginBottom: 4,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   totalPriceSeatContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    gap: 8,
+    justifyContent: 'center',
   },
   grandTotalPrice: {
-    color: COLORS.primary, // Highlight total price
-    fontSize: 24,
-    fontWeight: '900',
+    color: THEME.accent,
+    fontSize: 22,
+    fontWeight: '800',
+    marginBottom: 2,
   },
   breakdownText: {
-    color: COLORS.textSecondary,
-    fontSize: 12,
+    color: '#5C5E6F',
+    fontSize: 11,
     fontWeight: '500',
   },
   bookingButton: {
-    backgroundColor: COLORS.primary,
-    borderRadius: 12, // More rounded corners
-    paddingHorizontal: 20,
-    paddingVertical: 14,
+    backgroundColor: THEME.accent,
+    borderRadius: 25, // Pill shape
+    paddingHorizontal: 24,
+    height: 50,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
+    gap: 8,
+    shadowColor: THEME.accent,
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    elevation: 8,
   },
   bookingButtonText: {
-    color: COLORS.text,
+    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '700',
   },
