@@ -15,10 +15,20 @@ export const MainTabs: React.FC<MainTabsProps> = () => {
     <Tab.Navigator
       initialRouteName="HomeStack"
       screenOptions={{
-        tabBarActiveTintColor: '#FF8133',
-        tabBarInactiveTintColor: 'white',
+        tabBarActiveTintColor: '#FF3B30', // Accent color matching HomeScreen
+        tabBarInactiveTintColor: '#8F90A6', // Text gray matching HomeScreen
         tabBarStyle: {
-          backgroundColor: '#3D3D3D',
+          backgroundColor: '#1F2130', // Card background matching HomeScreen
+          borderTopWidth: 0, // Remove default border
+          elevation: 0, // Remove shadow on Android
+          shadowOpacity: 0, // Remove shadow on iOS
+          paddingBottom: 5,
+          paddingTop: 5,
+          height: 60,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '600',
         },
       }}>
       <Tab.Screen

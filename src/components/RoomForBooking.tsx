@@ -57,14 +57,14 @@ export const RoomForBooking = React.memo(
 
 const styles = StyleSheet.create({
   roomContainer: {
-    backgroundColor: '#3d3d3d',
+    backgroundColor: '#1F2130', // Card background matching HomeScreen
     marginHorizontal: 15,
     marginBottom: 10,
     paddingHorizontal: 15,
     paddingVertical: 5,
-    borderRadius: 6,
+    borderRadius: 8,
     borderLeftWidth: 3,
-    borderLeftColor: '#ff8133',
+    borderLeftColor: '#FF3B30', // Accent color matching HomeScreen
   },
   roomDetails: {
     flexDirection: 'row',
@@ -78,16 +78,16 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   roomType: {
-    color: '#ff8133',
+    color: '#FF3B30', // Accent color matching HomeScreen
     fontSize: 13,
     fontWeight: '500',
-    backgroundColor: 'rgba(255, 129, 51, 0.1)',
+    backgroundColor: 'rgba(255, 59, 48, 0.1)', // Subtle accent background
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 12,
   },
   roomCapacity: {
-    color: '#c5c5c5',
+    color: '#8F90A6', // Text gray matching HomeScreen
     fontSize: 13,
     fontWeight: '400',
   },

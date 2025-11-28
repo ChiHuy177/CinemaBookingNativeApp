@@ -1,16 +1,17 @@
 import {SeatColumnForBookingProps} from '../types/seat';
 
 export const colors = {
-  primary: '#ff8133',
-  dark: '#2f2f2f',
-  mediumGray: '#3d3d3d',
-  lightGray: '#c5c5c5',
+  primary: '#FF3B30', // Bright Red/Coral accent matching HomeScreen
+  dark: '#10111D', // Dark cinematic background matching HomeScreen
+  mediumGray: '#1F2130', // Card background matching HomeScreen
+  lightGray: '#8F90A6', // Muted gray text matching HomeScreen
   white: '#ffffff',
   black: '#000000',
   green: '#4CAF50',
   red: '#f44336',
   gold: '#ffd700',
   pink: '#e91e63',
+  textPlaceholder: '#5C5E6F', // Placeholder text matching HomeScreen
 };
 
 export const getRankColor = (rank: string) => {
