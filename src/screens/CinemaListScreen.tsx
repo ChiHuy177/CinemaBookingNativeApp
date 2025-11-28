@@ -1,16 +1,27 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { useState, useEffect, useCallback } from "react";
-import { Platform, UIManager, LayoutAnimation, SafeAreaView, View, TouchableOpacity, Text, ScrollView, StyleSheet } from "react-native";
-import { Icon } from "react-native-paper";
+import { Platform, UIManager, LayoutAnimation, SafeAreaView, View, TouchableOpacity, Text, ScrollView, StyleSheet, StatusBar, Dimensions } from "react-native";
+import Icon from 'react-native-vector-icons/Ionicons'; 
 import { CityItem } from "../components/CityItem";
-import { colors } from "../constant/color";
 import { useSpinner } from "../context/SpinnerContext";
 import { getAllCinemasForBooking } from "../services/CinemaService";
 import { CityData } from "../types/cinema";
 import { CinemaListScreenProps } from "../types/screentypes";
 import { showToast, checkErrorFetchingData } from "../utils/function";
 
+const { width } = Dimensions.get('window');
+
+// THEME CONSTANTS MATCHING PREVIOUS SCREENS
+const THEME = {
+  background: '#10111D', // Dark cinematic background
+  cardBg: '#1F2130',     // Input/Card background
+  accent: '#FF3B30',     // Bright Red/Coral accent
+  textWhite: '#FFFFFF',
+  textGray: '#8F90A6',   // Muted gray
+  textPlaceholder: '#5C5E6F',
+  error: '#FF3B30',
+};
 
 if (
   Platform.OS === 'android' &&
@@ -66,15 +77,21 @@ const CinemaListScreen: React.FC<CinemaListScreenProps> = ({navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor={THEME.background} />
+      
+      {/* Decorative Glow */}
+      <View style={styles.topGlow} />
+      
+      {/* Header Area styled like the ChangePasswordScreen */}
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}>
-          <Icon source="chevron-left" size={30} color="white" />
+          <Icon name="arrow-back" size={24} color={THEME.textWhite} />
         </TouchableOpacity>
-
+        
         <View style={styles.headerCenter}>
-          <Text style={styles.headerTitle}>Cinemas</Text>
+          <Text style={styles.headerTitle}>CINEMAS</Text>
           <Text style={styles.headerSubtitle}>Choose city to pick cinema</Text>
         </View>
 
@@ -102,41 +119,60 @@ const CinemaListScreen: React.FC<CinemaListScreenProps> = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.dark,
+    backgroundColor: THEME.background,
+  },
+  topGlow: {
+    position: 'absolute',
+    top: -100,
+    left: -50,
+    width: width,
+    height: 300,
+    backgroundColor: THEME.accent,
+    opacity: 0.05,
+    borderRadius: 150,
+    transform: [{ scaleX: 1.5 }],
   },
   header: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center', // Aligns vertically
+    justifyContent: 'space-between',
     paddingHorizontal: 20,
-    paddingVertical: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.mediumGray,
+    paddingVertical: 15,
+    marginTop: 10,
   },
   backButton: {
-    paddingTop: 4,
+    width: 40,
+    height: 40,
+    borderRadius: 20, // Circular
+    backgroundColor: 'rgba(255,255,255,0.1)', // Glassmorphism effect
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   headerCenter: {
     flex: 1,
     alignItems: 'center',
   },
   headerRight: {
-    width: 30,
+    width: 40, // Match back button width for perfect centering
   },
   headerTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: colors.white,
+    fontSize: 18,
+    fontWeight: '800', // Extra bold
+    color: THEME.textWhite,
     marginBottom: 4,
+    letterSpacing: 1,
+    textTransform: 'uppercase',
   },
   headerSubtitle: {
-    fontSize: 16,
-    color: colors.lightGray,
+    fontSize: 13,
+    color: THEME.textGray,
+    fontWeight: '500',
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    padding: 16,
+    padding: 20,
     paddingBottom: 32,
   },
 });

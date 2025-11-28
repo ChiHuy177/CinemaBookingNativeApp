@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback, useMemo, useState } from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import {
   View,
   Text,
@@ -8,21 +8,20 @@ import {
   TouchableOpacity,
   ScrollView,
   StatusBar,
-  Dimensions,
+  // Dimensions,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import { ShowingTimeBookingScreenProps } from '../types/screentypes';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { CinemaForBookingProps } from '../types/cinema';
-import { useSpinner } from '../context/SpinnerContext';
-import { useFocusEffect } from '@react-navigation/native';
-import { useForm, SubmitHandler, Controller } from 'react-hook-form';
-import { CinemaForBooking } from '../components/CinemaForBooking';
-import { DateButtonForBooking } from '../components/DateButtonForBooking';
-import { colors } from '../constant/color';
-import { defaultDateForBooking } from '../constant/variable';
-import { getCinemaForBooking } from '../services/CinemaService';
-import { ShowingTimeInRoomProps } from '../types/showingTime';
+import Icon from 'react-native-vector-icons/Ionicons'; // Switched to Ionicons
+import {ShowingTimeBookingScreenProps} from '../types/screentypes';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {CinemaForBookingProps} from '../types/cinema';
+import {useSpinner} from '../context/SpinnerContext';
+import {useFocusEffect} from '@react-navigation/native';
+import {useForm, SubmitHandler, Controller} from 'react-hook-form';
+import {CinemaForBooking} from '../components/CinemaForBooking';
+import {DateButtonForBooking} from '../components/DateButtonForBooking';
+import {defaultDateForBooking} from '../constant/variable';
+import {getCinemaForBooking} from '../services/CinemaService';
+import {ShowingTimeInRoomProps} from '../types/showingTime';
 import {
   filterSuitableCinemasForBooking,
   showToast,
@@ -30,7 +29,20 @@ import {
   formatDateToHourseAndMinutes,
 } from '../utils/function';
 
-const { width } = Dimensions.get('window');
+// const {width} = Dimensions.get('window');
+
+// --- CINEMATIC DARK THEME CONFIGURATION ---
+const THEME = {
+  background: '#10111D', // Deep Cinematic Blue/Black
+  cardBg: '#1C1D2E', // Slightly lighter panel
+  primaryRed: '#FF3B30', // Neon/Cinematic Red
+  textWhite: '#FFFFFF',
+  textGray: '#A0A0B0',
+  textDarkGray: '#5C5D6F',
+  glass: 'rgba(255, 255, 255, 0.08)',
+  border: 'rgba(255, 255, 255, 0.05)',
+  shadowColor: '#FF3B30',
+};
 
 interface FormData {
   movieId: number;
@@ -43,14 +55,14 @@ const ShowingTimeBookingScreen: React.FC<ShowingTimeBookingScreenProps> = ({
   route,
   navigation,
 }) => {
-  const { movieId, movieTitle } = route.params;
+  const {movieId, movieTitle} = route.params;
 
   const dates = useMemo(() => defaultDateForBooking(), [movieId]);
   const [cinemas, setCinemas] = useState<CinemaForBookingProps[]>([]);
   const [tempCinemas, setTempCinemas] = useState<CinemaForBookingProps[]>([]);
   const {
     control,
-    formState: { isSubmitting },
+    formState: {isSubmitting},
     handleSubmit,
     watch,
     setValue,
@@ -71,7 +83,7 @@ const ShowingTimeBookingScreen: React.FC<ShowingTimeBookingScreenProps> = ({
     [cinemaName: string]: number;
   }>({});
 
-  const { hideSpinner, showSpinner } = useSpinner();
+  const {hideSpinner, showSpinner} = useSpinner();
 
   useFocusEffect(
     useCallback(() => {
@@ -106,7 +118,8 @@ const ShowingTimeBookingScreen: React.FC<ShowingTimeBookingScreenProps> = ({
           } else {
             showToast({
               type: 'error',
-              text1: responseData.message,
+              text1: 'Data Error',
+              text2: responseData.message,
             });
           }
         } catch (error) {
@@ -133,7 +146,7 @@ const ShowingTimeBookingScreen: React.FC<ShowingTimeBookingScreenProps> = ({
         cinemas,
         new Date(dateKey),
       );
-      console.log(filteredCinemas);
+      // console.log(filteredCinemas); // Keep clean for prod
       setTempCinemas(filteredCinemas);
       setExpandedCinemas(
         Object.fromEntries(filteredCinemas.map(cinema => [cinema.name, true])),
@@ -185,34 +198,43 @@ const ShowingTimeBookingScreen: React.FC<ShowingTimeBookingScreenProps> = ({
       showingTimeId: data.selectedTime?.showingTimeId || 0,
     });
   }, []);
+
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#1a1a1a" />
+      <StatusBar barStyle="light-content" backgroundColor={THEME.background} />
 
+      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Icon name="arrow-back" size={24} color="#fff" />
+          style={styles.glassButton}
+          onPress={() => navigation.goBack()}>
+          <Icon name="chevron-back" size={24} color={THEME.textWhite} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle} ellipsizeMode="tail" numberOfLines={1}>
+        <Text
+          style={styles.headerTitle}
+          ellipsizeMode="tail"
+          numberOfLines={1}>
           {movieTitle}
         </Text>
+        <View style={{width: 40}} /> 
       </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Select Date</Text>
+      <ScrollView
+        style={styles.content}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{paddingBottom: 20}}>
+        
+        {/* Date Selection */}
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionHeader}>Select Date</Text>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            style={styles.datesContainer}
-          >
+            contentContainerStyle={styles.datesScrollContent}>
             <Controller
               control={control}
               name="selectedDate"
-              render={({ field: { value } }) => (
+              render={({field: {value}}) => (
                 <>
                   {dates.map(date => {
                     const isToday = date.dateKey === dates[0].dateKey;
@@ -234,8 +256,13 @@ const ShowingTimeBookingScreen: React.FC<ShowingTimeBookingScreenProps> = ({
           </ScrollView>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Select Theater & Time</Text>
+        {/* Theaters List */}
+        <View style={styles.sectionContainer}>
+          <View style={styles.theaterHeaderRow}>
+            <Text style={styles.sectionHeader}>Cinemas & Showtimes</Text>
+            <Icon name="options-outline" size={20} color={THEME.textGray} />
+          </View>
+          
           {tempCinemas.map(eachCinema => (
             <CinemaForBooking
               cinema={eachCinema}
@@ -248,24 +275,41 @@ const ShowingTimeBookingScreen: React.FC<ShowingTimeBookingScreenProps> = ({
               key={eachCinema.cinemaId}
             />
           ))}
+
+          {tempCinemas.length === 0 && (
+            <View style={styles.emptyContainer}>
+              <View style={styles.emptyIconCircle}>
+                 <Icon name="calendar-outline" size={40} color={THEME.textDarkGray} />
+              </View>
+              <Text style={styles.emptyText}>
+                No showtimes found for this date.
+              </Text>
+              <Text style={styles.emptySubText}>
+                  Please select another date.
+              </Text>
+            </View>
+          )}
         </View>
       </ScrollView>
 
-      <View style={styles.bottomContainer}>
+      {/* Bottom Bar */}
+      <View style={styles.bottomBar}>
         <TouchableOpacity
           style={[
             styles.continueButton,
             {
               backgroundColor: watch('selectedTime')
-                ? colors.primary
-                : colors.lightGray,
-              opacity: watch('selectedTime') ? 1 : 0.5,
+                ? THEME.primaryRed
+                : THEME.cardBg,
+              opacity: watch('selectedTime') ? 1 : 0.6,
+              shadowOpacity: watch('selectedTime') ? 0.4 : 0,
             },
           ]}
           disabled={isSubmitting || !watch('selectedTime')}
-          onPress={handleSubmit(onSubmit)}
-        >
-          <Text style={styles.continueButtonText}>Continue</Text>
+          activeOpacity={0.8}
+          onPress={handleSubmit(onSubmit)}>
+          <Text style={styles.continueText}>Select Seats</Text>
+          {watch('selectedTime') && <Icon name="arrow-forward" size={20} color="#FFF" style={{marginLeft: 8}} />}
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -275,72 +319,125 @@ const ShowingTimeBookingScreen: React.FC<ShowingTimeBookingScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: THEME.background,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingVertical: 15,
-    backgroundColor: '#1a1a1a',
-    width: width,
-    maxWidth: width,
+    backgroundColor: THEME.background,
+    borderBottomWidth: 1,
+    borderBottomColor: THEME.border,
   },
-  backButton: {
-    marginRight: 15,
+  glassButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: THEME.glass,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: THEME.border,
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: '600',
-    color: '#fff',
+    fontWeight: '700',
+    color: THEME.textWhite,
     textAlign: 'center',
-    paddingRight: 50,
+    flex: 1,
+    paddingHorizontal: 15,
+    letterSpacing: 0.5,
   },
+  
   content: {
     flex: 1,
+    marginTop: 10,
+  },
+  
+  // Sections
+  sectionContainer: {
+    marginBottom: 25,
+  },
+  sectionHeader: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: THEME.textWhite,
+    marginBottom: 15,
     paddingHorizontal: 20,
   },
-  section: {
-    marginBottom: 30,
+  theaterHeaderRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingRight: 20,
   },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#fff',
-    marginBottom: 15,
+
+  // Date Scroll
+  datesScrollContent: {
+    paddingHorizontal: 20,
+    gap: 12,
   },
-  locationContainer: {
-    flexDirection: 'row',
+  
+  // Empty State
+  emptyContainer: {
     alignItems: 'center',
-    backgroundColor: '#2a2a2a',
-    paddingHorizontal: 15,
-    paddingVertical: 12,
-    borderRadius: 8,
+    justifyContent: 'center',
+    padding: 30,
+    backgroundColor: THEME.cardBg,
+    marginHorizontal: 20,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: THEME.border,
+    marginTop: 10,
   },
-  locationText: {
-    flex: 1,
-    color: '#ccc',
-    marginLeft: 10,
+  emptyIconCircle: {
+      width: 80,
+      height: 80,
+      borderRadius: 40,
+      backgroundColor: 'rgba(255,255,255,0.03)',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 15,
+  },
+  emptyText: {
+    color: THEME.textWhite,
     fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 5,
   },
-  datesContainer: {
-    flexDirection: 'row',
+  emptySubText: {
+      color: THEME.textGray,
+      fontSize: 13,
   },
-  bottomContainer: {
+
+  // Bottom Bar
+  bottomBar: {
     paddingHorizontal: 20,
     paddingVertical: 20,
-    backgroundColor: '#1a1a1a',
+    paddingBottom: 30,
+    backgroundColor: THEME.background,
+    borderTopWidth: 1,
+    borderTopColor: THEME.border,
   },
   continueButton: {
-    backgroundColor: '#FF6B35',
-    paddingVertical: 15,
-    borderRadius: 8,
+    flexDirection: 'row',
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: THEME.shadowColor,
+    shadowOffset: {width: 0, height: 8},
+    shadowRadius: 16,
+    elevation: 8,
   },
-  continueButtonText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#fff',
+  continueText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FFF',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
   },
 });
 

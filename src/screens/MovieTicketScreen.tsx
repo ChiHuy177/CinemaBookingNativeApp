@@ -11,27 +11,44 @@ import {
   Animated,
   Dimensions,
   StatusBar,
+  // Platform,
 } from 'react-native';
 import {MovieTicketScreenProps} from '../types/screentypes';
-
 import {SafeAreaView} from 'react-native-safe-area-context';
-import { useFocusEffect } from '@react-navigation/native';
-import { Icon } from 'react-native-paper';
+import {useFocusEffect} from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Ionicons'; // Switched to Ionicons
+
+// Components & Services
 import ModalCoupon from '../components/ModalCoupon';
 import ModalPoint from '../components/ModalPoints';
-import { colors } from '../constant/color';
-import { useSpinner } from '../context/SpinnerContext';
-import { getClientRank } from '../services/RankService';
-import { addTicket } from '../services/TicketService';
-import { CouponProps } from '../types/coupon';
-import { ClientRankProps } from '../types/rank';
-import { CreateTicketProps } from '../types/ticket';
-import { showToast, checkErrorFetchingData, getPosterImage, getComboImgae } from '../utils/function';
-import { getEmailAndToken } from '../utils/storage';
-
-
+import {useSpinner} from '../context/SpinnerContext';
+import {getClientRank} from '../services/RankService';
+import {addTicket} from '../services/TicketService';
+import {CouponProps} from '../types/coupon';
+import {ClientRankProps} from '../types/rank';
+import {CreateTicketProps} from '../types/ticket';
+import {
+  showToast,
+  checkErrorFetchingData,
+  getPosterImage,
+  getComboImgae,
+} from '../utils/function';
+import {getEmailAndToken} from '../utils/storage';
 
 const {width} = Dimensions.get('window');
+
+// --- CINEMATIC DARK THEME CONFIGURATION ---
+const THEME = {
+  background: '#10111D', // Deep Cinematic Blue/Black
+  cardBg: '#1C1D2E', // Slightly lighter panel
+  primaryRed: '#FF3B30', // Neon/Cinematic Red
+  textWhite: '#FFFFFF',
+  textGray: '#A0A0B0',
+  textDarkGray: '#5C5D6F',
+  glass: 'rgba(255, 255, 255, 0.08)',
+  border: 'rgba(255, 255, 255, 0.05)',
+  successGreen: '#34C759',
+};
 
 const MovieTicketScreen: React.FC<MovieTicketScreenProps> = ({
   route,
@@ -49,6 +66,7 @@ const MovieTicketScreen: React.FC<MovieTicketScreenProps> = ({
   const {movieId, movieTitle, poster} = useMemo(() => {
     return movieParam;
   }, [movieParam]);
+
   const [couponModalVisible, setCouponModalVisible] = useState<boolean>(false);
   const [pointsModalVisible, setPointsModalVisible] = useState<boolean>(false);
   const [rank, setRank] = useState<ClientRankProps | null>(null);
@@ -170,14 +188,14 @@ const MovieTicketScreen: React.FC<MovieTicketScreenProps> = ({
                 : ''
             } ${
               uavailableCombos.length > 0
-                ? `Unavailable Combos : ${comboError}`
+                ? `Unavailable Snacks : ${comboError}`
                 : ''
             }`,
           });
         } else {
           showToast({
             type: 'success',
-            text1: 'Booking Successfully!!',
+            text1: 'Booking Successful!',
           });
           navigation.navigate('TicketDetailScreen', {
             ticketId: responseData.result.ticketId,
@@ -193,7 +211,7 @@ const MovieTicketScreen: React.FC<MovieTicketScreenProps> = ({
     } catch (error) {
       checkErrorFetchingData({
         error: error,
-        title: 'Error booking',
+        title: 'Booking Error',
       });
     } finally {
       hideSpinner();
@@ -216,66 +234,63 @@ const MovieTicketScreen: React.FC<MovieTicketScreenProps> = ({
   ]);
 
   return (
-    <SafeAreaView style={[styles.container, {backgroundColor: colors.dark}]}>
-      <StatusBar backgroundColor={colors.dark} barStyle="light-content" />
+    <SafeAreaView style={styles.container}>
+      <StatusBar backgroundColor={THEME.background} barStyle="light-content" />
+
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.glassButton}>
+          <Icon name="chevron-back" size={24} color={THEME.textWhite} />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Order Summary</Text>
+        <View style={{width: 40}} />
+      </View>
 
       <ScrollView
         style={styles.scrollView}
-        showsVerticalScrollIndicator={false}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon source="chevron-left" size={35} color={colors.white} />
-        </TouchableOpacity>
-        <View style={styles.header}>
-          <Text style={[styles.headerTitle, {color: colors.white}]}>
-            Ticket Information
-          </Text>
-        </View>
-
-        <View
-          style={[styles.movieHeader, {backgroundColor: colors.mediumGray}]}>
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{paddingBottom: 40}}>
+        
+        {/* Movie Info Card */}
+        <View style={styles.movieCard}>
           <Image
             source={{uri: getPosterImage(poster)}}
             style={styles.movieImage}
+            resizeMode="cover"
           />
           <View style={styles.movieInfo}>
             <Text
-              style={[styles.movieTitle, {color: colors.white}]}
+              style={styles.movieTitle}
               ellipsizeMode="tail"
-              numberOfLines={3}>
+              numberOfLines={2}>
               {movieTitle}
             </Text>
+            
             <View style={styles.infoRow}>
-              <Icon source="map-marker" size={16} color={colors.lightGray} />
-              <Text style={[styles.infoText, {color: colors.lightGray}]}>
-                {cinemaName}
-              </Text>
+              <Icon name="location-outline" size={14} color={THEME.primaryRed} />
+              <Text style={styles.infoText}>{cinemaName}</Text>
             </View>
             <View style={styles.infoRow}>
-              <Icon source="calendar" size={16} color={colors.lightGray} />
-              <Text style={[styles.infoText, {color: colors.lightGray}]}>
-                {date}
-              </Text>
+              <Icon name="calendar-outline" size={14} color={THEME.textGray} />
+              <Text style={styles.infoText}>{date}</Text>
             </View>
             <View style={styles.infoRow}>
-              <Icon source="clock" size={16} color={colors.lightGray} />
-              <Text style={[styles.infoText, {color: colors.lightGray}]}>
-                {time}
-              </Text>
+              <Icon name="time-outline" size={14} color={THEME.textGray} />
+              <Text style={styles.infoText}>{time}</Text>
             </View>
           </View>
         </View>
 
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, {color: colors.white}]}>
-            Selected Seats
-          </Text>
-          <View
-            style={[
-              styles.seatContainer,
-              {backgroundColor: colors.mediumGray},
-            ]}>
-            <Icon source="seat" size={20} color={colors.primary} />
-            <Text style={[styles.seatText, {color: colors.white}]}>
+        {/* Seats Section */}
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionHeader}>Selected Seats</Text>
+          <View style={styles.itemCard}>
+            <View style={styles.iconCircle}>
+                <Icon name="grid-outline" size={20} color={THEME.textWhite} />
+            </View>
+            <Text style={styles.itemText}>
               {selectedSeats
                 .map(
                   eachSelectedSeat =>
@@ -283,158 +298,162 @@ const MovieTicketScreen: React.FC<MovieTicketScreenProps> = ({
                 )
                 .join(', ')}
             </Text>
-            <Text style={[styles.seatPrice, {color: colors.primary}]}>
-              {totalPriceSeats.toLocaleString('vi-VN') + 'đ'}
+            <Text style={styles.priceText}>
+              {totalPriceSeats.toLocaleString('vi-VN')} đ
             </Text>
           </View>
         </View>
 
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, {color: colors.white}]}>
-            Selected Combos
-          </Text>
-          {selectedCombos.map(eachCombo => (
-            <View
-              key={eachCombo.combo.comboId}
-              style={[styles.comboItem, {backgroundColor: colors.mediumGray}]}>
-              <Image
-                source={{uri: getComboImgae(eachCombo.combo.imageURL)}}
-                style={styles.comboImage}
-              />
-              <View style={styles.comboInfo}>
-                <Text style={[styles.comboName, {color: colors.white}]}>
-                  {eachCombo.combo.name}
-                </Text>
-                <Text style={[styles.comboQuantity, {color: colors.lightGray}]}>
-                  Quantity: {eachCombo.quantity}
+        {/* Combos Section */}
+        {selectedCombos.length > 0 && (
+          <View style={styles.sectionContainer}>
+            <Text style={styles.sectionHeader}>Snacks & Drinks</Text>
+            {selectedCombos.map(eachCombo => (
+              <View key={eachCombo.combo.comboId} style={styles.comboItem}>
+                <Image
+                  source={{uri: getComboImgae(eachCombo.combo.imageURL)}}
+                  style={styles.comboImage}
+                />
+                <View style={styles.comboDetails}>
+                  <Text style={styles.comboName}>{eachCombo.combo.name}</Text>
+                  <Text style={styles.comboQty}>
+                    x{eachCombo.quantity}
+                  </Text>
+                </View>
+                <Text style={styles.priceText}>
+                  {(eachCombo.quantity * eachCombo.combo.price).toLocaleString(
+                    'vi-VN',
+                  )}{' '}
+                  đ
                 </Text>
               </View>
-              <Text style={[styles.comboPrice, {color: colors.primary}]}>
-                {(eachCombo.quantity * eachCombo.combo.price).toLocaleString(
-                  'vi-VN',
-                ) + 'đ'}
-              </Text>
-            </View>
-          ))}
-        </View>
+            ))}
+          </View>
+        )}
 
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, {color: colors.white}]}>
-            Promotions
-          </Text>
+        {/* Offers & Promotions */}
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionHeader}>Offers & Discounts</Text>
 
+          {/* Coupon Button */}
           <TouchableOpacity
-            style={[
-              styles.discountButton,
-              {backgroundColor: colors.mediumGray},
-            ]}
+            style={styles.offerButton}
             onPress={() => showModal('coupon')}
             activeOpacity={0.7}>
-            <Icon source="gift" size={24} color={colors.primary} />
-            <Text style={[styles.discountText, {color: colors.white}]}>
-              {coupon ? `Code: ${coupon.code}` : 'Choose Your Coupon'}
-            </Text>
-            <View style={styles.discountRight}>
+            <View style={[styles.iconCircle, {backgroundColor: 'rgba(255, 59, 48, 0.1)'}]}>
+                <Icon name="ticket-outline" size={20} color={THEME.primaryRed} />
+            </View>
+            <View style={styles.offerContent}>
+                <Text style={styles.offerTitle}>
+                    {coupon ? `Applied: ${coupon.code}` : 'Select Coupon'}
+                </Text>
+                <Text style={styles.offerSubtitle}>
+                    {coupon ? 'Discount applied' : 'Apply voucher code'}
+                </Text>
+            </View>
+            <View style={styles.offerRight}>
               {coupon && (
-                <Text style={[styles.discountValue, {color: colors.primary}]}>
-                  -{(coupon?.discountAmount.toLocaleString('vi-VN') || 0) + 'đ'}
+                <Text style={styles.discountBadge}>
+                  -{coupon?.discountAmount.toLocaleString('vi-VN')} đ
                 </Text>
               )}
-
-              <Icon source="chevron-right" size={20} color={colors.lightGray} />
+              <Icon name="chevron-forward" size={18} color={THEME.textGray} />
             </View>
           </TouchableOpacity>
 
+          {/* Points Button */}
           <TouchableOpacity
-            style={[
-              styles.discountButton,
-              {backgroundColor: colors.mediumGray},
-            ]}
+            style={styles.offerButton}
             onPress={() => showModal('points')}
             activeOpacity={0.7}>
-            <Icon source="star" size={24} color={colors.primary} />
-            <Text style={[styles.discountText, {color: colors.white}]}>
-              {usedPoints > 0
-                ? `Used: ${usedPoints} points`
-                : 'Use Loyalpoints'}
-            </Text>
-            <View style={styles.discountRight}>
+             <View style={[styles.iconCircle, {backgroundColor: 'rgba(255, 215, 0, 0.1)'}]}>
+                <Icon name="star-outline" size={20} color="#FFD700" />
+            </View>
+            <View style={styles.offerContent}>
+                <Text style={styles.offerTitle}>
+                    {usedPoints > 0
+                        ? `Redeemed: ${usedPoints}`
+                        : 'Redeem Loyalty Points'}
+                </Text>
+                <Text style={styles.offerSubtitle}>
+                    {usedPoints > 0 ? 'Points used' : 'Use points for discount'}
+                </Text>
+            </View>
+            <View style={styles.offerRight}>
               {usedPoints > 0 && (
-                <Text style={[styles.discountValue, {color: colors.primary}]}>
-                  -{usedPoints.toLocaleString('vi-VN') + 'đ'}
+                <Text style={styles.discountBadge}>
+                  -{usedPoints.toLocaleString('vi-VN')} đ
                 </Text>
               )}
-              <Icon source="chevron-right" size={20} color={colors.lightGray} />
+              <Icon name="chevron-forward" size={18} color={THEME.textGray} />
             </View>
           </TouchableOpacity>
         </View>
 
-        <View
-          style={[styles.totalSection, {backgroundColor: colors.mediumGray}]}>
-          <View style={styles.totalRow}>
-            <Text style={[styles.totalLabel, {color: colors.lightGray}]}>
-              SubTotal:
-            </Text>
-            <Text style={[styles.totalValue, {color: colors.white}]}>
-              {subTotal.toLocaleString('vi-VN') + 'đ'}
-            </Text>
-          </View>
-
-          <View style={styles.totalRow}>
-            <Text style={[styles.totalLabel, {color: colors.lightGray}]}>
-              Discount:
-            </Text>
-            <Text style={[styles.totalValue, {color: colors.primary}]}>
-              -{(coupon?.discountAmount.toLocaleString('vi-VN') || 0) + 'đ'}
+        {/* Payment Summary */}
+        <View style={styles.summaryContainer}>
+          <Text style={styles.sectionHeader}>Payment Details</Text>
+          
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryLabel}>Subtotal</Text>
+            <Text style={styles.summaryValue}>
+              {subTotal.toLocaleString('vi-VN')} đ
             </Text>
           </View>
 
-          <View style={styles.totalRow}>
-            <Text style={[styles.totalLabel, {color: colors.lightGray}]}>
-              Points:
-            </Text>
-            <Text style={[styles.totalValue, {color: colors.primary}]}>
-              -{usedPoints.toLocaleString('vi-VN') + 'đ'}
-            </Text>
-          </View>
+          {coupon && (
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>Coupon Discount</Text>
+              <Text style={styles.discountValue}>
+                -{coupon.discountAmount.toLocaleString('vi-VN')} đ
+              </Text>
+            </View>
+          )}
+
+          {usedPoints > 0 && (
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>Points Redeemed</Text>
+              <Text style={styles.discountValue}>
+                -{usedPoints.toLocaleString('vi-VN')} đ
+              </Text>
+            </View>
+          )}
+
+          {rank && rank.discount > 0 && (
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>
+                Member Rank ({rank.discount}%)
+              </Text>
+              <Text style={styles.discountValue}>
+                -{totalRankDiscount.toLocaleString('vi-VN')} đ
+              </Text>
+            </View>
+          )}
+
+          <View style={styles.divider} />
 
           <View style={styles.totalRow}>
-            <Text style={[styles.totalLabel, {color: colors.lightGray}]}>
-              Rank {rank?.discount}%:
-            </Text>
-            <Text style={[styles.totalValue, {color: colors.primary}]}>
-              -{totalRankDiscount.toLocaleString('vi-VN') + 'đ'}
-            </Text>
-          </View>
-
-          <View style={[styles.totalRow, styles.finalTotal]}>
-            <Text
-              style={[
-                styles.totalLabel,
-                {color: colors.white, fontSize: 18, fontWeight: 'bold'},
-              ]}>
-              Total Price:
-            </Text>
-            <Text
-              style={[
-                styles.totalValue,
-                {color: colors.primary, fontSize: 20, fontWeight: 'bold'},
-              ]}>
-              {totalPrice.toLocaleString('vi-VN') + 'đ'}
-            </Text>
+            <Text style={styles.totalLabel}>Grand Total</Text>
+            <View style={{alignItems: 'flex-end'}}>
+                <Text style={styles.totalValue}>
+                {totalPrice.toLocaleString('vi-VN')} đ
+                </Text>
+                <Text style={styles.vatText}>(VAT Included)</Text>
+            </View>
           </View>
         </View>
 
+        {/* Confirm Button */}
         <TouchableOpacity
-          style={[styles.paymentButton, {backgroundColor: colors.primary}]}
+          style={styles.confirmButton}
           activeOpacity={0.8}
           onPress={() => handleBooking()}>
-          <Text style={[styles.paymentButtonText, {color: colors.white}]}>
-            Booking
-          </Text>
+          <Text style={styles.confirmButtonText}>Confirm Payment</Text>
+          <View style={styles.btnGlow} />
         </TouchableOpacity>
       </ScrollView>
 
+      {/* Modals */}
       <ModalCoupon
         coupon={coupon}
         setCoupon={setCoupon}
@@ -458,185 +477,279 @@ const MovieTicketScreen: React.FC<MovieTicketScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: THEME.background,
   },
   scrollView: {
     flex: 1,
     paddingHorizontal: 20,
   },
+  
+  // Header
   header: {
-    marginBottom: 15,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 15,
+    marginBottom: 10,
+  },
+  glassButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: THEME.glass,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: THEME.border,
   },
   headerTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
+    fontSize: 18,
+    fontWeight: '700',
+    color: THEME.textWhite,
+    letterSpacing: 0.5,
   },
-  movieHeader: {
+
+  // Movie Card
+  movieCard: {
     flexDirection: 'row',
-    padding: 15,
-    borderRadius: 15,
-    marginBottom: 20,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    backgroundColor: THEME.cardBg,
+    borderRadius: 16,
+    padding: 12,
+    marginBottom: 25,
+    borderWidth: 1,
+    borderColor: THEME.border,
   },
   movieImage: {
-    width: 100,
-    height: 140,
-    borderRadius: 10,
-    marginRight: 15,
+    width: 80,
+    height: 110,
+    borderRadius: 12,
+    backgroundColor: '#000',
   },
   movieInfo: {
     flex: 1,
-    justifyContent: 'space-between',
+    marginLeft: 15,
+    justifyContent: 'center',
   },
   movieTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
+    color: THEME.textWhite,
     marginBottom: 10,
   },
   infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 5,
+    marginBottom: 6,
   },
   infoText: {
+    fontSize: 13,
+    color: THEME.textGray,
+    marginLeft: 6,
+    fontWeight: '500',
+  },
+
+  // Sections
+  sectionContainer: {
+    marginBottom: 25,
+  },
+  sectionHeader: {
     fontSize: 14,
-    marginLeft: 8,
+    fontWeight: '700',
+    color: THEME.textDarkGray,
+    marginBottom: 10,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
   },
-  section: {
-    marginBottom: 20,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 15,
-  },
-  seatContainer: {
+  
+  // Seat Item
+  itemCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
-    borderRadius: 12,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
+    backgroundColor: THEME.cardBg,
+    padding: 15,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: THEME.border,
   },
-  seatText: {
-    fontSize: 16,
+  iconCircle: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      backgroundColor: 'rgba(255,255,255,0.1)',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 12,
+  },
+  itemText: {
     flex: 1,
-    marginLeft: 12,
+    color: THEME.textWhite,
+    fontSize: 15,
+    fontWeight: '600',
   },
-  seatPrice: {
-    fontSize: 16,
-    fontWeight: 'bold',
+  priceText: {
+    color: THEME.primaryRed,
+    fontSize: 15,
+    fontWeight: '700',
   },
+
+  // Combo Item
   comboItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
+    backgroundColor: THEME.cardBg,
+    padding: 12,
+    borderRadius: 14,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: THEME.border,
   },
   comboImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 8,
+    width: 48,
+    height: 48,
+    borderRadius: 10,
     marginRight: 12,
   },
-  comboInfo: {
+  comboDetails: {
     flex: 1,
   },
   comboName: {
-    fontSize: 16,
+    color: THEME.textWhite,
+    fontSize: 14,
     fontWeight: '600',
     marginBottom: 4,
   },
-  comboQuantity: {
-    fontSize: 14,
+  comboQty: {
+    color: THEME.textGray,
+    fontSize: 12,
   },
-  comboPrice: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  discountButton: {
+
+  // Offer Buttons
+  offerButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
+    backgroundColor: THEME.cardBg,
+    padding: 12,
+    borderRadius: 14,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: THEME.border,
   },
-  discountText: {
-    fontSize: 16,
-    flex: 1,
-    marginLeft: 12,
+  offerContent: {
+      flex: 1,
   },
-  discountRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  offerTitle: {
+      color: THEME.textWhite,
+      fontSize: 14,
+      fontWeight: '600',
+  },
+  offerSubtitle: {
+      color: THEME.textGray,
+      fontSize: 11,
+      marginTop: 2,
+  },
+  offerRight: {
+      flexDirection: 'row',
+      alignItems: 'center',
+  },
+  discountBadge: {
+      color: THEME.successGreen,
+      fontSize: 13,
+      fontWeight: '600',
+      marginRight: 5,
+  },
+
+  // Summary
+  summaryContainer: {
+      backgroundColor: THEME.cardBg,
+      borderRadius: 20,
+      padding: 20,
+      marginBottom: 30,
+      borderWidth: 1,
+      borderColor: THEME.border,
+  },
+  summaryRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 12,
+  },
+  summaryLabel: {
+      color: THEME.textGray,
+      fontSize: 14,
+  },
+  summaryValue: {
+      color: THEME.textWhite,
+      fontSize: 14,
+      fontWeight: '600',
   },
   discountValue: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginRight: 8,
+      color: THEME.successGreen,
+      fontSize: 14,
+      fontWeight: '600',
   },
-  totalSection: {
-    padding: 20,
-    borderRadius: 15,
-    marginBottom: 20,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+  divider: {
+      height: 1,
+      backgroundColor: 'rgba(255,255,255,0.1)',
+      marginVertical: 12,
+      borderStyle: 'dashed',
+      borderWidth: 1,
+      borderColor: 'rgba(255,255,255,0.1)', // Dashed trick
   },
   totalRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  finalTotal: {
-    marginTop: 10,
-    paddingTop: 15,
-    borderTopWidth: 1,
-    borderTopColor: '#555',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginTop: 5,
   },
   totalLabel: {
-    fontSize: 16,
+      color: THEME.textWhite,
+      fontSize: 16,
+      fontWeight: 'bold',
   },
   totalValue: {
-    fontSize: 16,
-    fontWeight: '600',
+      color: THEME.primaryRed,
+      fontSize: 22,
+      fontWeight: '800',
+      textShadowColor: 'rgba(255, 59, 48, 0.3)',
+      textShadowOffset: {width: 0, height: 0},
+      textShadowRadius: 10,
   },
-  paymentButton: {
-    padding: 18,
-    borderRadius: 15,
+  vatText: {
+      color: THEME.textDarkGray,
+      fontSize: 10,
+      marginTop: 2,
+  },
+
+  // Payment Button
+  confirmButton: {
+    backgroundColor: THEME.primaryRed,
+    paddingVertical: 18,
+    borderRadius: 30,
     alignItems: 'center',
-    marginBottom: 30,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    marginBottom: 20,
+    shadowColor: THEME.primaryRed,
+    shadowOffset: {width: 0, height: 8},
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 8,
+    position: 'relative',
+    overflow: 'hidden',
   },
-  paymentButtonText: {
-    fontSize: 18,
+  confirmButtonText: {
+    fontSize: 16,
     fontWeight: 'bold',
+    color: '#FFF',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
   },
+  btnGlow: {
+      position: 'absolute',
+      top: -10,
+      left: 20,
+      width: 50,
+      height: 100,
+      backgroundColor: 'rgba(255,255,255,0.1)',
+      transform: [{rotate: '20deg'}],
+  }
 });
 
 export default MovieTicketScreen;

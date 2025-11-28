@@ -12,15 +12,28 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Dimensions,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {matchPassword, required, strongPassword} from '../utils/validators';
 import {useSpinner} from '../context/SpinnerContext';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import { changePasswordClient } from '../services/ClientService';
-import { ChangePasswordProfileProps } from '../types/client';
-import { showToast, checkErrorFetchingData } from '../utils/function';
+import {changePasswordClient} from '../services/ClientService';
+import {ChangePasswordProfileProps} from '../types/client';
+import {showToast, checkErrorFetchingData} from '../utils/function';
 
+const { width } = Dimensions.get('window');
+
+// THEME CONSTANTS MATCHING LOGIN & REGISTER
+const THEME = {
+  background: '#10111D', // Dark cinematic background
+  cardBg: '#1F2130',     // Input/Card background
+  accent: '#FF3B30',     // Bright Red/Coral accent
+  textWhite: '#FFFFFF',
+  textGray: '#8F90A6',   // Muted gray
+  textPlaceholder: '#5C5E6F',
+  error: '#FF3B30',
+};
 
 export const ChangePasswordScreen: React.FC<ChangePasswordScreenProps> = ({
   navigation,
@@ -59,6 +72,9 @@ export const ChangePasswordScreen: React.FC<ChangePasswordScreenProps> = ({
           type: responseData.code === 1000 ? 'success' : 'error',
           text1: responseData.result,
         });
+        if (responseData.code === 1000) {
+            navigation.goBack();
+        }
       } catch (error) {
         checkErrorFetchingData({
           error: error,
@@ -68,164 +84,194 @@ export const ChangePasswordScreen: React.FC<ChangePasswordScreenProps> = ({
         hideSpinner();
       }
     },
-    [],
+    [navigation, showSpinner, hideSpinner],
   );
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#2F2F2F" />
+      <StatusBar barStyle="light-content" backgroundColor={THEME.background} />
+      
+      {/* Decorative Glow */}
+      <View style={styles.topGlow} />
+
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}>
         <ScrollView
           contentContainerStyle={styles.scrollContainer}
           showsVerticalScrollIndicator={false}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}>
-            <Icon name="arrow-back" size={24} color="#FFFFFF" />
-          </TouchableOpacity>
-
+          
+          {/* HEADER */}
           <View style={styles.header}>
-            <Text style={styles.title}>Change Password</Text>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => navigation.goBack()}>
+              <Icon name="arrow-back" size={24} color={THEME.textWhite} />
+            </TouchableOpacity>
+            
+            <View style={styles.headerTitleContainer}>
+                 <Text style={styles.headerTitle}>CHANGE PASSWORD</Text>
+                 <Text style={styles.subTitle}>
+                  Create a new password to secure your account
+                </Text>
+            </View>
           </View>
 
-          {errors.currentPassword && (
-            <Text style={styles.error}>{errors.currentPassword.message}</Text>
-          )}
           <View style={styles.form}>
-            <View style={styles.inputContainer}>
-              <Icon
-                name="lock-closed-outline"
-                size={20}
-                color="#C5C5C5"
-                style={styles.inputIcon}
-              />
-              <Controller
-                control={control}
-                name="currentPassword"
-                rules={{
-                  ...required('Current password is required'),
-                  ...strongPassword,
-                }}
-                render={({field}) => (
-                  <TextInput
-                    style={[styles.input, styles.passwordInput]}
-                    placeholder="Enter current password"
-                    placeholderTextColor="#C5C5C5"
-                    secureTextEntry={!showCurrentPassword}
-                    value={field.value}
-                    onChangeText={field.onChange}
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                  />
+            {/* Current Password */}
+            <View style={styles.inputWrapper}>
+                <Text style={styles.label}>Current Password</Text>
+                <View style={[styles.inputContainer, errors.currentPassword && styles.inputError]}>
+                    <Icon
+                    name="lock-closed"
+                    size={20}
+                    color={errors.currentPassword ? THEME.error : THEME.textPlaceholder}
+                    style={styles.inputIcon}
+                    />
+                    <Controller
+                    control={control}
+                    name="currentPassword"
+                    rules={{
+                        ...required('Current password is required'),
+                        ...strongPassword,
+                    }}
+                    render={({field}) => (
+                        <TextInput
+                        style={styles.input}
+                        placeholder="••••••••"
+                        placeholderTextColor={THEME.textPlaceholder}
+                        secureTextEntry={!showCurrentPassword}
+                        value={field.value}
+                        onChangeText={field.onChange}
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        />
+                    )}
+                    />
+                    <TouchableOpacity
+                    onPress={() => setShowCurrentPassword(!showCurrentPassword)}
+                    style={styles.eyeIcon}>
+                    <Icon
+                        name={showCurrentPassword ? 'eye' : 'eye-off'}
+                        size={20}
+                        color={THEME.textPlaceholder}
+                    />
+                    </TouchableOpacity>
+                </View>
+                {errors.currentPassword && (
+                <Text style={styles.error}>{errors.currentPassword.message}</Text>
                 )}
-              />
-              <TouchableOpacity
-                onPress={() => setShowCurrentPassword(!showCurrentPassword)}
-                style={styles.eyeIcon}>
-                <Icon
-                  name={showCurrentPassword ? 'eye-outline' : 'eye-off-outline'}
-                  size={20}
-                  color="#C5C5C5"
-                />
-              </TouchableOpacity>
             </View>
 
-            {errors.newPassword && (
-              <Text style={styles.error}>{errors.newPassword.message}</Text>
-            )}
-            <View style={styles.inputContainer}>
-              <Icon
-                name="lock-closed-outline"
-                size={20}
-                color="#C5C5C5"
-                style={styles.inputIcon}
-              />
-              <Controller
-                control={control}
-                name="newPassword"
-                rules={{
-                  ...required('New password is required'),
-                  ...strongPassword,
-                }}
-                render={({field}) => (
-                  <TextInput
-                    style={[styles.input, styles.passwordInput]}
-                    placeholder="New password"
-                    placeholderTextColor="#C5C5C5"
-                    secureTextEntry={!showNewPassword}
-                    value={field.value}
-                    onChangeText={field.onChange}
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                  />
+            {/* New Password */}
+            <View style={styles.inputWrapper}>
+                <Text style={styles.label}>New Password</Text>
+                <View style={[styles.inputContainer, errors.newPassword && styles.inputError]}>
+                    <Icon
+                    name="lock-closed"
+                    size={20}
+                    color={errors.newPassword ? THEME.error : THEME.textPlaceholder}
+                    style={styles.inputIcon}
+                    />
+                    <Controller
+                    control={control}
+                    name="newPassword"
+                    rules={{
+                        ...required('New password is required'),
+                        ...strongPassword,
+                    }}
+                    render={({field}) => (
+                        <TextInput
+                        style={styles.input}
+                        placeholder="••••••••"
+                        placeholderTextColor={THEME.textPlaceholder}
+                        secureTextEntry={!showNewPassword}
+                        value={field.value}
+                        onChangeText={field.onChange}
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        />
+                    )}
+                    />
+                    <TouchableOpacity
+                    onPress={() => setShowNewPassword(!showNewPassword)}
+                    style={styles.eyeIcon}>
+                    <Icon
+                        name={showNewPassword ? 'eye' : 'eye-off'}
+                        size={20}
+                        color={THEME.textPlaceholder}
+                    />
+                    </TouchableOpacity>
+                </View>
+                {errors.newPassword && (
+                <Text style={styles.error}>{errors.newPassword.message}</Text>
                 )}
-              />
-              <TouchableOpacity
-                onPress={() => setShowNewPassword(!showNewPassword)}
-                style={styles.eyeIcon}>
-                <Icon
-                  name={showNewPassword ? 'eye-outline' : 'eye-off-outline'}
-                  size={20}
-                  color="#C5C5C5"
-                />
-              </TouchableOpacity>
             </View>
 
-            {errors.confirmNewPassword && (
-              <Text style={styles.error}>
-                {errors.confirmNewPassword.message}
-              </Text>
-            )}
-            <View style={styles.inputContainer}>
-              <Icon
-                name="lock-closed-outline"
-                size={20}
-                color="#C5C5C5"
-                style={styles.inputIcon}
-              />
-              <Controller
-                control={control}
-                name="confirmNewPassword"
-                rules={{
-                  ...required('Please confirm your password'),
-                  ...strongPassword,
-                  ...matchPassword(getValues, 'newPassword'),
-                }}
-                render={({field}) => (
-                  <TextInput
-                    style={[styles.input, styles.passwordInput]}
-                    placeholder="Confirm new password"
-                    placeholderTextColor="#C5C5C5"
-                    secureTextEntry={!showConfirmNewPassword}
-                    value={field.value}
-                    onChangeText={field.onChange}
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                  />
+            {/* Confirm New Password */}
+            <View style={styles.inputWrapper}>
+                <Text style={styles.label}>Confirm New Password</Text>
+                <View style={[styles.inputContainer, errors.confirmNewPassword && styles.inputError]}>
+                    <Icon
+                    name="lock-closed"
+                    size={20}
+                    color={errors.confirmNewPassword ? THEME.error : THEME.textPlaceholder}
+                    style={styles.inputIcon}
+                    />
+                    <Controller
+                    control={control}
+                    name="confirmNewPassword"
+                    rules={{
+                        ...required('Please confirm your password'),
+                        ...strongPassword,
+                        ...matchPassword(getValues, 'newPassword'),
+                    }}
+                    render={({field}) => (
+                        <TextInput
+                        style={styles.input}
+                        placeholder="••••••••"
+                        placeholderTextColor={THEME.textPlaceholder}
+                        secureTextEntry={!showConfirmNewPassword}
+                        value={field.value}
+                        onChangeText={field.onChange}
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        />
+                    )}
+                    />
+                    <TouchableOpacity
+                    onPress={() =>
+                        setShowConfirmNewPassword(!showConfirmNewPassword)
+                    }
+                    style={styles.eyeIcon}>
+                    <Icon
+                        name={
+                        showConfirmNewPassword ? 'eye' : 'eye-off'
+                        }
+                        size={20}
+                        color={THEME.textPlaceholder}
+                    />
+                    </TouchableOpacity>
+                </View>
+                {errors.confirmNewPassword && (
+                <Text style={styles.error}>
+                    {errors.confirmNewPassword.message}
+                </Text>
                 )}
-              />
-              <TouchableOpacity
-                onPress={() =>
-                  setShowConfirmNewPassword(!showConfirmNewPassword)
-                }
-                style={styles.eyeIcon}>
-                <Icon
-                  name={
-                    showConfirmNewPassword ? 'eye-outline' : 'eye-off-outline'
-                  }
-                  size={20}
-                  color="#C5C5C5"
-                />
-              </TouchableOpacity>
             </View>
 
             <TouchableOpacity
-              style={styles.resetButton}
+              style={[styles.resetButton, isSubmitting && styles.resetButtonDisabled]}
               onPress={handleSubmit(onSubmit)}
               disabled={isSubmitting}>
-              <Text style={styles.resetButtonText}>Change Password</Text>
+               {isSubmitting ? (
+                 <Text style={styles.resetButtonText}>Updating...</Text>
+               ) : (
+                <>
+                  <Text style={styles.resetButtonText}>Update Password</Text>
+                  <Icon name="checkmark-circle" size={20} color="#FFF" style={{marginLeft: 8}} />
+                </>
+               )}
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -237,7 +283,18 @@ export const ChangePasswordScreen: React.FC<ChangePasswordScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2F2F2F',
+    backgroundColor: THEME.background,
+  },
+  topGlow: {
+    position: 'absolute',
+    top: -100,
+    left: -50,
+    width: width,
+    height: 300,
+    backgroundColor: THEME.accent,
+    opacity: 0.05,
+    borderRadius: 150,
+    transform: [{ scaleX: 1.5 }],
   },
   keyboardView: {
     flex: 1,
@@ -245,112 +302,114 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
     paddingHorizontal: 24,
-    paddingTop: 30,
+    paddingTop: 20,
+    paddingBottom: 40,
+  },
+  
+  // Header Styles
+  header: {
+    marginBottom: 30,
+    marginTop: 10,
   },
   backButton: {
-    position: 'absolute',
-    top: 10,
-    left: 24,
-    zIndex: 1,
-    padding: 8,
-  },
-  header: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.1)', // Circle back button
+    justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
-    marginTop: 40,
   },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
+  headerTitleContainer: {
+      marginBottom: 10,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: THEME.textWhite,
+    letterSpacing: 1,
     marginBottom: 8,
+    textTransform: 'uppercase',
   },
+  subTitle: {
+    fontSize: 14,
+    color: THEME.textGray,
+    lineHeight: 22,
+  },
+
+  // Form Styles
   form: {
-    marginBottom: 40,
+    marginTop: 10,
+  },
+  inputWrapper: {
+    marginBottom: 24,
+  },
+  label: {
+    fontSize: 14,
+    color: THEME.textWhite,
+    fontWeight: '600',
+    marginBottom: 8,
+    marginLeft: 4,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#3D3D3D',
-    borderRadius: 12,
-    marginBottom: 16,
-    paddingHorizontal: 16,
+    backgroundColor: THEME.cardBg,
+    borderRadius: 16,
     height: 56,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  inputError: {
+    borderColor: THEME.error,
+    borderWidth: 1,
   },
   inputIcon: {
     marginRight: 12,
   },
   input: {
     flex: 1,
-    fontSize: 16,
-    color: '#FFFFFF',
-    backgroundColor: '#3D3D3D',
-  },
-  passwordInput: {
-    paddingRight: 40,
+    fontSize: 15,
+    color: THEME.textWhite,
+    height: '100%',
   },
   eyeIcon: {
-    position: 'absolute',
-    right: 16,
-    padding: 4,
+    padding: 8,
   },
-  sendButton: {
-    backgroundColor: '#FF8133',
-    borderRadius: 12,
-    height: 56,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 8,
+  error: {
+    color: THEME.error,
+    fontSize: 12,
+    marginTop: 6,
+    marginLeft: 4,
   },
-  sendButtonText: {
-    color: '#FFFFFF',
-    fontSize: 18,
-    fontWeight: '600',
-  },
+
+  // Button Styles
   resetButton: {
-    backgroundColor: '#FF8133',
-    borderRadius: 12,
-    height: 56,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  resetButtonText: {
-    color: '#FFFFFF',
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  disabledButton: {
-    opacity: 0.6,
-  },
-  resendCode: {
-    alignSelf: 'center',
-    marginBottom: 24,
-  },
-  resendCodeText: {
-    color: '#FF8133',
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  footer: {
+    backgroundColor: THEME.accent,
+    borderRadius: 29, // Pill shape
+    height: 58,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 'auto',
-    paddingBottom: 40,
+    marginTop: 20,
+    shadowColor: THEME.accent,
+    shadowOffset: {
+      width: 0,
+      height: 8,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 15,
+    elevation: 8,
   },
-  footerText: {
-    color: '#C5C5C5',
+  resetButtonDisabled: {
+      opacity: 0.7,
+      backgroundColor: '#3A3A3A',
+  },
+  resetButtonText: {
+    color: '#FFFFFF',
     fontSize: 16,
-  },
-  signInText: {
-    color: '#FF8133',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  error: {
-    color: '#FF4444',
-    marginBottom: 10,
-    fontSize: 14,
+    fontWeight: '700',
+    letterSpacing: 0.5,
   },
 });

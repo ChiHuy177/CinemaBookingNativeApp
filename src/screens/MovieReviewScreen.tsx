@@ -9,17 +9,39 @@ import {
   TextInput,
   ScrollView,
   Image,
+  StatusBar,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import {MovieReviewScreenProps} from '../types/screentypes';
+import Icon from 'react-native-vector-icons/Ionicons'; // Switched to Ionicons
 
-import {Icon} from 'react-native-paper';
 import {Controller, SubmitHandler, useForm} from 'react-hook-form';
 import {maxLength, minValue} from '../utils/validators';
 import {useSpinner} from '../context/SpinnerContext';
-import { colors } from '../constant/color';
-import { addReview } from '../services/ReviewService';
-import { showToast, checkErrorFetchingData, getPosterImage, formatMinutesToHours, getClientImage, getRelativeTimeFromNow } from '../utils/function';
+import {addReview} from '../services/ReviewService';
+import {
+  showToast,
+  checkErrorFetchingData,
+  getPosterImage,
+  formatMinutesToHours,
+  getClientImage,
+  getRelativeTimeFromNow,
+} from '../utils/function';
 
+// --- CINEMATIC DARK THEME CONFIGURATION ---
+const THEME = {
+  background: '#10111D', // Deep Cinematic Blue/Black
+  cardBg: '#1C1D2E', // Slightly lighter panel
+  primaryRed: '#FF3B30', // Neon/Cinematic Red
+  inputBg: 'rgba(255, 255, 255, 0.05)', // Glassy input
+  textWhite: '#FFFFFF',
+  textGray: '#A0A0B0',
+  textDarkGray: '#5C5D6F',
+  starGold: '#FFD700',
+  glass: 'rgba(255, 255, 255, 0.08)',
+  shadowColor: '#FF3B30', // Red Glow
+};
 
 interface FormData {
   rating: number;
@@ -59,7 +81,8 @@ const MovieReviewScreen: React.FC<MovieReviewScreenProps> = ({
         if (responseData.code === 1000) {
           showToast({
             type: 'success',
-            text1: responseData.result,
+            text1: 'Review Submitted',
+            text2: responseData.result || 'Thank you for your feedback!',
           });
           navigation.navigate('MovieDetailScreen', {
             movieId: movie.movieId,
@@ -78,380 +101,383 @@ const MovieReviewScreen: React.FC<MovieReviewScreenProps> = ({
   );
 
   return (
-    <ScrollView style={[styles.container, {backgroundColor: colors.dark}]}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}>
-          <Icon source="chevron-left" size={24} color="#fff" />
-        </TouchableOpacity>
-        <Text style={[styles.headerTitle, {color: colors.white}]}>
-          Review Film
-        </Text>
-        <View style={styles.placeholder} />
-      </View>
+    <KeyboardAvoidingView
+      style={{flex: 1}}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+        <StatusBar
+          barStyle="light-content"
+          backgroundColor={THEME.background}
+        />
 
-      <View style={[styles.movieCard, {backgroundColor: colors.mediumGray}]}>
-        <View style={styles.movieInfo}>
-          <View style={[styles.poster, {backgroundColor: colors.lightGray}]}>
-            <Text style={[styles.posterText, {color: colors.dark}]}>
-              <Image
-                source={{uri: getPosterImage(movie.posterURL)}}
-                style={styles.posterImage}
-                resizeMode="cover"
-              />
-            </Text>
-          </View>
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.glassButton}
+            onPress={() => navigation.goBack()}>
+            <Icon name="chevron-back" size={24} color={THEME.textWhite} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Write a Review</Text>
+          <View style={{width: 40}} /> 
+        </View>
+
+        {/* Movie Summary Card */}
+        <View style={styles.movieCard}>
+          <Image
+            source={{uri: getPosterImage(movie.posterURL)}}
+            style={styles.posterImage}
+            resizeMode="cover"
+          />
           <View style={styles.movieDetails}>
-            <Text
-              style={[styles.movieTitle, {color: colors.white}]}
-              ellipsizeMode="tail"
-              numberOfLines={2}>
+            <Text style={styles.movieTitle} numberOfLines={2}>
               {movie.title}
             </Text>
-            <Text style={[styles.movieMeta, {color: colors.lightGray}]}>
-              Genres: {movie.genres.map(eachGenre => eachGenre.name).join(', ')}
-            </Text>
-            <Text style={[styles.movieMeta, {color: colors.lightGray}]}>
-              Duration: {formatMinutesToHours(movie.duration)}
-            </Text>
-          </View>
-        </View>
-      </View>
-
-      <View style={styles.ratingSection}>
-        {errors.rating && (
-          <Text style={styles.error}>{errors.rating.message}</Text>
-        )}
-        <View style={styles.starContainer}>
-          <Controller
-            control={control}
-            name="rating"
-            rules={{
-              ...minValue(1, 'Rating must be at least 1 star'),
-            }}
-            render={({field}) => (
-              <>
-                {[1, 2, 3, 4, 5].map(star => (
-                  <TouchableOpacity
-                    key={star}
-                    onPress={() =>
-                      setValue('rating', star === field.value ? 0 : star)
-                    }
-                    style={styles.starButton}>
-                    <Text
-                      style={[
-                        styles.starIcon,
-                        {
-                          color:
-                            field.value >= star
-                              ? colors.primary
-                              : colors.lightGray,
-                        },
-                      ]}>
-                      ★
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </>
-            )}
-          />
-        </View>
-        {watch('rating') > 0 && (
-          <Text style={[styles.ratingText, {color: colors.primary}]}>
-            {watch('rating')} / 5 stars
-          </Text>
-        )}
-      </View>
-
-      <View style={styles.commentSection}>
-        <Text style={[styles.sectionTitle, {color: colors.white}]}>
-          Your Feedback
-        </Text>
-        <View
-          style={[
-            styles.commentContainer,
-            {backgroundColor: colors.mediumGray},
-          ]}>
-          {errors.comment && (
-            <Text style={styles.error}>{errors.comment.message}</Text>
-          )}
-          <Controller
-            control={control}
-            name="comment"
-            rules={{
-              ...maxLength(500, 'Comment must be less than 500 characters'),
-            }}
-            render={({field}) => (
-              <TextInput
-                placeholder="Enter your comment here..."
-                placeholderTextColor={colors.lightGray}
-                keyboardType="email-address"
-                multiline
-                value={field.value}
-                textAlignVertical="top"
-                onChangeText={field.onChange}
-                autoCapitalize="none"
-                autoCorrect={false}
-                maxLength={500}
-                style={[styles.commentInput, {color: colors.white}]}
-              />
-            )}
-          />
-          <View style={styles.characterCount}>
-            <Text
-              style={[styles.characterCountText, {color: colors.lightGray}]}>
-              {watch('comment').length}/500
-            </Text>
-          </View>
-        </View>
-      </View>
-
-      <TouchableOpacity
-        onPress={handleSubmit(onSubmit)}
-        disabled={isSubmitting}
-        style={[
-          styles.submitButton,
-          {
-            backgroundColor:
-              watch('rating') > 0 && watch('comment').trim()
-                ? colors.primary
-                : colors.lightGray,
-            opacity: watch('rating') > 0 && watch('comment').trim() ? 1 : 0.5,
-          },
-        ]}>
-        <Text style={styles.submitButtonText}>
-          <Icon source="send" size={20} color="white" /> {'   '}Send
-        </Text>
-      </TouchableOpacity>
-
-      <View style={styles.recentReviews}>
-        <Text style={[styles.sectionTitle, {color: colors.white}]}>
-          Recent Reviews
-        </Text>
-        {movie.reviews.map(eachReview => (
-          <View
-            style={[styles.reviewItem, {backgroundColor: colors.mediumGray}]}>
-            <View style={styles.reviewHeader}>
-              <Image
-                source={{uri: getClientImage(eachReview.client.avatar)}}
-                resizeMode="cover"
-                style={[styles.avatar]}
-              />
-
-              <View style={styles.reviewInfo}>
-                <View style={styles.reviewTopRow}>
-                  <Text style={[styles.userName, {color: colors.white}]}>
-                    {eachReview.client.name}
-                  </Text>
-                  <View style={styles.reviewStars}>
-                    {[1, 2, 3, 4, 5].map(star => (
-                      <Text
-                        key={star}
-                        style={[
-                          styles.smallStar,
-                          {
-                            color:
-                              star <= eachReview.rating
-                                ? colors.primary
-                                : colors.lightGray,
-                          },
-                        ]}>
-                        ★
-                      </Text>
-                    ))}
-                  </View>
-                </View>
-                <Text style={[styles.reviewComment, {color: colors.lightGray}]}>
-                  {eachReview.comment}
+            <View style={styles.metaRow}>
+                <Icon name="film-outline" size={12} color={THEME.primaryRed} style={{marginRight: 4}} />
+                <Text style={styles.movieMeta} numberOfLines={1}>
+                {movie.genres.map(g => g.name).join(', ')}
                 </Text>
-                <Text style={[styles.reviewDate, {color: colors.lightGray}]}>
-                  {getRelativeTimeFromNow(eachReview.createdAt)}
+            </View>
+            <View style={styles.metaRow}>
+                <Icon name="time-outline" size={12} color={THEME.primaryRed} style={{marginRight: 4}} />
+                <Text style={styles.movieMeta}>
+                {formatMinutesToHours(movie.duration)}
                 </Text>
-              </View>
             </View>
           </View>
-        ))}
-      </View>
-    </ScrollView>
+        </View>
+
+        {/* Rating Section */}
+        <View style={styles.ratingContainer}>
+            <Text style={styles.sectionTitle}>How was the movie?</Text>
+            {errors.rating && (
+                <Text style={styles.errorText}>{errors.rating.message}</Text>
+            )}
+            
+            <View style={styles.starRow}>
+                <Controller
+                control={control}
+                name="rating"
+                rules={{...minValue(1, 'Please select a rating')}}
+                render={({field}) => (
+                    <>
+                    {[1, 2, 3, 4, 5].map(star => (
+                        <TouchableOpacity
+                        key={star}
+                        activeOpacity={0.7}
+                        onPress={() => setValue('rating', star === field.value ? 0 : star)}
+                        style={styles.starWrapper}>
+                        <Icon
+                            name={field.value >= star ? 'star' : 'star-outline'}
+                            size={36}
+                            color={field.value >= star ? THEME.starGold : THEME.textDarkGray}
+                            style={field.value >= star ? styles.glowingStar : undefined}
+                        />
+                        </TouchableOpacity>
+                    ))}
+                    </>
+                )}
+                />
+            </View>
+            
+            <Text style={styles.ratingLabel}>
+                {watch('rating') > 0 ? `${watch('rating')}.0 Excellent` : 'Tap to Rate'}
+            </Text>
+        </View>
+
+        {/* Comment Input */}
+        <View style={styles.inputSection}>
+          <Text style={styles.sectionTitle}>Your Review</Text>
+          {errors.comment && (
+            <Text style={styles.errorText}>{errors.comment.message}</Text>
+          )}
+          
+          <View style={styles.inputWrapper}>
+            <Controller
+                control={control}
+                name="comment"
+                rules={{
+                ...maxLength(500, 'Comment cannot exceed 500 characters'),
+                }}
+                render={({field}) => (
+                <TextInput
+                    placeholder="Share your thoughts on the plot, acting, and visuals..."
+                    placeholderTextColor={THEME.textDarkGray}
+                    multiline
+                    value={field.value}
+                    onChangeText={field.onChange}
+                    textAlignVertical="top"
+                    style={styles.textInput}
+                    maxLength={500}
+                />
+                )}
+            />
+            <Text style={styles.charCount}>
+                {watch('comment').length}/500
+            </Text>
+          </View>
+        </View>
+
+        {/* Submit Button */}
+        <TouchableOpacity
+          onPress={handleSubmit(onSubmit)}
+          disabled={isSubmitting}
+          style={[
+            styles.submitButton,
+            {
+              opacity:
+                watch('rating') > 0 && watch('comment').trim() ? 1 : 0.5,
+              shadowOpacity: 
+                watch('rating') > 0 && watch('comment').trim() ? 0.4 : 0,
+            },
+          ]}>
+          <Text style={styles.submitText}>Post Review</Text>
+          <Icon name="paper-plane" size={18} color="#FFF" style={{marginLeft: 8}} />
+        </TouchableOpacity>
+
+        {/* Recent Reviews (Context) */}
+        {movie.reviews.length > 0 && (
+            <View style={styles.recentSection}>
+                <View style={styles.recentHeader}>
+                    <Text style={styles.sectionTitle}>Recent Reviews</Text>
+                    <Icon name="chatbubbles-outline" size={18} color={THEME.textGray} />
+                </View>
+                
+                {movie.reviews.map((eachReview, index) => (
+                    <View key={index} style={styles.reviewCard}>
+                        <View style={styles.reviewHeader}>
+                            <Image
+                                source={{uri: getClientImage(eachReview.client.avatar)}}
+                                style={styles.avatar}
+                            />
+                            <View style={{flex: 1}}>
+                                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                                    <Text style={styles.reviewerName}>{eachReview.client.name}</Text>
+                                    <View style={styles.miniRating}>
+                                        <Icon name="star" size={10} color={THEME.starGold} />
+                                        <Text style={styles.miniRatingText}>{eachReview.rating}</Text>
+                                    </View>
+                                </View>
+                                <Text style={styles.reviewDate}>
+                                    {getRelativeTimeFromNow(eachReview.createdAt)}
+                                </Text>
+                            </View>
+                        </View>
+                        <Text style={styles.reviewBody}>{eachReview.comment}</Text>
+                    </View>
+                ))}
+            </View>
+        )}
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 16,
+    backgroundColor: THEME.background,
+    paddingHorizontal: 20,
   },
   header: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 16,
-    paddingTop: 50,
+    alignItems: 'center',
+    paddingVertical: 15,
+    marginBottom: 10,
   },
-  backButton: {
-    padding: 8,
-  },
-  backIcon: {
-    fontSize: 24,
-    fontWeight: 'bold',
+  glassButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: THEME.glass,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '700',
+    color: THEME.textWhite,
+    letterSpacing: 0.5,
   },
-  placeholder: {
-    width: 40,
-  },
+  
+  // Movie Card
   movieCard: {
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 24,
-  },
-  movieInfo: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-  },
-  poster: {
-    width: 80,
-    height: 112,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 16,
-  },
-  posterText: {
-    fontSize: 12,
-    textAlign: 'center',
-    fontWeight: '500',
+    backgroundColor: THEME.cardBg,
+    borderRadius: 16,
+    padding: 12,
+    marginBottom: 25,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.05)',
   },
   posterImage: {
-    width: 120,
-    height: 180,
+    width: 70,
+    height: 105,
     borderRadius: 8,
+    backgroundColor: '#000',
   },
   movieDetails: {
     flex: 1,
+    marginLeft: 15,
+    justifyContent: 'center',
   },
   movieTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 4,
+    color: THEME.textWhite,
+    marginBottom: 8,
+  },
+  metaRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 4,
   },
   movieMeta: {
-    fontSize: 14,
-    marginBottom: 2,
+    fontSize: 12,
+    color: THEME.textGray,
   },
-  ratingSection: {
-    alignItems: 'center',
-    marginBottom: 24,
+
+  // Rating
+  ratingContainer: {
+      alignItems: 'center',
+      marginBottom: 30,
   },
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 16,
-    textAlign: 'center',
+      fontSize: 16,
+      fontWeight: '600',
+      color: THEME.textWhite,
+      marginBottom: 10,
+      alignSelf: 'flex-start',
   },
-  starContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 8,
-    marginVertical: 16,
+  starRow: {
+      flexDirection: 'row',
+      gap: 12,
+      marginBottom: 10,
+      marginTop: 5,
   },
-  starButton: {
-    padding: 8,
+  starWrapper: {
+      padding: 5,
   },
-  starIcon: {
-    fontSize: 32,
+  glowingStar: {
+      textShadowColor: 'rgba(255, 215, 0, 0.5)',
+      textShadowOffset: {width: 0, height: 0},
+      textShadowRadius: 10,
   },
-  ratingText: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginTop: 8,
+  ratingLabel: {
+      color: THEME.textGray,
+      fontSize: 14,
+      marginTop: 5,
   },
-  commentSection: {
-    marginBottom: 24,
+  errorText: {
+      color: THEME.primaryRed,
+      fontSize: 12,
+      marginBottom: 5,
   },
-  commentContainer: {
-    borderRadius: 12,
-    padding: 16,
+
+  // Input
+  inputSection: {
+      marginBottom: 30,
   },
-  commentInput: {
-    height: 120,
-    fontSize: 16,
-    textAlignVertical: 'top',
+  inputWrapper: {
+      backgroundColor: THEME.inputBg,
+      borderRadius: 16,
+      padding: 15,
+      borderWidth: 1,
+      borderColor: 'rgba(255,255,255,0.1)',
   },
-  characterCount: {
-    alignItems: 'flex-end',
-    marginTop: 8,
+  textInput: {
+      height: 120,
+      color: THEME.textWhite,
+      fontSize: 14,
+      lineHeight: 22,
   },
-  characterCountText: {
-    fontSize: 12,
+  charCount: {
+      color: THEME.textDarkGray,
+      fontSize: 11,
+      alignSelf: 'flex-end',
+      marginTop: 8,
   },
+
+  // Button
   submitButton: {
-    borderRadius: 12,
-    paddingVertical: 16,
-    alignItems: 'center',
-    marginBottom: 32,
+      flexDirection: 'row',
+      backgroundColor: THEME.primaryRed,
+      height: 56,
+      borderRadius: 28,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 40,
+      shadowColor: THEME.shadowColor,
+      shadowOffset: {width: 0, height: 8},
+      shadowRadius: 16,
+      elevation: 8,
   },
-  submitButtonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '600',
+  submitText: {
+      color: '#FFF',
+      fontSize: 16,
+      fontWeight: 'bold',
+      letterSpacing: 1,
   },
-  recentReviews: {
-    marginBottom: 32,
+
+  // Reviews List
+  recentSection: {
+      marginBottom: 40,
   },
-  reviewItem: {
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
+  recentHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 15,
+  },
+  reviewCard: {
+      backgroundColor: THEME.cardBg,
+      borderRadius: 12,
+      padding: 15,
+      marginBottom: 12,
   },
   reviewHeader: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+      flexDirection: 'row',
+      marginBottom: 10,
   },
   avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: '#333',
+      marginRight: 10,
   },
-  avatarText: {
-    color: '#ffffff',
-    fontSize: 14,
-    fontWeight: 'bold',
+  reviewerName: {
+      color: THEME.textWhite,
+      fontSize: 13,
+      fontWeight: '600',
   },
-  reviewInfo: {
-    flex: 1,
+  miniRating: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: 'rgba(255,255,255,0.05)',
+      paddingHorizontal: 5,
+      paddingVertical: 2,
+      borderRadius: 4,
   },
-  reviewTopRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 4,
-  },
-  userName: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginRight: 8,
-  },
-  reviewStars: {
-    flexDirection: 'row',
-  },
-  smallStar: {
-    fontSize: 12,
-  },
-  reviewComment: {
-    fontSize: 14,
-    marginBottom: 4,
-    lineHeight: 20,
+  miniRatingText: {
+      color: THEME.textWhite,
+      fontSize: 10,
+      fontWeight: 'bold',
+      marginLeft: 3,
   },
   reviewDate: {
-    fontSize: 12,
+      color: THEME.textDarkGray,
+      fontSize: 10,
+      marginTop: 2,
   },
-  error: {color: 'red', marginBottom: 10},
+  reviewBody: {
+      color: THEME.textGray,
+      fontSize: 13,
+      lineHeight: 18,
+  }
 });
 
 export default MovieReviewScreen;

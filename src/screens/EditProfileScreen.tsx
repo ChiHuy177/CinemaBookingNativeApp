@@ -11,6 +11,7 @@ import {
   Alert,
   Image,
   SafeAreaView,
+  Dimensions,
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import {CameraOptions} from 'react-native-image-picker';
@@ -18,14 +19,27 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {EditProfileScreenProps} from '../types/screentypes';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { Dropdown } from 'react-native-element-dropdown';
-import { Icon } from 'react-native-paper';
-import { colors } from '../constant/color';
+import Icon from 'react-native-vector-icons/Ionicons'; // Switched to Ionicons for consistency
 import { requestCameraPermission } from '../constant/function';
 import { useSpinner } from '../context/SpinnerContext';
 import { updateClient } from '../services/ClientService';
 import { EditClientProfileProps } from '../types/client';
 import { getCitiesAPI, checkErrorFetchingData, showToast, formatDateOfBirth } from '../utils/function';
 import { required, isPhoneNumber } from '../utils/validators';
+
+const { width } = Dimensions.get('window');
+
+// THEME CONSTANTS
+const THEME = {
+  background: '#10111D', // Dark cinematic background
+  cardBg: '#1F2130',     // Input/Card background
+  accent: '#FF3B30',     // Bright Red/Coral accent
+  textWhite: '#FFFFFF',
+  textGray: '#8F90A6',   // Muted gray
+  textPlaceholder: '#5C5E6F',
+  error: '#FF3B30',
+  success: '#10B981',
+};
 
 const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
   navigation,
@@ -40,10 +54,10 @@ const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
     defaultValues: route.params,
   });
 
-
   const [cities, setCities] = useState([]);
   const {showSpinner, hideSpinner} = useSpinner();
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+
   useEffect(() => {
     async function getAllCities() {
       try {
@@ -89,8 +103,9 @@ const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
         if (responseData.code === 1000) {
           showToast({
             type: 'success',
-            text1: 'Update Successfully!!',
+            text1: 'Update Successfully!',
           });
+          navigation.goBack();
         } else {
           showToast({
             type: 'error',
@@ -175,7 +190,7 @@ const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
     Alert.alert('Pick Image', 'Where do you want to pick image?', [
       {text: 'Cancel', style: 'cancel'},
       {
-        text: 'Libraries',
+        text: 'Library',
         onPress: () => {
           handleImagePicker();
         },
@@ -190,41 +205,25 @@ const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
   }, []);
 
   return (
-    <SafeAreaView
-      style={[styles.container, {backgroundColor: colors.dark}]}>
-      <StatusBar
-        backgroundColor={colors.dark}
-        barStyle="light-content"
-      />
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor={THEME.background} />
 
-      <View
-        style={[
-          styles.header,
-          {backgroundColor: colors.mediumGray},
-        ]}>
+      {/* Decorative Glow */}
+      <View style={styles.topGlow} />
+
+      {/* Header */}
+      <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}>
-          <Icon
-            source="chevron-left"
-            size={30}
-            color={colors.white}
-          />
+          <Icon name="arrow-back" size={24} color={THEME.textWhite} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, {color: colors.white}]}>
-          Edit Profile
-        </Text>
+        <Text style={styles.headerTitle}>EDIT PROFILE</Text>
         <TouchableOpacity
           disabled={isSubmitting}
           onPress={handleSubmit(onSubmit)}
           style={styles.saveButton}>
-          <Text
-            style={[
-              styles.saveButtonText,
-              {color: colors.primary},
-            ]}>
-            Save
-          </Text>
+          <Text style={styles.saveButtonText}>SAVE</Text>
         </TouchableOpacity>
       </View>
 
@@ -232,6 +231,7 @@ const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}>
         <View style={styles.formContainer}>
+          {/* Avatar Section */}
           <View style={styles.avatarSection}>
             <View style={styles.avatarContainer}>
               <Controller
@@ -240,51 +240,24 @@ const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
                 render={({field}) => (
                   <Image
                     source={{uri: field.value?.uri}}
-                    style={[
-                      styles.avatar,
-                      {borderColor: colors.primary},
-                    ]}
+                    style={styles.avatar}
                   />
                 )}
               />
               <TouchableOpacity
-                style={[
-                  styles.editAvatarButton,
-                  {backgroundColor: colors.primary},
-                ]}
+                style={styles.editAvatarButton}
                 onPress={showModalConfirmImage}>
-                <Icon
-                  source="camera"
-                  size={16}
-                  color={colors.white}
-                />
+                <Icon name="camera" size={16} color={THEME.textWhite} />
               </TouchableOpacity>
             </View>
-            <Text
-              style={[
-                styles.avatarText,
-                {color: colors.lightGray},
-              ]}>
-              Press to change avatar
-            </Text>
+            <Text style={styles.avatarText}>Tap to change avatar</Text>
           </View>
+
+          {/* Name Input */}
           <View style={styles.inputGroup}>
-            <Text style={[styles.label, {color: colors.white}]}>
-              Họ và tên *
-            </Text>
-            {errors.name && (
-              <Text style={styles.error}>{errors.name.message}</Text>
-            )}
-            <View
-              style={[
-                styles.inputContainer,
-                {backgroundColor: colors.mediumGray},
-              ]}>
-              <Icon
-                source="account"
-                size={20}
-                color={colors.lightGray}
-              />
+            <Text style={styles.label}>Full Name *</Text>
+            <View style={[styles.inputContainer, errors.name && styles.inputError]}>
+              <Icon name="person" size={20} color={THEME.textGray} />
               <Controller
                 control={control}
                 name="name"
@@ -293,36 +266,25 @@ const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
                 }}
                 render={({field}) => (
                   <TextInput
-                    placeholder="Name"
-                    placeholderTextColor="#C5C5C5"
+                    placeholder="Full Name"
+                    placeholderTextColor={THEME.textPlaceholder}
                     value={field.value}
                     onChangeText={field.onChange}
-                    style={[
-                      styles.textInput,
-                      {color: colors.white},
-                    ]}
+                    style={styles.textInput}
                     autoCapitalize="words"
                     autoCorrect={false}
                   />
                 )}
               />
             </View>
+            {errors.name && <Text style={styles.error}>{errors.name.message}</Text>}
           </View>
+
+          {/* Email Input (Read Only) */}
           <View style={styles.inputGroup}>
-            <Text style={[styles.label, {color: colors.white}]}>
-              Email
-            </Text>
-            <View
-              style={[
-                styles.inputContainer,
-                styles.disabledInput,
-                {backgroundColor: colors.mediumGray},
-              ]}>
-              <Icon
-                source="email"
-                size={20}
-                color={colors.lightGray}
-              />
+            <Text style={styles.label}>Email (Read-only)</Text>
+            <View style={[styles.inputContainer, styles.disabledInput]}>
+              <Icon name="mail" size={20} color={THEME.textGray} />
               <Controller
                 control={control}
                 name="email"
@@ -330,84 +292,54 @@ const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
                   <TextInput
                     value={field.value}
                     editable={false}
-                    style={[
-                      styles.textInput,
-                      styles.disabledText,
-                      {color: colors.lightGray},
-                    ]}
-                    autoCapitalize="words"
-                    autoCorrect={false}
+                    style={[styles.textInput, {color: THEME.textGray}]}
                   />
                 )}
               />
-              <Icon
-                source="lock"
-                size={16}
-                color={colors.lightGray}
-              />
+              <Icon name="lock-closed" size={16} color={THEME.textGray} />
             </View>
           </View>
-          <View style={styles.inputGroup}>
-            <Text style={[styles.label, {color: colors.white}]}>
-              City *
-            </Text>
 
-            {errors.city && (
-              <Text style={styles.error}>{errors.city.message}</Text>
-            )}
-            <View
-              style={[
-                styles.inputContainer,
-                {backgroundColor: colors.mediumGray},
-              ]}>
-              <Icon
-                source="map-marker"
-                size={20}
-                color={colors.lightGray}
-              />
+          {/* City Dropdown */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>City *</Text>
+            <View style={[styles.inputContainer, errors.city && styles.inputError]}>
+              <Icon name="location" size={20} color={THEME.textGray} />
               <Controller
                 control={control}
                 name="city"
                 rules={{required: 'City is required'}}
                 render={({field}) => (
                   <Dropdown
-                    style={styles.textInput}
+                    style={styles.dropdown}
                     containerStyle={styles.dropdownContainer}
                     itemTextStyle={styles.dropdownItemText}
                     placeholderStyle={styles.dropdownPlaceholder}
                     selectedTextStyle={styles.dropdownText}
                     itemContainerStyle={styles.dropdownItem}
+                    activeColor={THEME.background}
+                    iconColor={THEME.textGray}
                     search
                     searchPlaceholder="Search..."
                     inputSearchStyle={styles.dropdownSearchInput}
                     data={cities}
                     labelField="label"
                     valueField="value"
-                    placeholder="Chọn thành phố"
-                    value={{label: field.value, value: field.value}}
+                    placeholder="Select City"
+                    value={field.value}
                     onChange={item => field.onChange(item.value)}
                   />
                 )}
               />
             </View>
+            {errors.city && <Text style={styles.error}>{errors.city.message}</Text>}
           </View>
+
+          {/* Phone Input */}
           <View style={styles.inputGroup}>
-            <Text style={[styles.label, {color: colors.white}]}>
-              PhoneNumber *
-            </Text>
-            {errors.phoneNumber && (
-              <Text style={styles.error}>{errors.phoneNumber.message}</Text>
-            )}
-            <View
-              style={[
-                styles.inputContainer,
-                {backgroundColor: colors.mediumGray},
-              ]}>
-              <Icon
-                source="phone"
-                size={20}
-                color={colors.lightGray}
-              />
+            <Text style={styles.label}>Phone Number *</Text>
+            <View style={[styles.inputContainer, errors.phoneNumber && styles.inputError]}>
+              <Icon name="call" size={20} color={THEME.textGray} />
               <Controller
                 control={control}
                 name="phoneNumber"
@@ -417,40 +349,27 @@ const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
                 }}
                 render={({field}) => (
                   <TextInput
-                    placeholder="PhoneNumber"
-                    placeholderTextColor="#C5C5C5"
+                    placeholder="Phone Number"
+                    placeholderTextColor={THEME.textPlaceholder}
                     value={field.value}
                     onChangeText={field.onChange}
-                    style={[
-                      styles.textInput,
-                      {color: colors.white},
-                    ]}
-                    autoCapitalize="words"
-                    autoCorrect={false}
+                    style={styles.textInput}
+                    autoCapitalize="none"
                     keyboardType="phone-pad"
                   />
                 )}
               />
             </View>
+            {errors.phoneNumber && (
+              <Text style={styles.error}>{errors.phoneNumber.message}</Text>
+            )}
           </View>
 
+          {/* Date of Birth */}
           <View style={styles.inputGroup}>
-            <Text style={[styles.label, {color: colors.white}]}>
-              Date of Birth *
-            </Text>
-            {errors.doB && (
-              <Text style={styles.error}>{errors.doB.message}</Text>
-            )}
-            <View
-              style={[
-                styles.inputContainer,
-                {backgroundColor: colors.mediumGray},
-              ]}>
-              <Icon
-                source="calendar-outline"
-                size={20}
-                color={colors.lightGray}
-              />
+            <Text style={styles.label}>Date of Birth *</Text>
+            <View style={[styles.inputContainer, errors.doB && styles.inputError]}>
+              <Icon name="calendar" size={20} color={THEME.textGray} />
               <Controller
                 control={control}
                 name="doB"
@@ -460,14 +379,14 @@ const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
                 render={({field}) => (
                   <>
                     <TouchableOpacity
-                      style={styles.inputContainer}
+                      style={styles.dateTouchable}
                       onPress={() => setShowDatePicker(true)}>
-                      <Text style={styles.dateText}>
+                      <Text style={[styles.textInput, !field.value && {color: THEME.textPlaceholder}]}>
                         {field.value
                           ? formatDateOfBirth(field.value)
-                          : 'Select date of birth'}
+                          : 'Select Date'}
                       </Text>
-                      <Icon source="chevron-down" size={20} color="#C5C5C5" />
+                      <Icon name="chevron-down" size={20} color={THEME.textGray} />
                     </TouchableOpacity>
                     <DatePicker
                       modal
@@ -485,94 +404,87 @@ const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
                 )}
               />
             </View>
+            {errors.doB && <Text style={styles.error}>{errors.doB.message}</Text>}
           </View>
 
+          {/* Address */}
           <View style={styles.inputGroup}>
-            <Text style={[styles.label, {color: colors.white}]}>
-              Address
-            </Text>
-            <View
-              style={[
-                styles.inputContainer,
-                {backgroundColor: colors.mediumGray},
-              ]}>
-              <Icon
-                source="road-variant"
-                size={20}
-                color={colors.lightGray}
-              />
+            <Text style={styles.label}>Address</Text>
+            <View style={styles.inputContainer}>
+              <Icon name="home" size={20} color={THEME.textGray} />
               <Controller
                 control={control}
                 name="address"
                 render={({field}) => (
                   <TextInput
                     placeholder="Address"
-                    placeholderTextColor="#C5C5C5"
+                    placeholderTextColor={THEME.textPlaceholder}
                     value={field.value}
                     onChangeText={field.onChange}
-                    style={[
-                      styles.textInput,
-                      {color: colors.white},
-                    ]}
+                    style={styles.textInput}
                     autoCapitalize="words"
-                    autoCorrect={false}
                   />
                 )}
               />
             </View>
           </View>
 
-          <View style={[styles.genderContainer]}>
-            <Controller
-              control={control}
-              name="genre"
-              defaultValue={false}
-              render={({field}) => (
-                <>
-                  <TouchableOpacity
-                    style={[
-                      styles.genderButton,
-                      field.value && styles.genderButtonActive,
-                    ]}
-                    onPress={() => field.onChange(true)}>
-                    <Icon
-                      source="gender-male"
-                      size={20}
-                      color={field.value ? '#FFFFFF' : '#C5C5C5'}
-                    />
-                    <Text
+          {/* Gender */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Gender</Text>
+            <View style={styles.genderContainer}>
+              <Controller
+                control={control}
+                name="genre"
+                defaultValue={false}
+                render={({field}) => (
+                  <>
+                    <TouchableOpacity
                       style={[
-                        styles.genderButtonText,
-                        field.value && styles.genderButtonTextActive,
-                      ]}>
-                      Male
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[
-                      styles.genderButton,
-                      !field.value && styles.genderButtonActive,
-                    ]}
-                    onPress={() => field.onChange(false)}>
-                    <Icon
-                      source="gender-female"
-                      size={20}
-                      color={!field.value ? '#FFFFFF' : '#C5C5C5'}
-                    />
-                    <Text
+                        styles.genderButton,
+                        field.value && styles.genderButtonActive,
+                      ]}
+                      onPress={() => field.onChange(true)}>
+                      <Icon
+                        name="male"
+                        size={20}
+                        color={field.value ? THEME.textWhite : THEME.textGray}
+                      />
+                      <Text
+                        style={[
+                          styles.genderButtonText,
+                          field.value && styles.genderButtonTextActive,
+                        ]}>
+                        Male
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
                       style={[
-                        styles.genderButtonText,
-                        !field.value && styles.genderButtonTextActive,
-                      ]}>
-                      Female
-                    </Text>
-                  </TouchableOpacity>
-                </>
-              )}
-            />
+                        styles.genderButton,
+                        !field.value && styles.genderButtonActive,
+                      ]}
+                      onPress={() => field.onChange(false)}>
+                      <Icon
+                        name="female"
+                        size={20}
+                        color={!field.value ? THEME.textWhite : THEME.textGray}
+                      />
+                      <Text
+                        style={[
+                          styles.genderButtonText,
+                          !field.value && styles.genderButtonTextActive,
+                        ]}>
+                        Female
+                      </Text>
+                    </TouchableOpacity>
+                  </>
+                )}
+              />
+            </View>
           </View>
+
+          <View style={styles.bottomSpacing} />
         </View>
-        <View style={styles.bottomSpacing} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -581,56 +493,72 @@ const EditProfileScreen: React.FC<EditProfileScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: THEME.background,
+  },
+  topGlow: {
+    position: 'absolute',
+    top: -100,
+    left: -50,
+    width: width,
+    height: 300,
+    backgroundColor: THEME.accent,
+    opacity: 0.05,
+    borderRadius: 150,
+    transform: [{ scaleX: 1.5 }],
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
-    paddingVertical: 5,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    paddingVertical: 15,
+    marginTop: 10,
   },
   backButton: {
-    padding: 5,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    flex: 1,
-    textAlign: 'center',
-    marginHorizontal: 20,
+    fontWeight: '800',
+    color: THEME.textWhite,
+    letterSpacing: 1,
   },
   saveButton: {
-    paddingHorizontal: 15,
-    paddingVertical: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255, 59, 48, 0.1)',
   },
   saveButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 14,
+    fontWeight: '700',
+    color: THEME.accent,
   },
   scrollView: {
     flex: 1,
   },
   formContainer: {
-    padding: 20,
+    padding: 24,
   },
   avatarSection: {
     alignItems: 'center',
-    marginBottom: 30,
+    marginBottom: 32,
   },
   avatarContainer: {
     position: 'relative',
-    marginBottom: 10,
+    marginBottom: 12,
   },
   avatar: {
     width: 100,
     height: 100,
     borderRadius: 50,
-    borderWidth: 3,
+    borderWidth: 2,
+    borderColor: THEME.accent,
   },
   editAvatarButton: {
     position: 'absolute',
@@ -639,137 +567,108 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
+    backgroundColor: THEME.accent,
     alignItems: 'center',
     justifyContent: 'center',
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    borderWidth: 2,
+    borderColor: THEME.background,
   },
   avatarText: {
     fontSize: 14,
-    textAlign: 'center',
+    color: THEME.textGray,
   },
   inputGroup: {
     marginBottom: 20,
   },
   label: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600',
+    color: THEME.textWhite,
     marginBottom: 8,
+    marginLeft: 4,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 15,
-    paddingVertical: 12,
-    borderRadius: 10,
-    minHeight: 50,
+    backgroundColor: THEME.cardBg,
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    height: 56,
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  inputError: {
+    borderColor: THEME.error,
   },
   disabledInput: {
     opacity: 0.7,
+    backgroundColor: '#2A2C3A',
   },
   textInput: {
     flex: 1,
-    fontSize: 16,
-    marginLeft: 10,
-    paddingVertical: 0,
+    fontSize: 15,
+    color: THEME.textWhite,
+    marginLeft: 12,
+    height: '100%',
   },
-  selectText: {
+  dateTouchable: {
     flex: 1,
-    fontSize: 16,
-    marginLeft: 10,
-  },
-  disabledText: {
-    flex: 1,
-    fontSize: 16,
-    marginLeft: 10,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    maxHeight: '70%',
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#404040',
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  optionsList: {
-    maxHeight: 400,
-  },
-  optionItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#404040',
+    height: '100%',
+    marginLeft: 12,
   },
-  optionText: {
-    fontSize: 16,
+  error: {
+    color: THEME.error,
+    fontSize: 12,
+    marginTop: 6,
+    marginLeft: 4,
+  },
+  // Dropdown
+  dropdown: {
     flex: 1,
-  },
-  bottomSpacing: {
-    height: 30,
-  },
-  dateText: {
-    flex: 1,
-    fontSize: 16,
-    color: '#FFFFFF',
-  },
-  chevronIcon: {
-    marginLeft: 8,
+    marginLeft: 12,
   },
   dropdownText: {
-    fontSize: 16,
-    color: '#FFFFFF',
+    fontSize: 15,
+    color: THEME.textWhite,
   },
-
   dropdownPlaceholder: {
-    fontSize: 16,
-    color: '#fff',
+    fontSize: 15,
+    color: THEME.textPlaceholder,
   },
-
   dropdownContainer: {
-    backgroundColor: '#3D3D3D',
+    backgroundColor: '#2A2C3A',
     borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#3D3D3D',
+    borderWidth: 0,
+    marginTop: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
   },
-
   dropdownItem: {
-    paddingVertical: 6,
-    paddingHorizontal: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    backgroundColor: '#2A2C3A',
     borderBottomWidth: 0.5,
-    borderBottomColor: '#555',
+    borderBottomColor: 'rgba(255,255,255,0.05)',
   },
-
   dropdownItemText: {
-    fontSize: 16,
-    color: '#FFFFFF',
+    fontSize: 15,
+    color: THEME.textWhite,
   },
   dropdownSearchInput: {
     borderRadius: 8,
-    color: '#FFFFFF',
-    backgroundColor: '#2F2F2F',
-    fontSize: 16,
+    color: THEME.textWhite,
+    backgroundColor: '#1F2130',
+    fontSize: 14,
+    borderWidth: 0,
+    margin: 8,
   },
-  genderButtons: {
+  // Gender
+  genderContainer: {
     flexDirection: 'row',
     gap: 12,
   },
@@ -778,52 +677,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#3D3D3D',
-    borderRadius: 12,
-    height: 56,
-    borderWidth: 2,
+    backgroundColor: THEME.cardBg,
+    borderRadius: 16,
+    height: 50,
+    borderWidth: 1,
     borderColor: 'transparent',
   },
   genderButtonActive: {
-    backgroundColor: '#FF8133',
-    borderColor: '#FF8133',
+    backgroundColor: 'rgba(255, 59, 48, 0.15)',
+    borderColor: THEME.accent,
   },
   genderButtonText: {
-    fontSize: 16,
-    color: '#C5C5C5',
+    fontSize: 14,
+    color: THEME.textGray,
     marginLeft: 8,
-    fontWeight: '500',
+    fontWeight: '600',
   },
   genderButtonTextActive: {
-    color: '#FFFFFF',
+    color: THEME.accent,
   },
-  checkboxContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 24,
-    paddingHorizontal: 4,
+  bottomSpacing: {
+    height: 40,
   },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderWidth: 2,
-    borderColor: '#C5C5C5',
-    borderRadius: 4,
-    marginRight: 12,
-    marginTop: 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  checkboxChecked: {
-    backgroundColor: '#FF8133',
-    borderColor: '#FF8133',
-  },
-  genderContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    gap: 10,
-  },
-  error: {color: 'red', marginBottom: 10},
 });
 
 export default EditProfileScreen;

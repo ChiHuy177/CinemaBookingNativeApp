@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import {useCallback, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {ResetPasswordScreenProps} from '../types/screentypes';
 import {Controller, SubmitHandler, useForm} from 'react-hook-form';
 import {ResetPasswordProps} from '../types/auth';
@@ -20,6 +20,20 @@ import {useSpinner} from '../context/SpinnerContext';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {resetPassword, resendResetPasswordCode} from '../services/AuthService';
 import {showToast, checkErrorFetchingData} from '../utils/function';
+
+// --- CINEMATIC DARK THEME CONFIGURATION ---
+const THEME = {
+  background: '#10111D', // Deep Cinematic Blue/Black
+  cardBg: '#1C1D2E', // Slightly lighter panel
+  primaryRed: '#FF3B30', // Neon/Cinematic Red
+  inputBg: 'rgba(255, 255, 255, 0.05)', // Glassy input
+  textWhite: '#FFFFFF',
+  textGray: '#A0A0B0',
+  textDarkGray: '#5C5D6F',
+  glass: 'rgba(255, 255, 255, 0.08)',
+  border: 'rgba(255, 255, 255, 0.05)',
+  shadowColor: '#FF3B30',
+};
 
 export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
   navigation,
@@ -59,7 +73,8 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
         if (responseData.code === 1000) {
           showToast({
             type: 'success',
-            text1: `${responseData.message}`,
+            text1: 'Password Reset Successful',
+            text2: responseData.message || 'You can now login with your new password.',
           });
           setTimeout(() => {
             navigation.navigate('LoginScreen');
@@ -68,7 +83,7 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
       } catch (error) {
         checkErrorFetchingData({
           error: error,
-          title: 'Error resetting password',
+          title: 'Reset Failed',
         });
       } finally {
         hideSpinner();
@@ -84,13 +99,14 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
       if (responseData.code === 1000) {
         showToast({
           type: 'success',
-          text1: 'Verification code resent successfully',
+          text1: 'Code Sent',
+          text2: 'A new verification code has been sent to your email.',
         });
       }
     } catch (error) {
       checkErrorFetchingData({
         error: error,
-        title: 'Error resending verification code',
+        title: 'Error Resending Code',
       });
     } finally {
       hideSpinner();
@@ -99,11 +115,11 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#070816" />
+      <StatusBar barStyle="light-content" backgroundColor={THEME.background} />
 
-      {/* fake background blobs giống login/register */}
-      <View style={styles.bgCircleTop} />
-      <View style={styles.bgCircleBottom} />
+      {/* Decorative Background Elements */}
+      <View style={styles.bgGlowTop} />
+      <View style={styles.bgGlowBottom} />
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -111,160 +127,179 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
         <ScrollView
           contentContainerStyle={styles.scrollContainer}
           showsVerticalScrollIndicator={false}>
-          {/* HEADER */}
-          <View style={styles.headerRow}>
+          
+          {/* Header Section */}
+          <View style={styles.headerContainer}>
             <TouchableOpacity
-              style={styles.backButton}
+              style={styles.glassButton}
               onPress={() => navigation.goBack()}>
-              <Icon name="chevron-back" size={22} color="#FFFFFF" />
+              <Icon name="chevron-back" size={24} color={THEME.textWhite} />
             </TouchableOpacity>
           </View>
 
-          <View style={styles.header}>
+          <View style={styles.titleSection}>
             <View style={styles.badge}>
               <View style={styles.badgeDot} />
-              <Text style={styles.badgeText}>Cinema App</Text>
+              <Text style={styles.badgeText}>Security Check</Text>
             </View>
 
-            <Text style={styles.title}>Reset password</Text>
+            <Text style={styles.title}>Reset Password</Text>
             <Text style={styles.subtitle}>
-              We&apos;ve sent a verification code to{' '}
-              <Text style={styles.subtitleAccent}>{email}</Text>
+              We've sent a 6-digit code to{' '}
+              <Text style={styles.subtitleAccent}>{email}</Text>. Please enter it below to set a new password.
             </Text>
           </View>
 
-          {/* FORM CARD */}
+          {/* Form Card */}
           <View style={styles.formCard}>
-            <View style={styles.inputContainer}>
-              <Icon
-                name="shield-checkmark-outline"
-                size={20}
-                color="#C5C5C5"
-                style={styles.inputIcon}
-              />
-              <Controller
-                control={control}
-                name="code"
-                rules={{
-                  ...required('Verification code is required'),
-                }}
-                render={({field}) => (
-                  <TextInput
-                    placeholder="Enter verification code"
-                    placeholderTextColor="#8E8E93"
-                    keyboardType="numeric"
-                    value={field.value}
-                    onChangeText={field.onChange}
-                    style={styles.input}
-                    maxLength={6}
-                  />
-                )}
-              />
+            
+            {/* Verification Code Input */}
+            <View style={styles.inputWrapper}>
+              <View style={styles.inputContainer}>
+                <Icon
+                  name="shield-checkmark-outline"
+                  size={20}
+                  color={THEME.textGray}
+                  style={styles.inputIcon}
+                />
+                <Controller
+                  control={control}
+                  name="code"
+                  rules={{
+                    ...required('Verification code is required'),
+                  }}
+                  render={({field}) => (
+                    <TextInput
+                      placeholder="Verification Code"
+                      placeholderTextColor={THEME.textDarkGray}
+                      keyboardType="number-pad"
+                      value={field.value}
+                      onChangeText={field.onChange}
+                      style={styles.input}
+                      maxLength={6}
+                    />
+                  )}
+                />
+              </View>
+              {errors.code && (
+                <Text style={styles.errorText}>{errors.code.message}</Text>
+              )}
             </View>
-            {errors.code && (
-              <Text style={styles.error}>{errors.code.message}</Text>
-            )}
 
             <TouchableOpacity
               onPress={() => resendCode(email)}
-              style={styles.resendCode}>
+              style={styles.resendCode}
+              activeOpacity={0.7}>
               <Text style={styles.resendCodeText}>
-                Didn&apos;t receive code? Resend
+                Didn't receive it? <Text style={styles.resendCodeHighlight}>Resend Code</Text>
               </Text>
             </TouchableOpacity>
 
-            {errors.password && (
-              <Text style={styles.error}>{errors.password.message}</Text>
-            )}
-            <View style={styles.inputContainer}>
-              <Icon
-                name="lock-closed-outline"
-                size={20}
-                color="#C5C5C5"
-                style={styles.inputIcon}
-              />
-              <Controller
-                control={control}
-                name="password"
-                rules={{
-                  ...required('Password is required'),
-                  ...strongPassword,
-                }}
-                render={({field}) => (
-                  <TextInput
-                    style={[styles.input, styles.passwordInput]}
-                    placeholder="New password"
-                    placeholderTextColor="#8E8E93"
-                    secureTextEntry={!showPassword}
-                    value={field.value}
-                    onChangeText={field.onChange}
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                  />
-                )}
-              />
-              <TouchableOpacity
-                onPress={() => setShowPassword(!showPassword)}
-                style={styles.eyeIcon}>
+            <View style={styles.divider} />
+
+            {/* New Password Input */}
+            <View style={styles.inputWrapper}>
+                <View style={styles.inputContainer}>
                 <Icon
-                  name={showPassword ? 'eye-outline' : 'eye-off-outline'}
-                  size={20}
-                  color="#C5C5C5"
+                    name="lock-closed-outline"
+                    size={20}
+                    color={THEME.textGray}
+                    style={styles.inputIcon}
                 />
-              </TouchableOpacity>
+                <Controller
+                    control={control}
+                    name="password"
+                    rules={{
+                    ...required('Password is required'),
+                    ...strongPassword,
+                    }}
+                    render={({field}) => (
+                    <TextInput
+                        style={[styles.input, {paddingRight: 40}]}
+                        placeholder="New Password"
+                        placeholderTextColor={THEME.textDarkGray}
+                        secureTextEntry={!showPassword}
+                        value={field.value}
+                        onChangeText={field.onChange}
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                    />
+                    )}
+                />
+                <TouchableOpacity
+                    onPress={() => setShowPassword(!showPassword)}
+                    style={styles.eyeIcon}>
+                    <Icon
+                    name={showPassword ? 'eye-outline' : 'eye-off-outline'}
+                    size={20}
+                    color={THEME.textGray}
+                    />
+                </TouchableOpacity>
+                </View>
+                {errors.password && (
+                    <Text style={styles.errorText}>{errors.password.message}</Text>
+                )}
             </View>
 
-            {errors.confirmPassword && (
-              <Text style={styles.error}>{errors.confirmPassword.message}</Text>
-            )}
-            <View style={styles.inputContainer}>
-              <Icon
-                name="lock-closed-outline"
-                size={20}
-                color="#C5C5C5"
-                style={styles.inputIcon}
-              />
-              <Controller
-                control={control}
-                name="confirmPassword"
-                rules={{
-                  ...required('Please confirm your password'),
-                  ...strongPassword,
-                  ...matchPassword(getValues, 'password'),
-                }}
-                render={({field}) => (
-                  <TextInput
-                    style={[styles.input, styles.passwordInput]}
-                    placeholder="Confirm new password"
-                    placeholderTextColor="#8E8E93"
-                    secureTextEntry={!showConfirmPassword}
-                    value={field.value}
-                    onChangeText={field.onChange}
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                  />
-                )}
-              />
-              <TouchableOpacity
-                onPress={() =>
-                  setShowConfirmPassword(!showConfirmPassword)
-                }
-                style={styles.eyeIcon}>
+            {/* Confirm Password Input */}
+            <View style={styles.inputWrapper}>
+                <View style={styles.inputContainer}>
                 <Icon
-                  name={
-                    showConfirmPassword ? 'eye-outline' : 'eye-off-outline'
-                  }
-                  size={20}
-                  color="#C5C5C5"
+                    name="lock-closed-outline"
+                    size={20}
+                    color={THEME.textGray}
+                    style={styles.inputIcon}
                 />
-              </TouchableOpacity>
+                <Controller
+                    control={control}
+                    name="confirmPassword"
+                    rules={{
+                    ...required('Please confirm your password'),
+                    ...strongPassword,
+                    ...matchPassword(getValues, 'password'),
+                    }}
+                    render={({field}) => (
+                    <TextInput
+                        style={[styles.input, {paddingRight: 40}]}
+                        placeholder="Confirm New Password"
+                        placeholderTextColor={THEME.textDarkGray}
+                        secureTextEntry={!showConfirmPassword}
+                        value={field.value}
+                        onChangeText={field.onChange}
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                    />
+                    )}
+                />
+                <TouchableOpacity
+                    onPress={() =>
+                    setShowConfirmPassword(!showConfirmPassword)
+                    }
+                    style={styles.eyeIcon}>
+                    <Icon
+                    name={
+                        showConfirmPassword ? 'eye-outline' : 'eye-off-outline'
+                    }
+                    size={20}
+                    color={THEME.textGray}
+                    />
+                </TouchableOpacity>
+                </View>
+                {errors.confirmPassword && (
+                <Text style={styles.errorText}>{errors.confirmPassword.message}</Text>
+                )}
             </View>
 
+            {/* Submit Button */}
             <TouchableOpacity
               style={styles.resetButton}
               onPress={handleSubmit(onSubmit)}
-              disabled={isSubmitting}>
-              <Text style={styles.resetButtonText}>Reset password</Text>
+              disabled={isSubmitting}
+              activeOpacity={0.8}>
+              <Text style={styles.resetButtonText}>
+                 {isSubmitting ? 'Processing...' : 'Reset Password'}
+              </Text>
+              <View style={styles.btnGlow} />
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -276,7 +311,7 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#070816',
+    backgroundColor: THEME.background,
   },
   keyboardView: {
     flex: 1,
@@ -284,163 +319,191 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
     paddingHorizontal: 24,
-    paddingVertical: 32,
+    paddingVertical: 20,
   },
 
-  // background blobs
-  bgCircleTop: {
+  // Ambient Background
+  bgGlowTop: {
     position: 'absolute',
-    top: -120,
-    left: -60,
-    width: 260,
-    height: 260,
-    borderRadius: 130,
-    backgroundColor: '#20213A',
-    opacity: 0.9,
+    top: -100,
+    left: -50,
+    width: 300,
+    height: 300,
+    borderRadius: 150,
+    backgroundColor: THEME.primaryRed,
+    opacity: 0.08,
+    transform: [{ scaleX: 1.5 }],
   },
-  bgCircleBottom: {
+  bgGlowBottom: {
     position: 'absolute',
-    bottom: -140,
-    right: -80,
-    width: 280,
-    height: 280,
-    borderRadius: 140,
-    backgroundColor: '#FF4B3A',
-    opacity: 0.25,
+    bottom: -100,
+    right: -50,
+    width: 300,
+    height: 300,
+    borderRadius: 150,
+    backgroundColor: '#0055FF', // Subtle blue contrast
+    opacity: 0.05,
   },
 
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
+  // Header
+  headerContainer: {
+    marginBottom: 20,
+    alignItems: 'flex-start',
   },
-  backButton: {
-    paddingVertical: 4,
-    paddingHorizontal: 4,
-    marginBottom: 8,
+  glassButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    backgroundColor: THEME.glass,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: THEME.border,
   },
-  header: {
-    marginBottom: 24,
+
+  // Title Section
+  titleSection: {
+    marginBottom: 30,
   },
   badge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 999,
-    backgroundColor: 'rgba(255,255,255,0.06)',
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    backgroundColor: 'rgba(255, 59, 48, 0.1)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    alignSelf: 'flex-start',
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 59, 48, 0.2)',
   },
   badgeDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#FF4B3A',
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: THEME.primaryRed,
     marginRight: 8,
   },
   badgeText: {
-    color: '#FFFFFF',
+    color: THEME.primaryRed,
     fontSize: 12,
     fontWeight: '600',
+    letterSpacing: 0.5,
   },
   title: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    marginBottom: 6,
+    fontSize: 32,
+    fontWeight: '800',
+    color: THEME.textWhite,
+    marginBottom: 10,
+    textShadowColor: 'rgba(255, 59, 48, 0.2)',
+    textShadowOffset: {width: 0, height: 0},
+    textShadowRadius: 10,
   },
   subtitle: {
     fontSize: 15,
-    color: '#B0B0B5',
-    lineHeight: 22,
+    color: THEME.textGray,
+    lineHeight: 24,
   },
   subtitleAccent: {
-    color: '#FFFFFF',
+    color: THEME.textWhite,
     fontWeight: '600',
   },
 
+  // Form Card
   formCard: {
-    backgroundColor: 'rgba(12, 11, 23, 0.96)',
+    backgroundColor: THEME.cardBg,
     borderRadius: 24,
-    padding: 22,
-    marginTop: 8,
-    marginBottom: 24,
-    shadowColor: '#000000',
-    shadowOffset: {width: 0, height: 18},
-    shadowOpacity: 0.45,
-    shadowRadius: 30,
-    elevation: 16,
+    padding: 24,
+    borderWidth: 1,
+    borderColor: THEME.border,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 10},
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 10,
   },
-
-  form: {
-    marginBottom: 40,
+  
+  inputWrapper: {
+      marginBottom: 16,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.04)',
+    backgroundColor: THEME.inputBg,
     borderRadius: 16,
-    marginBottom: 16,
     paddingHorizontal: 16,
-    height: 56,
+    height: 60,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
+    borderColor: THEME.border,
   },
   inputIcon: {
     marginRight: 12,
   },
   input: {
     flex: 1,
-    fontSize: 15,
-    color: '#FFFFFF',
-  },
-  passwordInput: {
-    paddingRight: 40,
+    fontSize: 16,
+    color: THEME.textWhite,
   },
   eyeIcon: {
-    position: 'absolute',
-    right: 16,
-    padding: 4,
+    padding: 8,
   },
-
-  resetButton: {
-    backgroundColor: '#FF4B3A',
-    borderRadius: 18,
-    height: 56,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 8,
-    shadowColor: '#FF4B3A',
-    shadowOffset: {width: 0, height: 12},
-    shadowOpacity: 0.45,
-    shadowRadius: 24,
-    elevation: 10,
-  },
-  resetButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
+  errorText: {
+    color: THEME.primaryRed,
+    marginTop: 6,
+    fontSize: 12,
+    marginLeft: 4,
   },
 
   resendCode: {
-    alignSelf: 'center',
-    marginBottom: 24,
+    alignSelf: 'flex-end',
+    marginBottom: 10,
   },
   resendCodeText: {
-    color: '#FF4B3A',
-    fontSize: 14,
-    fontWeight: '600',
+    color: THEME.textGray,
+    fontSize: 13,
+  },
+  resendCodeHighlight: {
+      color: THEME.primaryRed,
+      fontWeight: '600',
   },
 
-  disabledButton: {
-    opacity: 0.6,
+  divider: {
+      height: 1,
+      backgroundColor: THEME.border,
+      marginVertical: 20,
+      width: '100%',
   },
 
-  error: {
-    color: '#FF6B6B',
-    marginBottom: 8,
-    fontSize: 12,
+  // Button
+  resetButton: {
+    backgroundColor: THEME.primaryRed,
+    height: 58,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10,
+    shadowColor: THEME.shadowColor,
+    shadowOffset: {width: 0, height: 8},
+    shadowOpacity: 0.4,
+    shadowRadius: 16,
+    elevation: 8,
+    position: 'relative',
+    overflow: 'hidden',
   },
+  resetButtonText: {
+    color: THEME.textWhite,
+    fontSize: 16,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+  },
+  btnGlow: {
+      position: 'absolute',
+      top: -20,
+      left: 20,
+      width: 50,
+      height: 100,
+      backgroundColor: 'rgba(255,255,255,0.15)',
+      transform: [{rotate: '20deg'}],
+  }
 });

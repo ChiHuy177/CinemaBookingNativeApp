@@ -9,23 +9,49 @@ import {
   TouchableOpacity,
   StatusBar,
   Dimensions,
+  Platform,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {MovieDetailScreenProps} from '../types/screentypes';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import MovieTrailer from '../components/MovieTrailer';
+import {useFocusEffect} from '@react-navigation/native';
+
+// Types & Services
+import {MovieDetailScreenProps} from '../types/screentypes';
 import {MovieDetailProps} from '../types/movie';
 import {useSpinner} from '../context/SpinnerContext';
+import {movieDetailForBooking} from '../services/MovieService';
+import MovieTrailer from '../components/MovieTrailer';
 
+// Utils
 import {
   handleAddFavoriteMovie,
   handleRemoveFavoriteMovie,
 } from '../utils/movie';
-import {useFocusEffect} from '@react-navigation/native';
-import { movieDetailForBooking } from '../services/MovieService';
-import { showToast, checkErrorFetchingData, getAgeRatingColor, getAgeRatingFromRequireAge, formatMinutesToHours, getPosterImage, getActorImage, getClientImage, getRelativeTimeFromNow } from '../utils/function';
+import {
+  showToast,
+  checkErrorFetchingData,
+  getAgeRatingColor,
+  getAgeRatingFromRequireAge,
+  formatMinutesToHours,
+  getPosterImage,
+  getActorImage,
+  getClientImage,
+  getRelativeTimeFromNow,
+} from '../utils/function';
 
 const {width} = Dimensions.get('window');
+
+// --- CINEMATIC DARK THEME CONFIGURATION ---
+const THEME = {
+  background: '#10111D', // Deep Cinematic Blue/Black
+  cardBg: '#1C1D2E', // Slightly lighter panel
+  primaryRed: '#FF3B30', // Neon/Cinematic Red
+  textWhite: '#FFFFFF',
+  textGray: '#A0A0B0',
+  textDarkGray: '#5C5D6F',
+  glass: 'rgba(255, 255, 255, 0.08)', // Glassmorphism effect
+  shadowColor: '#FF3B30', // Glow color
+};
 
 const MovieDetailScreen: React.FC<MovieDetailScreenProps> = ({
   navigation,
@@ -47,14 +73,14 @@ const MovieDetailScreen: React.FC<MovieDetailScreenProps> = ({
           } else {
             showToast({
               type: 'error',
-              text1: 'Error getting movie detail',
-              text2: responseData.message,
+              text1: 'Data Error',
+              text2: responseData.message || 'Could not load movie details.',
             });
           }
         } catch (error) {
           checkErrorFetchingData({
             error: error,
-            title: 'Error getting movie detail',
+            title: 'Connection Error',
           });
         } finally {
           hideSpinner();
@@ -70,173 +96,209 @@ const MovieDetailScreen: React.FC<MovieDetailScreenProps> = ({
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#1a1a1a" />
+      <StatusBar barStyle="light-content" backgroundColor={THEME.background} />
 
+      {/* Header with Glass Back Button */}
       <View style={styles.header}>
         <TouchableOpacity
-          style={styles.backButton}
+          style={styles.glassButton}
           onPress={() => navigation.goBack()}>
-          <Icon name="chevron-back" size={24} color="#fff" />
+          <Icon name="chevron-back" size={24} color="#FFF" />
         </TouchableOpacity>
+        <Text style={styles.headerTitle} numberOfLines={1}>
+          Movie Details
+        </Text>
+        <View style={{width: 40}} /> 
+        {/* Spacer to center title properly */}
       </View>
 
       <ScrollView
         style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}>
-        <View style={styles.videoContainer}>
-          <MovieTrailer
-            trailerURL={movie?.trailerURL || ''}
-            key={movie?.trailerURL}
-          />
+        
+        {/* VIDEO SECTION */}
+        <View style={styles.videoWrapper}>
+          <View style={styles.videoContainer}>
+            <MovieTrailer
+              trailerURL={movie?.trailerURL || ''}
+              key={movie?.trailerURL}
+            />
+          </View>
+          {/* Glow Effect behind video */}
+          <View style={styles.videoGlow} />
         </View>
 
-        <View style={styles.titleSection}>
-          <View style={styles.trailerLabel}>
-            <Text style={styles.trailerText}>OFFICIAL TRAILER</Text>
+        {/* MAIN INFO HEADER */}
+        <View style={styles.mainInfoContainer}>
+          <View style={styles.titleRow}>
+            <Text style={styles.movieTitle}>{movie?.title}</Text>
           </View>
-          <View style={styles.ageRating}>
-            <Text
-              style={[
-                styles.ageText,
-                {color: getAgeRatingColor(movie?.requireAge || 0)},
-              ]}>
-              {getAgeRatingFromRequireAge(movie?.requireAge || 0)}
-            </Text>
-          </View>
-          <View style={styles.totalLikeContainer}>
-            {movie?.isFavorite ? (
-              <TouchableOpacity
-                style={styles.favoriteButton}
-                onPress={() =>
-                  handleRemoveFavoriteMovie(
-                    movie.movieId || 0,
-                    setMovie,
-                    showSpinner,
-                    hideSpinner,
-                  )
-                }>
-                <Icon name="heart" size={24} color="#B4263C" />
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity
-                style={styles.favoriteButton}
-                onPress={() =>
-                  handleAddFavoriteMovie(
-                    movie?.movieId || 0,
-                    setMovie,
-                    showSpinner,
-                    hideSpinner,
-                  )
-                }>
-                <Icon name="heart-outline" size={24} color="#B4263C" />
-              </TouchableOpacity>
-            )}
 
-            <Text style={styles.totalLikeText}> {movie?.totalLike}</Text>
-          </View>
-          <View style={styles.ratingContainer}>
-            <Icon name="star" size={14} color="#FF6B35" />
-            <Text style={styles.rating}>{movie?.rating}/5</Text>
-          </View>
-        </View>
-
-        <View style={styles.titleSection}>
-          <Text style={styles.movieTitle}>{movie?.title}</Text>
-        </View>
-
-        <View style={styles.movieInfoSection}>
-          <View style={styles.movieDetails}>
-            <View style={styles.movieMeta}>
-              <Text style={styles.duration}>
+          {/* Meta Data Row: Time | Language | Rating */}
+          <View style={styles.metaRow}>
+            <View style={styles.metaItem}>
+              <Icon name="time-outline" size={14} color={THEME.primaryRed} />
+              <Text style={styles.metaText}>
                 {formatMinutesToHours(movie?.duration || 0)}
               </Text>
+            </View>
+            <View style={styles.divider} />
+            <Text style={styles.metaText}>{movie?.language || 'EN'}</Text>
+            <View style={styles.divider} />
+            <View style={styles.ratingBadge}>
+              <Icon name="star" size={12} color="#FFD700" />
+              <Text style={styles.ratingText}>{movie?.rating}</Text>
+            </View>
+          </View>
 
-              {movie?.genres.map(genre => (
-                <Text style={styles.genre} key={genre.genreId}>
-                  {genre.name}
+          {/* Action Row: Trailer Tag | Age | Like */}
+          <View style={styles.actionRow}>
+            <View style={styles.tagContainer}>
+               <View style={[styles.ageTag, {borderColor: getAgeRatingColor(movie?.requireAge || 0)}]}>
+                <Text style={[styles.ageText, {color: getAgeRatingColor(movie?.requireAge || 0)}]}>
+                  {getAgeRatingFromRequireAge(movie?.requireAge || 0)}
                 </Text>
-              ))}
+              </View>
             </View>
 
-            <Text style={styles.director}>DIRECTED BY {movie?.director}</Text>
-
-            <Text
-              style={styles.description}
-              ellipsizeMode={'tail'}
-              numberOfLines={4}>
-              {movie?.description}
-            </Text>
-            <Text style={styles.director}>{movie?.language}</Text>
-            <TouchableOpacity
-              onPress={() => {
-                if (movie) {
-                  navigation.navigate('MovieReviewScreen', movie);
-                }
-              }}>
-              <Text style={styles.readMore}>Rate, review, add to list...</Text>
-            </TouchableOpacity>
+            {/* Like Button Group */}
+            <View style={styles.likeContainer}>
+              <TouchableOpacity
+                onPress={() =>
+                  movie?.isFavorite
+                    ? handleRemoveFavoriteMovie(
+                        movie.movieId || 0,
+                        setMovie,
+                        showSpinner,
+                        hideSpinner,
+                      )
+                    : handleAddFavoriteMovie(
+                        movie?.movieId || 0,
+                        setMovie,
+                        showSpinner,
+                        hideSpinner,
+                      )
+                }>
+                <Icon
+                  name={movie?.isFavorite ? 'heart' : 'heart-outline'}
+                  size={26}
+                  color={THEME.primaryRed}
+                />
+              </TouchableOpacity>
+              <Text style={styles.likeCount}>{movie?.totalLike}</Text>
+            </View>
           </View>
-          <View style={styles.posterContainer}>
+        </View>
+
+        <View style={styles.separator} />
+
+        {/* CONTENT & POSTER SECTION */}
+        <View style={styles.contentSection}>
+          <View style={styles.posterWrapper}>
             <Image
               source={{uri: getPosterImage(movie?.posterURL || '')}}
               style={styles.posterImage}
               resizeMode="cover"
             />
           </View>
+
+          <View style={styles.detailsWrapper}>
+            <Text style={styles.sectionLabel}>GENRES</Text>
+            <View style={styles.genreRow}>
+              {movie?.genres.map(genre => (
+                <View key={genre.genreId} style={styles.genrePill}>
+                  <Text style={styles.genreText}>{genre.name}</Text>
+                </View>
+              ))}
+            </View>
+
+            <Text style={[styles.sectionLabel, {marginTop: 15}]}>DIRECTOR</Text>
+            <Text style={styles.directorName}>{movie?.director}</Text>
+
+            <Text style={[styles.sectionLabel, {marginTop: 15}]}>STORYLINE</Text>
+            <Text
+              style={styles.descriptionText}
+              ellipsizeMode="tail"
+              numberOfLines={4}>
+              {movie?.description}
+            </Text>
+            
+            <TouchableOpacity 
+              activeOpacity={0.7}
+              onPress={() => movie && navigation.navigate('MovieReviewScreen', movie)}>
+              <Text style={styles.readMoreText}>Read more & Rate...</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
-        <View style={styles.castSection}>
-          <Text style={styles.sectionTitle}>Cast</Text>
+        {/* CAST SECTION */}
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionHeader}>Cast & Crew</Text>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            style={styles.castScrollView}>
+            contentContainerStyle={styles.castList}>
             {movie?.movieActors.map((movieActor, index) => (
-              <View key={index} style={styles.castItem}>
+              <View key={index} style={styles.castCard}>
                 <Image
                   source={{uri: getActorImage(movieActor.actor.imageURL)}}
-                  style={styles.castImage}
+                  style={styles.castImg}
                 />
-                <Text style={styles.castName}>{movieActor.actor.name}</Text>
-                <Text style={styles.castCharacter}>
+                <Text style={styles.castName} numberOfLines={1}>
+                  {movieActor.actor.name}
+                </Text>
+                <Text style={styles.castRole} numberOfLines={1}>
                   {movieActor.characterName}
                 </Text>
               </View>
             ))}
           </ScrollView>
         </View>
-        <View style={styles.reviewsSection}>
-          <Text style={styles.sectionTitle}>Reviews</Text>
+
+        {/* REVIEWS SECTION */}
+        <View style={[styles.sectionContainer, {marginBottom: 100}]}>
+          <View style={styles.reviewHeaderRow}>
+             <Text style={styles.sectionHeader}>Reviews</Text>
+             <Icon name="chatbubble-ellipses-outline" size={20} color={THEME.textDarkGray} />
+          </View>
+         
           {movie?.reviews.map((eachReview, index) => (
-            <View key={index}>
-              <View style={styles.reviewRating}>
-                <Icon name="star" size={16} color="#FF6B35" />
-                <Text style={styles.reviewScore}>{eachReview.rating}/5</Text>
-              </View>
-              <View style={styles.reviewItem}>
+            <View key={index} style={styles.reviewCard}>
+              <View style={styles.reviewTop}>
                 <Image
                   source={{uri: getClientImage(eachReview.client.avatar)}}
-                  style={styles.reviewerImage}
+                  style={styles.reviewerAvatar}
                 />
-                <View style={styles.reviewContent}>
-                  <Text
-                    style={styles.reviewText}
-                    ellipsizeMode="tail"
-                    numberOfLines={4}>
-                    {eachReview.comment}
-                  </Text>
+                <View style={{flex: 1}}>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                        <Text style={styles.reviewerName}>{eachReview.client.name || 'User'}</Text>
+                        <View style={styles.reviewRatingBadge}>
+                            <Icon name="star" size={10} color="#FFD700" />
+                            <Text style={styles.reviewRatingText}>{eachReview.rating}</Text>
+                        </View>
+                    </View>
+                    <Text style={styles.reviewDate}>
+                        {getRelativeTimeFromNow(eachReview.createdAt)}
+                    </Text>
                 </View>
               </View>
-              <Text style={styles.reviewDate}>
-                {getRelativeTimeFromNow(eachReview.createdAt)}
+              <Text
+                style={styles.reviewComment}
+                numberOfLines={3}
+                ellipsizeMode="tail">
+                "{eachReview.comment}"
               </Text>
             </View>
           ))}
         </View>
       </ScrollView>
-      <View style={styles.bottomContainer}>
+
+      {/* BOTTOM FLOATING BUTTON */}
+      <View style={styles.bottomBar}>
         <TouchableOpacity
-          style={styles.bookButton}
+          style={styles.bookingButton}
+          activeOpacity={0.8}
           onPress={() =>
             navigation.navigate('ShowingTimeBookingScreen', {
               movieId: movie?.movieId || 0,
@@ -244,7 +306,8 @@ const MovieDetailScreen: React.FC<MovieDetailScreenProps> = ({
               poster: movie?.posterURL || '',
             })
           }>
-          <Text style={styles.bookButtonText}>Book Tickets</Text>
+          <Text style={styles.bookingBtnText}>Book Ticket</Text>
+          <View style={styles.btnGlow} />
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -254,281 +317,385 @@ const MovieDetailScreen: React.FC<MovieDetailScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: THEME.background,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 20,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    backgroundColor: '#1a1a1a',
+    paddingVertical: 10,
     marginBottom: 5,
   },
-  backButton: {
-    padding: 5,
+  headerTitle: {
+      color: THEME.textWhite,
+      fontSize: 16,
+      fontWeight: '600',
+      opacity: 0.8,
   },
-  favoriteButton: {
-    padding: 5,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  videoContainer: {
-    width: width - 40,
-    height: 200,
-    marginHorizontal: 20,
-    borderRadius: 12,
-    overflow: 'hidden',
-    position: 'relative',
-    marginBottom: 10,
-  },
-  videoImage: {
-    width: '100%',
-    height: '100%',
-  },
-  videoOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.3)',
-  },
-  playButton: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: [{translateX: -20}, {translateY: -20}],
+  glassButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'rgba(255,255,255,0.9)',
+    backgroundColor: THEME.glass, // Glass effect
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
   },
-  titleSection: {
-    paddingHorizontal: 20,
-    marginBottom: 5,
-    display: 'flex',
+  
+  // Video
+  videoWrapper: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 25,
+    marginTop: 5,
+  },
+  videoContainer: {
+    width: width - 40,
+    height: 210,
+    borderRadius: 24,
+    overflow: 'hidden',
+    backgroundColor: '#000',
+    zIndex: 2,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+  },
+  videoGlow: {
+    position: 'absolute',
+    width: width - 60,
+    height: 180,
+    backgroundColor: THEME.primaryRed,
+    opacity: 0.15,
+    borderRadius: 40,
+    bottom: -10,
+    zIndex: 1,
+    transform: [{scale: 1.05}],
+  },
+
+  // Main Info
+  mainInfoContainer: {
+    paddingHorizontal: 24,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 10,
+  },
+  movieTitle: {
+    color: THEME.textWhite,
+    fontSize: 28,
+    fontWeight: '800',
+    letterSpacing: 0.5,
+    textShadowColor: 'rgba(255, 59, 48, 0.3)',
+    textShadowOffset: {width: 0, height: 0},
+    textShadowRadius: 10,
+    flex: 1,
+  },
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  metaItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  metaText: {
+    color: THEME.textGray,
+    fontSize: 13,
+    fontWeight: '500',
+    marginLeft: 4,
+  },
+  divider: {
+    height: 12,
+    width: 1,
+    backgroundColor: THEME.textDarkGray,
+    marginHorizontal: 12,
+  },
+  ratingBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 215, 0, 0.15)',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  ratingText: {
+    color: '#FFD700',
+    fontSize: 13,
+    fontWeight: 'bold',
+    marginLeft: 4,
+  },
+
+  // Actions
+  actionRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: 20,
   },
-  mainTitle: {
-    color: '#fff',
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  trailerLabel: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#000',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
-  },
-  trailerText: {
-    color: '#fff',
-    fontSize: 11,
-    fontWeight: 'bold',
-    letterSpacing: 0.5,
-  },
-  movieInfoSection: {
+  tagContainer: {
     flexDirection: 'row',
-    paddingHorizontal: 20,
-    marginBottom: 30,
+    gap: 10,
   },
-  posterContainer: {
-    marginLeft: 10,
-  },
-  posterImage: {
-    width: 120,
-    height: 180,
+  trailerTag: {
+    backgroundColor: THEME.primaryRed,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
     borderRadius: 8,
   },
-  movieDetails: {
-    flex: 1,
-    justifyContent: 'flex-start',
-  },
-  movieTitle: {
-    color: '#fff',
-    fontSize: 20,
+  trailerTagText: {
+    color: '#FFF',
+    fontSize: 10,
     fontWeight: 'bold',
-    marginBottom: 8,
   },
-  movieMeta: {
+  ageTag: {
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+    backgroundColor: 'transparent',
+  },
+  ageText: {
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  likeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
-    flexWrap: 'wrap',
-    gap: 5,
+    backgroundColor: THEME.glass,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.05)',
   },
-  duration: {
-    color: '#999',
-    fontSize: 13,
+  likeCount: {
+    color: THEME.textWhite,
+    fontSize: 14,
+    fontWeight: '600',
+    marginLeft: 6,
   },
+
   separator: {
-    color: '#999',
-    fontSize: 13,
-    marginHorizontal: 8,
+    height: 1,
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    marginHorizontal: 24,
+    marginBottom: 24,
   },
-  genre: {
-    color: '#999',
-    fontSize: 13,
-  },
-  ratingContainer: {
+
+  // Content
+  contentSection: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 12,
+    paddingHorizontal: 24,
+    marginBottom: 30,
   },
-  rating: {
-    color: '#FF6B35',
-    fontSize: 13,
-    marginLeft: 4,
-    fontWeight: 'bold',
+  posterWrapper: {
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 10},
+    shadowOpacity: 0.5,
+    shadowRadius: 15,
+    elevation: 10,
   },
-  director: {
-    color: '#999',
+  posterImage: {
+    width: 110,
+    height: 165,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+  },
+  detailsWrapper: {
+    flex: 1,
+    marginLeft: 20,
+  },
+  sectionLabel: {
+    color: THEME.textDarkGray,
     fontSize: 11,
-    marginBottom: 8,
-    letterSpacing: 0.3,
-  },
-  tagline: {
-    color: '#fff',
-    fontSize: 13,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  description: {
-    color: '#ccc',
-    fontSize: 13,
-    lineHeight: 18,
-    marginBottom: 8,
-  },
-  readMore: {
-    color: '#FF6B35',
-    fontSize: 13,
-  },
-  castSection: {
-    paddingHorizontal: 20,
-    marginBottom: 25,
-  },
-  sectionTitle: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 15,
-  },
-  castScrollView: {
-    marginLeft: -20,
-    paddingLeft: 20,
-  },
-  castItem: {
-    marginRight: 15,
-    alignItems: 'center',
-    width: 85,
-  },
-  castImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 25,
+    fontWeight: '700',
+    letterSpacing: 1,
     marginBottom: 6,
-    backgroundColor: '#333',
   },
-  castName: {
-    color: '#fff',
-    fontSize: 11,
-    textAlign: 'center',
-    marginBottom: 2,
+  directorName: {
+    color: THEME.textWhite,
+    fontSize: 15,
     fontWeight: '500',
   },
-  castCharacter: {
-    color: '#999',
-    fontSize: 9,
+  genreRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
+  },
+  genrePill: {
+    backgroundColor: THEME.cardBg,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.05)',
+  },
+  genreText: {
+    color: THEME.textGray,
+    fontSize: 11,
+  },
+  descriptionText: {
+    color: THEME.textGray,
+    fontSize: 13,
+    lineHeight: 20,
+    marginBottom: 8,
+  },
+  readMoreText: {
+    color: THEME.primaryRed,
+    fontSize: 13,
+    fontWeight: '600',
+  },
+
+  // Cast
+  sectionContainer: {
+    marginBottom: 30,
+    paddingHorizontal: 24,
+  },
+  sectionHeader: {
+    color: THEME.textWhite,
+    fontSize: 20,
+    fontWeight: '700',
+    marginBottom: 16,
+  },
+  castList: {
+    paddingRight: 20,
+  },
+  castCard: {
+    marginRight: 16,
+    width: 80,
+    alignItems: 'center',
+  },
+  castImg: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    borderWidth: 2,
+    borderColor: THEME.cardBg,
+    marginBottom: 8,
+  },
+  castName: {
+    color: THEME.textWhite,
+    fontSize: 12,
+    fontWeight: '600',
+    textAlign: 'center',
+    marginBottom: 2,
+  },
+  castRole: {
+    color: THEME.textDarkGray,
+    fontSize: 10,
     textAlign: 'center',
   },
-  reviewsSection: {
-    paddingHorizontal: 20,
-    marginBottom: 100,
+
+  // Reviews
+  reviewHeaderRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 15,
   },
-  reviewRating: {
+  reviewCard: {
+    backgroundColor: THEME.cardBg,
+    padding: 16,
+    borderRadius: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.03)',
+  },
+  reviewTop: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: 10,
   },
-  reviewScore: {
-    color: '#FF6B35',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginLeft: 4,
-  },
-  reviewItem: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-  },
-  reviewerImage: {
+  reviewerAvatar: {
     width: 36,
     height: 36,
     borderRadius: 18,
     marginRight: 12,
     backgroundColor: '#333',
   },
-  reviewContent: {
-    flex: 1,
-  },
-  reviewText: {
-    color: '#ccc',
-    fontSize: 13,
-    lineHeight: 18,
+  reviewerName: {
+      color: THEME.textWhite,
+      fontSize: 14,
+      fontWeight: '600',
   },
   reviewDate: {
-    fontSize: 11,
-    color: '#999',
-    marginTop: 4,
-    textAlign: 'right',
+      color: THEME.textDarkGray,
+      fontSize: 11,
+      marginTop: 2,
   },
-  bottomContainer: {
+  reviewRatingBadge: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: 'rgba(255,255,255,0.05)',
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+      borderRadius: 4,
+  },
+  reviewRatingText: {
+      color: THEME.textWhite,
+      fontSize: 11,
+      fontWeight: 'bold',
+      marginLeft: 3,
+  },
+  reviewComment: {
+    color: THEME.textGray,
+    fontSize: 13,
+    fontStyle: 'italic',
+    lineHeight: 18,
+  },
+
+  // Bottom Bar
+  bottomBar: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#1a1a1a',
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    paddingBottom: 30,
+    paddingHorizontal: 24,
+    paddingTop: 20,
+    paddingBottom: Platform.OS === 'ios' ? 30 : 20,
+    backgroundColor: THEME.background, 
     borderTopWidth: 1,
-    borderTopColor: '#333',
+    borderTopColor: 'rgba(255,255,255,0.05)',
   },
-  bookButton: {
-    backgroundColor: '#FF6B35',
-    paddingVertical: 15,
-    borderRadius: 8,
+  bookingButton: {
+    backgroundColor: THEME.primaryRed,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: THEME.primaryRed,
+    shadowOffset: {width: 0, height: 8},
+    shadowOpacity: 0.4,
+    shadowRadius: 16,
+    elevation: 12,
+    position: 'relative',
   },
-  bookButtonText: {
-    color: '#fff',
-    fontSize: 16,
+  bookingBtnText: {
+    color: '#FFF',
+    fontSize: 18,
     fontWeight: 'bold',
+    letterSpacing: 1,
   },
-  ageRating: {
-    backgroundColor: '#F0F0F0',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
-  },
-  ageText: {
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  totalLikeContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    gap: 1,
-    alignItems: 'center',
-  },
-  totalLikeText: {
-    color: '#ccc',
-  },
+  btnGlow: {
+      position: 'absolute',
+      top: 5,
+      left: 10,
+      right: 10,
+      height: 20,
+      backgroundColor: 'rgba(255,255,255,0.2)',
+      borderRadius: 20,
+      opacity: 0.3,
+  }
 });
 
 export default MovieDetailScreen;
