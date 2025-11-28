@@ -35,17 +35,17 @@ const styles = StyleSheet.create({
   timeButton: {
     paddingVertical: 8,
     paddingHorizontal: 16,
-    backgroundColor: '#3a3a3a',
-    borderRadius: 6,
+    backgroundColor: '#1F2130', // Card background matching HomeScreen
+    borderRadius: 8,
     minWidth: 60,
     alignItems: 'center',
   },
   selectedTimeButton: {
-    backgroundColor: '#FF6B35',
+    backgroundColor: '#FF3B30', // Accent color matching HomeScreen
   },
   timeText: {
     fontSize: 14,
-    color: '#ccc',
+    color: '#8F90A6', // Text gray matching HomeScreen
     fontWeight: '500',
   },
   selectedTimeText: {

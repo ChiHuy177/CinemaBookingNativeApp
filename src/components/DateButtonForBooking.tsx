@@ -37,16 +37,16 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
     marginRight: 12,
-    backgroundColor: '#2a2a2a',
-    borderRadius: 8,
+    backgroundColor: '#1F2130', // Card background matching HomeScreen
+    borderRadius: 12, // Increased border radius to match HomeScreen
     minWidth: 60,
   },
   selectedDateButton: {
-    backgroundColor: '#FF6B35',
+    backgroundColor: '#FF3B30', // Accent color matching HomeScreen
   },
   dayName: {
     fontSize: 12,
-    color: '#999',
+    color: '#8F90A6', // Text gray matching HomeScreen
     marginBottom: 4,
   },
   dayNumber: {
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
   },
   monthText: {
     fontSize: 12,
-    color: '#999',
+    color: '#8F90A6', // Text gray matching HomeScreen
   },
   selectedDateText: {
     color: '#fff',

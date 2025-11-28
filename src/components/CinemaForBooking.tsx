@@ -72,8 +72,8 @@ export const CinemaForBooking = React.memo(
 
 const styles = StyleSheet.create({
   cinemaContainer: {
-    backgroundColor: '#2a2a2a',
-    borderRadius: 8,
+    backgroundColor: '#1F2130', // Card background matching HomeScreen
+    borderRadius: 12, // Increased border radius to match HomeScreen
     marginBottom: 15,
     overflow: 'hidden',
   },
@@ -95,6 +95,6 @@ const styles = StyleSheet.create({
   },
   showtimeCount: {
     fontSize: 12,
-    color: '#999',
+    color: '#8F90A6', // Text gray matching HomeScreen
   },
 });

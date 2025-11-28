@@ -38,7 +38,7 @@ export default function MovieItem({
         </Text>
         <View style={styles.movieDetails}>
           <Text style={styles.movieDate}>
-            {formatDate(movieItem?.releaseDate || new Date())}
+            {formatDate(movieItem?.releaseDate || new Date(), 'yyyy/MM/dd')}
           </Text>
           <View style={styles.ageRating}>
             <Text
@@ -108,14 +108,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    borderBottomColor: 'rgba(143, 144, 166, 0.1)', // Subtle border using textGray
     alignItems: 'flex-start',
   },
   movieImage: {
     width: 100,
     height: 150,
-    borderRadius: 12,
-    backgroundColor: '#F0F0F0',
+    borderRadius: 16, // Increased border radius to match HomeScreen
+    backgroundColor: '#1F2130', // Card background matching HomeScreen
   },
   movieInfo: {
     flex: 1,
@@ -138,13 +138,13 @@ const styles = StyleSheet.create({
   },
   movieDate: {
     fontSize: 14,
-    color: '#C5C5C5',
+    color: '#8F90A6', // Text gray matching HomeScreen
   },
   ageRating: {
-    backgroundColor: '#F0F0F0',
+    backgroundColor: 'rgba(255, 59, 48, 0.1)', // Subtle accent background
     paddingHorizontal: 6,
     paddingVertical: 2,
-    borderRadius: 4,
+    borderRadius: 6, // Slightly more rounded
   },
   ageText: {
     fontSize: 12,
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
   },
   movieDuration: {
     fontSize: 14,
-    color: '#C5C5C5',
+    color: '#8F90A6', // Text gray matching HomeScreen
   },
   movieGenreContainer: {
     display: 'flex',
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
   },
   movieGenre: {
     fontSize: 14,
-    color: '#C5C5C5',
+    color: '#8F90A6', // Text gray matching HomeScreen
   },
   ratingContainer: {
     display: 'flex',
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   rating: {
-    color: '#FF6B35',
+    color: '#FF3B30', // Accent color matching HomeScreen
     fontSize: 13,
     marginLeft: 4,
     fontWeight: 'bold',
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
   },
   chevronText: {
     fontSize: 20,
-    color: '#C5C5C5',
+    color: '#8F90A6', // Text gray matching HomeScreen
   },
   totalLikeContainer: {
     display: 'flex',
@@ -204,6 +204,6 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   totalLikeText: {
-    color: '#ccc',
+    color: '#8F90A6', // Text gray matching HomeScreen
   },
 });

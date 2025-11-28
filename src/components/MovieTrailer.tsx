@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
   container: {
     width: width - 32,
     height: 200,
-    borderRadius: 12,
+    borderRadius: 16, // Increased border radius to match HomeScreen
     overflow: 'hidden',
     position: 'relative',
     backgroundColor: '#000',
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     width: width - 32,
     height: 220,
     backgroundColor: '#000',
-    borderRadius: 12,
+    borderRadius: 16, // Increased border radius to match HomeScreen
     overflow: 'hidden',
     position: 'relative',
   },
