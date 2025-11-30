@@ -144,7 +144,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             key={index}
             style={[
               styles.dot,
-              { backgroundColor: index === activeSlide ? '#fff' : '#666' },
+              {
+                backgroundColor:
+                  index === activeSlide ? ACCENT_RED : MUTED_DOT,
+              },
             ]}
           />
         ))}
@@ -155,23 +158,23 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <StatusBar backgroundColor="#000" barStyle="light-content" />
+      <StatusBar backgroundColor={BG_DARK} barStyle="light-content" />
       <SafeAreaView style={styles.safeArea}>
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
           <View style={styles.searchContainer}>
             <Text style={styles.sectionTitle}>Top Shows</Text>
             <View style={styles.iconHeaderContainer}>
               <Pressable
-                style={styles.iconButton}
+                style={[styles.iconButton, styles.iconButtonDark]}
                 onPress={() => navigation.navigate('MyTicketsScreen')}
               >
-                <Icon source="ticket-confirmation" size={30} color="white" />
+                <Icon source="ticket-confirmation" size={24} color="#FFFFFF" />
               </Pressable>
               <Pressable
-                style={styles.iconButton}
+                style={[styles.iconButton, styles.iconButtonPrimary]}
                 onPress={() => navigation.navigate('SearchScreen')}
               >
-                <Icon source="search-web" size={30} color="white" />
+                <Icon source="magnify" size={24} color="#FFFFFF" />
               </Pressable>
             </View>
           </View>
@@ -211,32 +214,65 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   );
 };
 
+// ====== COLORS (match figma) ======
+const ACCENT_RED = '#FF315A';
+const BG_DARK = '#0F101A';
+const CARD_DARK = '#1C1825';
+const MUTED_DOT = '#3F3B4E';
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: BG_DARK,
   },
   safeArea: {
     flex: 1,
-  },
-  iconHeaderContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    gap: 10,
-    alignItems: 'center',
-  },
-  searchContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  iconButton: {
-    marginRight: 10,
+    backgroundColor: BG_DARK,
   },
   content: {
     flex: 1,
+    paddingTop: 8,
   },
+
+  // header
+  searchContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    marginBottom: 20,
+    marginTop: 4,
+  },
+  sectionTitle: {
+    color: '#FFFFFF',
+    fontSize: 22,
+    fontWeight: '700',
+  },
+  iconHeaderContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  iconButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 10,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOpacity: 0.4,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  iconButtonPrimary: {
+    backgroundColor: ACCENT_RED,
+  },
+  iconButtonDark: {
+    backgroundColor: CARD_DARK,
+  },
+
+  // top shows slider
   topShowsContainer: {
     position: 'relative',
     marginBottom: 40,
@@ -245,24 +281,28 @@ const styles = StyleSheet.create({
     width: width,
     height: 300,
     position: 'relative',
+    paddingHorizontal: 20,
   },
   topShowImage: {
     width: '100%',
     height: '100%',
-    resizeMode: 'stretch',
+    borderRadius: 24,
+    resizeMode: 'cover',
   },
   topShowOverlay: {
     position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'linear-gradient(transparent, rgba(0,0,0,0.8))',
-    padding: 12,
+    bottom: 20,
+    left: 30,
+    right: 30,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 16,
+    backgroundColor: 'rgba(0,0,0,0.6)',
   },
   topShowTitle: {
-    color: '#fff',
-    fontSize: 20,
-    fontWeight: 'bold',
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: '700',
   },
   dotsContainer: {
     flexDirection: 'row',
@@ -278,25 +318,27 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     marginHorizontal: 4,
   },
+
+  // sections
   section: {
-    marginBottom: 30,
-  },
-  sectionTitle: {
-    color: '#fff',
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginLeft: 20,
-    marginBottom: 15,
+    marginBottom: 26,
   },
   moviesList: {
     flexDirection: 'row',
     paddingLeft: 20,
     paddingRight: 10,
   },
+
   movieCard: {
-    marginRight: 15,
-    borderRadius: 12,
-    overflow: 'hidden',
+    marginRight: 16,
+    backgroundColor: CARD_DARK,
+    borderRadius: 18,
+    padding: 6,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOpacity: 0.45,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
   },
   movieImage: {
     width: 140,

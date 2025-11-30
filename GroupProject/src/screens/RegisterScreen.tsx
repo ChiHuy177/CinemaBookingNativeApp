@@ -82,7 +82,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
         });
       }
     } catch (error: any) {
-      console.error(error.response)
+      // console.error(error.r)
       checkErrorFetchingData({
         error,
         title: 'Register Failed',
