@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useCallback} from 'react';
+import React, { useCallback } from 'react';
 import {
   View,
   Text,
@@ -8,13 +8,12 @@ import {
   StyleSheet,
   StatusBar,
   Keyboard,
-  TouchableWithoutFeedback,
 } from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {SearchScreenProps} from '../types/screentypes';
-import {Controller, SubmitHandler, useForm} from 'react-hook-form';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { SearchScreenProps } from '../types/screentypes';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import Icon from 'react-native-vector-icons/Ionicons'; // Switched to Ionicons
-import {required} from '../utils/validators';
+import { required } from '../utils/validators';
 
 // --- CINEMATIC DARK THEME CONFIGURATION ---
 const THEME = {
@@ -34,14 +33,14 @@ interface FormData {
   searchText: string;
 }
 
-export const SearchScreen: React.FC<SearchScreenProps> = ({navigation}) => {
+export const SearchScreen: React.FC<SearchScreenProps> = ({ navigation }) => {
   const {
     control,
-    formState: {isSubmitting, errors},
+    formState: { isSubmitting, errors },
     handleSubmit,
     watch,
     setValue,
-  } = useForm<FormData>({defaultValues: {searchText: ''}});
+  } = useForm<FormData>({ defaultValues: { searchText: '' } });
 
   const onSubmit: SubmitHandler<FormData> = useCallback(async data => {
     Keyboard.dismiss();
@@ -51,97 +50,99 @@ export const SearchScreen: React.FC<SearchScreenProps> = ({navigation}) => {
   }, []);
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <SafeAreaView style={styles.container}>
-        <StatusBar
-          backgroundColor={THEME.background}
-          barStyle="light-content"
-        />
+    <SafeAreaView style={styles.container}>
+      <StatusBar backgroundColor={THEME.background} barStyle="light-content" />
 
-        {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.glassButton}
-            onPress={() => navigation.goBack()}>
-            <Icon name="chevron-back" size={24} color={THEME.textWhite} />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Search Movies</Text>
-          <View style={{width: 40}} /> 
-        </View>
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.glassButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Icon name="chevron-back" size={24} color={THEME.textWhite} />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Search Movies</Text>
+        <View style={{ width: 40 }} />
+      </View>
 
-        {/* Search Section */}
-        <View style={styles.contentContainer}>
-          <View style={styles.searchRow}>
-            <View style={styles.inputWrapper}>
-              <Icon
-                name="search-outline"
-                size={22}
-                color={THEME.textGray}
-                style={styles.searchIcon}
-              />
-              <Controller
-                control={control}
-                name="searchText"
-                rules={{
-                  ...required('Please enter a movie name'),
-                }}
-                render={({field}) => (
-                  <TextInput
-                    placeholder="Find movies, genres..."
-                    placeholderTextColor={THEME.textDarkGray}
-                    value={field.value}
-                    onChangeText={field.onChange}
-                    style={styles.searchInput}
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    returnKeyType="search"
-                    onSubmitEditing={handleSubmit(onSubmit)}
-                  />
-                )}
-              />
-              {watch('searchText').length > 0 && (
-                <TouchableOpacity
-                  style={styles.clearButton}
-                  onPress={() => setValue('searchText', '')}>
-                  <Icon
-                    name="close-circle"
-                    size={20}
-                    color={THEME.textDarkGray}
-                  />
-                </TouchableOpacity>
+      {/* Search Section - XÓA pointerEvents */}
+      <View style={styles.contentContainer}>
+        <View style={styles.searchRow}>
+          <View style={styles.inputWrapper}>
+            <Icon
+              name="search-outline"
+              size={22}
+              color={THEME.textGray}
+              style={styles.searchIcon}
+            />
+            <Controller
+              control={control}
+              name="searchText"
+              rules={{
+                ...required('Please enter a movie name'),
+              }}
+              render={({ field }) => (
+                <TextInput
+                  placeholder="Find movies, genres..."
+                  placeholderTextColor={THEME.textDarkGray}
+                  value={field.value}
+                  onChangeText={field.onChange}
+                  style={styles.searchInput}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  returnKeyType="search"
+                  onSubmitEditing={handleSubmit(onSubmit)}
+                  
+                />
               )}
-            </View>
-
-            <TouchableOpacity
-              style={styles.searchButton}
-              disabled={isSubmitting}
-              activeOpacity={0.8}
-              onPress={handleSubmit(onSubmit)}>
-              <Icon name="arrow-forward" size={24} color="#FFF" />
-            </TouchableOpacity>
+            />
+            {watch('searchText').length > 0 && (
+              <TouchableOpacity
+                style={styles.clearButton}
+                onPress={() => setValue('searchText', '')}
+              >
+                <Icon
+                  name="close-circle"
+                  size={20}
+                  color={THEME.textDarkGray}
+                />
+              </TouchableOpacity>
+            )}
           </View>
 
-          {errors.searchText && (
-            <View style={styles.errorContainer}>
-               <Icon name="alert-circle-outline" size={16} color={THEME.primaryRed} />
-               <Text style={styles.errorText}>{errors.searchText.message}</Text>
-            </View>
-          )}
-
-          {/* Optional: Visual filler for empty search state */}
-          <View style={styles.decorationContainer}>
-              <View style={styles.iconCircle}>
-                  <Icon name="film-outline" size={60} color={THEME.cardBg} />
-              </View>
-              <Text style={styles.decorationText}>Explore the Cinematic Universe</Text>
-          </View>
-
+          <TouchableOpacity
+            style={styles.searchButton}
+            disabled={isSubmitting}
+            activeOpacity={0.8}
+            onPress={handleSubmit(onSubmit)}
+          >
+            <Icon name="arrow-forward" size={24} color="#FFF" />
+          </TouchableOpacity>
         </View>
-      </SafeAreaView>
-    </TouchableWithoutFeedback>
+
+        {errors.searchText && (
+          <View style={styles.errorContainer}>
+            <Icon
+              name="alert-circle-outline"
+              size={16}
+              color={THEME.primaryRed}
+            />
+            <Text style={styles.errorText}>{errors.searchText.message}</Text>
+          </View>
+        )}
+
+        <View style={styles.decorationContainer}>
+          <View style={styles.iconCircle}>
+            <Icon name="film-outline" size={60} color={THEME.cardBg} />
+          </View>
+          <Text style={styles.decorationText}>
+            Explore the Cinematic Universe
+          </Text>
+        </View>
+      </View>
+    </SafeAreaView>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -171,12 +172,12 @@ const styles = StyleSheet.create({
     color: THEME.textWhite,
     letterSpacing: 0.5,
   },
-  
+
   contentContainer: {
     paddingHorizontal: 20,
     flex: 1,
   },
-  
+
   // Search Row
   searchRow: {
     flexDirection: 'row',
@@ -196,17 +197,20 @@ const styles = StyleSheet.create({
   },
   searchIcon: {
     marginRight: 10,
+    zIndex: 6666
   },
   searchInput: {
     flex: 1,
     fontSize: 16,
     color: THEME.textWhite,
     paddingVertical: 0,
+    zIndex: 6666
   },
   clearButton: {
     padding: 5,
+    zIndex: 6666
   },
-  
+
   // Search Button
   searchButton: {
     width: 56,
@@ -216,18 +220,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: THEME.shadowColor,
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 10,
     elevation: 8,
+    zIndex: 6666
   },
-  
+
   // Error
   errorContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginTop: 10,
-      marginLeft: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
+    marginLeft: 5,
   },
   errorText: {
     color: THEME.primaryRed,
@@ -238,27 +243,27 @@ const styles = StyleSheet.create({
 
   // Decoration (Empty State)
   decorationContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      opacity: 0.5,
-      marginTop: -40, // Offset slightly up
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    opacity: 0.5,
+    marginTop: -40, // Offset slightly up
   },
   iconCircle: {
-      width: 120,
-      height: 120,
-      borderRadius: 60,
-      backgroundColor: 'rgba(255,255,255,0.03)',
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginBottom: 20,
-      borderWidth: 1,
-      borderColor: 'rgba(255,255,255,0.05)',
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: 'rgba(255,255,255,0.03)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.05)',
   },
   decorationText: {
-      color: THEME.textGray,
-      fontSize: 14,
-      letterSpacing: 1,
-      textTransform: 'uppercase',
-  }
+    color: THEME.textGray,
+    fontSize: 14,
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+  },
 });

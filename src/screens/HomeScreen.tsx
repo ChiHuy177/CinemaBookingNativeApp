@@ -114,8 +114,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
               ellipsizeMode="tail">
               {item.title}
             </Text>
-            <View style={styles.watchNowBtn}>
-                <Text style={styles.watchNowText}>BOOK NOW</Text>
+            <View>
+                <Text >BOOK NOW</Text>
             </View>
           </View>
         </View>
@@ -189,14 +189,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
               <Pressable
                 style={[styles.iconButton, styles.iconButtonDark]}
                 onPress={() => navigation.navigate('MyTicketsScreen')}
-              >
-                <Icon source="ticket-confirmation" size={24} color="#FFFFFF" />
+              > {/* Changed from source to name for Ionicons */}
+                <Icon name="ticket-outline" size={24} color="#FFFFFF" />
               </Pressable>
               <Pressable
                 style={[styles.iconButton, styles.iconButtonPrimary]}
                 onPress={() => navigation.navigate('SearchScreen')}
-              >
-                <Icon source="magnify" size={24} color="#FFFFFF" />
+              > {/* Changed from source to name for Ionicons */}
+                <Icon name="search-outline" size={24} color="#FFFFFF" />
               </Pressable>
             </View>
           </View>
@@ -240,10 +240,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
 
           {/* Now Showing Section */}
           <View style={styles.section}>
-            <View style={styles.sectionHeader}>
+            <View style={{paddingHorizontal: 15}}>
                 <Text style={styles.sectionTitle}>NOW SHOWING</Text>
                 <TouchableOpacity onPress={() => {}}>
-                    <Text style={styles.seeAllText}>See All</Text>
+                    <Text>See All</Text>
                 </TouchableOpacity>
             </View>
             
@@ -259,7 +259,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
           </View>
 
           {/* Coming Soon Section */}
-          <View style={styles.section}>
+          {/* <View style={styles.section}>
              <View style={styles.sectionHeader}>
                 <Text style={styles.sectionTitle}>COMING SOON</Text>
                 <TouchableOpacity onPress={() => {}}>
@@ -275,7 +275,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
                 No coming soon movies.
               </Text>
             )}
-          </View>
+          </View> */}
           
           {/* Bottom Padding */}
           <View style={{height: 80}} />
@@ -319,6 +319,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 22,
     fontWeight: '700',
+    paddingHorizontal: 15
   },
   iconHeaderContainer: {
     flexDirection: 'row',

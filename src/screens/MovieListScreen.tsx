@@ -42,6 +42,8 @@ const MovieListScreen: React.FC<MovieListScreenProps> = ({
   const [movies, setMovies] = useState<MovieListProps[]>([]);
 
   const {hideSpinner, showSpinner} = useSpinner();
+  
+  console.log(searchValue)
 
   useFocusEffect(
     useCallback(() => {
@@ -52,6 +54,7 @@ const MovieListScreen: React.FC<MovieListScreenProps> = ({
           // Ideally remove console.log in production, keeping for debugging if needed
           // console.log(searchValue, 'Searching...'); 
           const responseData = await searchMovies(searchValue || '');
+          console.log(responseData)
           if (responseData.code === 1000 && isActive) {
             setMovies(responseData.result);
           }
