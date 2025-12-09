@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
-import React, {useCallback, useMemo, useState} from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -11,37 +11,36 @@ import {
   Animated,
   Dimensions,
   StatusBar,
-  // Platform,
 } from 'react-native';
-import {MovieTicketScreenProps} from '../types/screentypes';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {useFocusEffect} from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/Ionicons'; // Switched to Ionicons
+import { MovieTicketScreenProps } from '../types/screentypes';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useFocusEffect } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 // Components & Services
 import ModalCoupon from '../components/ModalCoupon';
 import ModalPoint from '../components/ModalPoints';
-import {useSpinner} from '../context/SpinnerContext';
-import {getClientRank} from '../services/RankService';
-import {addTicket} from '../services/TicketService';
-import {CouponProps} from '../types/coupon';
-import {ClientRankProps} from '../types/rank';
-import {CreateTicketProps} from '../types/ticket';
+import { useSpinner } from '../context/SpinnerContext';
+import { getClientRank } from '../services/RankService';
+import { addTicket } from '../services/TicketService';
+import { CouponProps } from '../types/coupon';
+import { ClientRankProps } from '../types/rank';
+import { CreateTicketProps } from '../types/ticket';
 import {
   showToast,
   checkErrorFetchingData,
   getPosterImage,
   getComboImgae,
 } from '../utils/function';
-import {getEmailAndToken} from '../utils/storage';
+import { getEmailAndToken } from '../utils/storage';
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
-// --- CINEMATIC DARK THEME CONFIGURATION ---
+// THEME CONFIGURATION
 const THEME = {
-  background: '#10111D', // Deep Cinematic Blue/Black
-  cardBg: '#1C1D2E', // Slightly lighter panel
-  primaryRed: '#FF3B30', // Neon/Cinematic Red
+  background: '#10111D',
+  cardBg: '#1C1D2E',
+  primaryRed: '#F74346',
   textWhite: '#FFFFFF',
   textGray: '#A0A0B0',
   textDarkGray: '#5C5D6F',
@@ -54,16 +53,16 @@ const MovieTicketScreen: React.FC<MovieTicketScreenProps> = ({
   route,
   navigation,
 }) => {
-  const {seatParam, selectedCombos, totalPriceCombos} = route.params;
-  const {selectedSeats, showingTimeParam, totalPriceSeats} = useMemo(() => {
+  const { seatParam, selectedCombos, totalPriceCombos } = route.params;
+  const { selectedSeats, showingTimeParam, totalPriceSeats } = useMemo(() => {
     return seatParam;
   }, [seatParam]);
 
-  const {cinemaName, date, movieParam, showingTimeId, time} = useMemo(() => {
+  const { cinemaName, date, movieParam, showingTimeId, time } = useMemo(() => {
     return showingTimeParam;
   }, [showingTimeParam]);
 
-  const {movieId, movieTitle, poster} = useMemo(() => {
+  const { movieId, movieTitle, poster } = useMemo(() => {
     return movieParam;
   }, [movieParam]);
 
@@ -74,7 +73,7 @@ const MovieTicketScreen: React.FC<MovieTicketScreenProps> = ({
   const [usedPoints, setUsedPoints] = useState<number>(0);
   const [slideAnim] = useState(new Animated.Value(width));
   const [clientEmail, setClientEmail] = useState<string>('');
-  const {showSpinner, hideSpinner} = useSpinner();
+  const { showSpinner, hideSpinner } = useSpinner();
 
   const subTotal = useMemo(() => {
     return totalPriceCombos + totalPriceSeats;
@@ -234,224 +233,270 @@ const MovieTicketScreen: React.FC<MovieTicketScreenProps> = ({
   ]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar backgroundColor={THEME.background} barStyle="light-content" />
 
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.glassButton}>
-          <Icon name="chevron-back" size={24} color={THEME.textWhite} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Order Summary</Text>
-        <View style={{width: 40}} />
-      </View>
-
-      <ScrollView
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{paddingBottom: 40}}>
-        
-        {/* Movie Info Card */}
-        <View style={styles.movieCard}>
-          <Image
-            source={{uri: getPosterImage(poster)}}
-            style={styles.movieImage}
-            resizeMode="cover"
-          />
-          <View style={styles.movieInfo}>
-            <Text
-              style={styles.movieTitle}
-              ellipsizeMode="tail"
-              numberOfLines={2}>
-              {movieTitle}
-            </Text>
-            
-            <View style={styles.infoRow}>
-              <Icon name="location-outline" size={14} color={THEME.primaryRed} />
-              <Text style={styles.infoText}>{cinemaName}</Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Icon name="calendar-outline" size={14} color={THEME.textGray} />
-              <Text style={styles.infoText}>{date}</Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Icon name="time-outline" size={14} color={THEME.textGray} />
-              <Text style={styles.infoText}>{time}</Text>
-            </View>
-          </View>
+      <SafeAreaView style={styles.safeArea}>
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backButton}
+          >
+            <Icon name="chevron-back" size={24} color={THEME.textWhite} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Checkout</Text>
+          <View style={{ width: 40 }} />
         </View>
 
-        {/* Seats Section */}
-        <View style={styles.sectionContainer}>
-          <Text style={styles.sectionHeader}>Selected Seats</Text>
-          <View style={styles.itemCard}>
-            <View style={styles.iconCircle}>
-                <Icon name="grid-outline" size={20} color={THEME.textWhite} />
-            </View>
-            <Text style={styles.itemText}>
-              {selectedSeats
-                .map(
-                  eachSelectedSeat =>
-                    eachSelectedSeat.row + eachSelectedSeat.column,
-                )
-                .join(', ')}
-            </Text>
-            <Text style={styles.priceText}>
-              {totalPriceSeats.toLocaleString('vi-VN')} đ
-            </Text>
-          </View>
-        </View>
-
-        {/* Combos Section */}
-        {selectedCombos.length > 0 && (
-          <View style={styles.sectionContainer}>
-            <Text style={styles.sectionHeader}>Snacks & Drinks</Text>
-            {selectedCombos.map(eachCombo => (
-              <View key={eachCombo.combo.comboId} style={styles.comboItem}>
+        <ScrollView
+          style={styles.scrollView}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
+          {/* Movie Hero Card */}
+          <View style={styles.heroCard}>
+            <Image
+              source={{ uri: getPosterImage(poster) }}
+              style={styles.heroPoster}
+              resizeMode="cover"
+              blurRadius={8}
+            />
+            <View style={styles.heroOverlay} />
+            <View style={styles.heroContent}>
+              <View style={styles.posterWrapper}>
                 <Image
-                  source={{uri: getComboImgae(eachCombo.combo.imageURL)}}
-                  style={styles.comboImage}
+                  source={{ uri: getPosterImage(poster) }}
+                  style={styles.posterImage}
+                  resizeMode="cover"
                 />
-                <View style={styles.comboDetails}>
-                  <Text style={styles.comboName}>{eachCombo.combo.name}</Text>
-                  <Text style={styles.comboQty}>
-                    x{eachCombo.quantity}
-                  </Text>
+              </View>
+              <View style={styles.heroInfo}>
+                <Text style={styles.heroTitle} numberOfLines={2}>
+                  {movieTitle}
+                </Text>
+                <View style={styles.heroDetails}>
+                  <View style={styles.heroDetailRow}>
+                    <Icon name="location" size={14} color={THEME.primaryRed} />
+                    <Text style={styles.heroDetailText}>{cinemaName}</Text>
+                  </View>
+                  <View style={styles.heroDetailRow}>
+                    <Icon name="calendar" size={14} color={THEME.textGray} />
+                    <Text style={styles.heroDetailText}>{date}</Text>
+                  </View>
+                  <View style={styles.heroDetailRow}>
+                    <Icon name="time" size={14} color={THEME.textGray} />
+                    <Text style={styles.heroDetailText}>{time}</Text>
+                  </View>
                 </View>
-                <Text style={styles.priceText}>
-                  {(eachCombo.quantity * eachCombo.combo.price).toLocaleString(
-                    'vi-VN',
-                  )}{' '}
-                  đ
+              </View>
+            </View>
+          </View>
+
+          {/* Order Items */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Your Order</Text>
+
+            {/* Seats */}
+            <View style={styles.orderCard}>
+              <View style={styles.orderHeader}>
+                <View style={styles.orderIconWrapper}>
+                  <Icon name="apps" size={20} color={THEME.primaryRed} />
+                </View>
+                <Text style={styles.orderTitle}>Seats</Text>
+              </View>
+              <View style={styles.orderContent}>
+                <Text style={styles.seatList}>
+                  {selectedSeats.map(seat => seat.row + seat.column).join(', ')}
+                </Text>
+                <Text style={styles.orderPrice}>
+                  {totalPriceSeats.toLocaleString('vi-VN')} đ
                 </Text>
               </View>
-            ))}
+            </View>
+
+            {/* Combos */}
+            {selectedCombos.length > 0 && (
+              <View style={styles.orderCard}>
+                <View style={styles.orderHeader}>
+                  <View style={styles.orderIconWrapper}>
+                    <Icon name="fast-food" size={20} color="#FF9500" />
+                  </View>
+                  <Text style={styles.orderTitle}>Food & Drinks</Text>
+                </View>
+                {selectedCombos.map(combo => (
+                  <View key={combo.combo.comboId} style={styles.comboRow}>
+                    <Image
+                      source={{ uri: getComboImgae(combo.combo.imageURL) }}
+                      style={styles.comboThumb}
+                    />
+                    <View style={styles.comboInfo}>
+                      <Text style={styles.comboName}>{combo.combo.name}</Text>
+                      <Text style={styles.comboQty}>Qty: {combo.quantity}</Text>
+                    </View>
+                    <Text style={styles.comboPrice}>
+                      {(combo.quantity * combo.combo.price).toLocaleString(
+                        'vi-VN',
+                      )}{' '}
+                      đ
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            )}
           </View>
-        )}
 
-        {/* Offers & Promotions */}
-        <View style={styles.sectionContainer}>
-          <Text style={styles.sectionHeader}>Offers & Discounts</Text>
+          {/* Discounts */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Apply Discounts</Text>
 
-          {/* Coupon Button */}
-          <TouchableOpacity
-            style={styles.offerButton}
-            onPress={() => showModal('coupon')}
-            activeOpacity={0.7}>
-            <View style={[styles.iconCircle, {backgroundColor: 'rgba(255, 59, 48, 0.1)'}]}>
-                <Icon name="ticket-outline" size={20} color={THEME.primaryRed} />
-            </View>
-            <View style={styles.offerContent}>
-                <Text style={styles.offerTitle}>
-                    {coupon ? `Applied: ${coupon.code}` : 'Select Coupon'}
+            {/* Coupon */}
+            <TouchableOpacity
+              style={styles.discountCard}
+              onPress={() => showModal('coupon')}
+              activeOpacity={0.8}
+            >
+              <View
+                style={[
+                  styles.discountIcon,
+                  { backgroundColor: 'rgba(247, 67, 70, 0.12)' },
+                ]}
+              >
+                <Icon name="pricetag" size={22} color={THEME.primaryRed} />
+              </View>
+              <View style={styles.discountContent}>
+                <Text style={styles.discountTitle}>
+                  {coupon ? coupon.code : 'Apply Coupon'}
                 </Text>
-                <Text style={styles.offerSubtitle}>
-                    {coupon ? 'Discount applied' : 'Apply voucher code'}
+                <Text style={styles.discountSubtitle}>
+                  {coupon
+                    ? `Save ${coupon.discountAmount.toLocaleString('vi-VN')} đ`
+                    : 'Get discount with voucher'}
                 </Text>
-            </View>
-            <View style={styles.offerRight}>
-              {coupon && (
-                <Text style={styles.discountBadge}>
-                  -{coupon?.discountAmount.toLocaleString('vi-VN')} đ
-                </Text>
+              </View>
+              {coupon ? (
+                <View style={styles.appliedBadge}>
+                  <Icon
+                    name="checkmark-circle"
+                    size={20}
+                    color={THEME.successGreen}
+                  />
+                </View>
+              ) : (
+                <Icon name="chevron-forward" size={20} color={THEME.textGray} />
               )}
-              <Icon name="chevron-forward" size={18} color={THEME.textGray} />
-            </View>
-          </TouchableOpacity>
+            </TouchableOpacity>
 
-          {/* Points Button */}
-          <TouchableOpacity
-            style={styles.offerButton}
-            onPress={() => showModal('points')}
-            activeOpacity={0.7}>
-             <View style={[styles.iconCircle, {backgroundColor: 'rgba(255, 215, 0, 0.1)'}]}>
-                <Icon name="star-outline" size={20} color="#FFD700" />
-            </View>
-            <View style={styles.offerContent}>
-                <Text style={styles.offerTitle}>
-                    {usedPoints > 0
-                        ? `Redeemed: ${usedPoints}`
-                        : 'Redeem Loyalty Points'}
+            {/* Points */}
+            <TouchableOpacity
+              style={styles.discountCard}
+              onPress={() => showModal('points')}
+              activeOpacity={0.8}
+            >
+              <View
+                style={[
+                  styles.discountIcon,
+                  { backgroundColor: 'rgba(255, 215, 0, 0.12)' },
+                ]}
+              >
+                <Icon name="star" size={22} color="#FFD700" />
+              </View>
+              <View style={styles.discountContent}>
+                <Text style={styles.discountTitle}>
+                  {usedPoints > 0 ? `${usedPoints} Points` : 'Redeem Points'}
                 </Text>
-                <Text style={styles.offerSubtitle}>
-                    {usedPoints > 0 ? 'Points used' : 'Use points for discount'}
+                <Text style={styles.discountSubtitle}>
+                  {usedPoints > 0
+                    ? `Save ${usedPoints.toLocaleString('vi-VN')} đ`
+                    : 'Use loyalty points'}
                 </Text>
+              </View>
+              {usedPoints > 0 ? (
+                <View style={styles.appliedBadge}>
+                  <Icon
+                    name="checkmark-circle"
+                    size={20}
+                    color={THEME.successGreen}
+                  />
+                </View>
+              ) : (
+                <Icon name="chevron-forward" size={20} color={THEME.textGray} />
+              )}
+            </TouchableOpacity>
+          </View>
+
+          {/* Price Breakdown */}
+          <View style={styles.breakdownCard}>
+            <Text style={styles.breakdownTitle}>Price Breakdown</Text>
+
+            <View style={styles.breakdownRow}>
+              <Text style={styles.breakdownLabel}>Subtotal</Text>
+              <Text style={styles.breakdownValue}>
+                {subTotal.toLocaleString('vi-VN')} đ
+              </Text>
             </View>
-            <View style={styles.offerRight}>
-              {usedPoints > 0 && (
-                <Text style={styles.discountBadge}>
+
+            {coupon && (
+              <View style={styles.breakdownRow}>
+                <Text style={styles.breakdownLabel}>Coupon Discount</Text>
+                <Text style={styles.breakdownDiscount}>
+                  -{coupon.discountAmount.toLocaleString('vi-VN')} đ
+                </Text>
+              </View>
+            )}
+
+            {usedPoints > 0 && (
+              <View style={styles.breakdownRow}>
+                <Text style={styles.breakdownLabel}>Points Redeemed</Text>
+                <Text style={styles.breakdownDiscount}>
                   -{usedPoints.toLocaleString('vi-VN')} đ
                 </Text>
-              )}
-              <Icon name="chevron-forward" size={18} color={THEME.textGray} />
-            </View>
-          </TouchableOpacity>
-        </View>
+              </View>
+            )}
 
-        {/* Payment Summary */}
-        <View style={styles.summaryContainer}>
-          <Text style={styles.sectionHeader}>Payment Details</Text>
-          
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Subtotal</Text>
-            <Text style={styles.summaryValue}>
-              {subTotal.toLocaleString('vi-VN')} đ
+            {rank && rank.discount > 0 && (
+              <View style={styles.breakdownRow}>
+                <Text style={styles.breakdownLabel}>
+                  Member Discount ({rank.discount}%)
+                </Text>
+                <Text style={styles.breakdownDiscount}>
+                  -{totalRankDiscount.toLocaleString('vi-VN')} đ
+                </Text>
+              </View>
+            )}
+
+            <View style={styles.breakdownDivider} />
+
+            <View style={styles.totalRow}>
+              <View>
+                <Text style={styles.totalLabel}>Total Amount</Text>
+                <Text style={styles.vatText}>Taxes included</Text>
+              </View>
+              <Text style={styles.totalValue}>
+                {totalPrice.toLocaleString('vi-VN')} đ
+              </Text>
+            </View>
+          </View>
+        </ScrollView>
+
+        {/* Bottom Checkout Button */}
+        <View style={styles.bottomBar}>
+          <View style={styles.bottomTotal}>
+            <Text style={styles.bottomTotalLabel}>Total</Text>
+            <Text style={styles.bottomTotalValue}>
+              {totalPrice.toLocaleString('vi-VN')} đ
             </Text>
           </View>
-
-          {coupon && (
-            <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>Coupon Discount</Text>
-              <Text style={styles.discountValue}>
-                -{coupon.discountAmount.toLocaleString('vi-VN')} đ
-              </Text>
-            </View>
-          )}
-
-          {usedPoints > 0 && (
-            <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>Points Redeemed</Text>
-              <Text style={styles.discountValue}>
-                -{usedPoints.toLocaleString('vi-VN')} đ
-              </Text>
-            </View>
-          )}
-
-          {rank && rank.discount > 0 && (
-            <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>
-                Member Rank ({rank.discount}%)
-              </Text>
-              <Text style={styles.discountValue}>
-                -{totalRankDiscount.toLocaleString('vi-VN')} đ
-              </Text>
-            </View>
-          )}
-
-          <View style={styles.divider} />
-
-          <View style={styles.totalRow}>
-            <Text style={styles.totalLabel}>Grand Total</Text>
-            <View style={{alignItems: 'flex-end'}}>
-                <Text style={styles.totalValue}>
-                {totalPrice.toLocaleString('vi-VN')} đ
-                </Text>
-                <Text style={styles.vatText}>(VAT Included)</Text>
-            </View>
-          </View>
+          <TouchableOpacity
+            style={styles.checkoutButton}
+            activeOpacity={0.9}
+            onPress={handleBooking}
+          >
+            <Text style={styles.checkoutButtonText}>Confirm & Pay</Text>
+            <Icon name="arrow-forward" size={20} color="#FFF" />
+          </TouchableOpacity>
         </View>
-
-        {/* Confirm Button */}
-        <TouchableOpacity
-          style={styles.confirmButton}
-          activeOpacity={0.8}
-          onPress={() => handleBooking()}>
-          <Text style={styles.confirmButtonText}>Confirm Payment</Text>
-          <View style={styles.btnGlow} />
-        </TouchableOpacity>
-      </ScrollView>
+      </SafeAreaView>
 
       {/* Modals */}
       <ModalCoupon
@@ -470,7 +515,7 @@ const MovieTicketScreen: React.FC<MovieTicketScreenProps> = ({
         totalWithOutPoints={totalWithOutRank - totalRankDiscount}
         usedPoints={usedPoints}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -479,20 +524,25 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: THEME.background,
   },
+  safeArea: {
+    flex: 1,
+  },
   scrollView: {
     flex: 1,
-    paddingHorizontal: 20,
   },
-  
+  scrollContent: {
+    paddingBottom: 120,
+  },
+
   // Header
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 15,
-    marginBottom: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 16,
   },
-  glassButton: {
+  backButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
@@ -503,253 +553,313 @@ const styles = StyleSheet.create({
     borderColor: THEME.border,
   },
   headerTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: THEME.textWhite,
+  },
+
+  // Hero Card
+  heroCard: {
+    height: 180,
+    marginHorizontal: 20,
+    marginBottom: 24,
+    borderRadius: 20,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  heroPoster: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+  },
+  heroOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(16, 17, 29, 0.85)',
+  },
+  heroContent: {
+    flex: 1,
+    flexDirection: 'row',
+    padding: 16,
+  },
+  posterWrapper: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 10,
+  },
+  posterImage: {
+    width: 90,
+    height: 130,
+    borderRadius: 12,
+  },
+  heroInfo: {
+    flex: 1,
+    marginLeft: 16,
+    justifyContent: 'center',
+  },
+  heroTitle: {
     fontSize: 18,
     fontWeight: '700',
     color: THEME.textWhite,
-    letterSpacing: 0.5,
+    marginBottom: 12,
+    lineHeight: 24,
   },
-
-  // Movie Card
-  movieCard: {
-    flexDirection: 'row',
-    backgroundColor: THEME.cardBg,
-    borderRadius: 16,
-    padding: 12,
-    marginBottom: 25,
-    borderWidth: 1,
-    borderColor: THEME.border,
+  heroDetails: {
+    gap: 8,
   },
-  movieImage: {
-    width: 80,
-    height: 110,
-    borderRadius: 12,
-    backgroundColor: '#000',
-  },
-  movieInfo: {
-    flex: 1,
-    marginLeft: 15,
-    justifyContent: 'center',
-  },
-  movieTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: THEME.textWhite,
-    marginBottom: 10,
-  },
-  infoRow: {
+  heroDetailRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 6,
   },
-  infoText: {
+  heroDetailText: {
     fontSize: 13,
     color: THEME.textGray,
-    marginLeft: 6,
+    marginLeft: 8,
     fontWeight: '500',
   },
 
   // Sections
-  sectionContainer: {
-    marginBottom: 25,
+  section: {
+    marginBottom: 24,
+    paddingHorizontal: 20,
   },
-  sectionHeader: {
-    fontSize: 14,
+  sectionTitle: {
+    fontSize: 18,
     fontWeight: '700',
-    color: THEME.textDarkGray,
-    marginBottom: 10,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-  },
-  
-  // Seat Item
-  itemCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: THEME.cardBg,
-    padding: 15,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: THEME.border,
-  },
-  iconCircle: {
-      width: 36,
-      height: 36,
-      borderRadius: 18,
-      backgroundColor: 'rgba(255,255,255,0.1)',
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginRight: 12,
-  },
-  itemText: {
-    flex: 1,
     color: THEME.textWhite,
-    fontSize: 15,
-    fontWeight: '600',
-  },
-  priceText: {
-    color: THEME.primaryRed,
-    fontSize: 15,
-    fontWeight: '700',
+    marginBottom: 14,
   },
 
-  // Combo Item
-  comboItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  // Order Cards
+  orderCard: {
     backgroundColor: THEME.cardBg,
-    padding: 12,
-    borderRadius: 14,
-    marginBottom: 10,
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 12,
     borderWidth: 1,
     borderColor: THEME.border,
   },
-  comboImage: {
-    width: 48,
-    height: 48,
+  orderHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  orderIconWrapper: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(247, 67, 70, 0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  orderTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: THEME.textWhite,
+  },
+  orderContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  seatList: {
+    flex: 1,
+    fontSize: 14,
+    color: THEME.textGray,
+    fontWeight: '500',
+  },
+  orderPrice: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: THEME.primaryRed,
+  },
+
+  // Combo Row
+  comboRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    borderTopWidth: 1,
+    borderTopColor: THEME.border,
+    marginTop: 8,
+  },
+  comboThumb: {
+    width: 44,
+    height: 44,
     borderRadius: 10,
     marginRight: 12,
   },
-  comboDetails: {
+  comboInfo: {
     flex: 1,
   },
   comboName: {
-    color: THEME.textWhite,
     fontSize: 14,
     fontWeight: '600',
-    marginBottom: 4,
+    color: THEME.textWhite,
+    marginBottom: 2,
   },
   comboQty: {
-    color: THEME.textGray,
     fontSize: 12,
+    color: THEME.textGray,
+  },
+  comboPrice: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: THEME.textWhite,
   },
 
-  // Offer Buttons
-  offerButton: {
+  // Discount Cards
+  discountCard: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: THEME.cardBg,
-    padding: 12,
-    borderRadius: 14,
-    marginBottom: 10,
+    borderRadius: 16,
+    padding: 14,
+    marginBottom: 12,
     borderWidth: 1,
     borderColor: THEME.border,
   },
-  offerContent: {
-      flex: 1,
+  discountIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
   },
-  offerTitle: {
-      color: THEME.textWhite,
-      fontSize: 14,
-      fontWeight: '600',
+  discountContent: {
+    flex: 1,
   },
-  offerSubtitle: {
-      color: THEME.textGray,
-      fontSize: 11,
-      marginTop: 2,
+  discountTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: THEME.textWhite,
+    marginBottom: 2,
   },
-  offerRight: {
-      flexDirection: 'row',
-      alignItems: 'center',
+  discountSubtitle: {
+    fontSize: 12,
+    color: THEME.textGray,
   },
-  discountBadge: {
-      color: THEME.successGreen,
-      fontSize: 13,
-      fontWeight: '600',
-      marginRight: 5,
+  appliedBadge: {
+    marginLeft: 8,
   },
 
-  // Summary
-  summaryContainer: {
-      backgroundColor: THEME.cardBg,
-      borderRadius: 20,
-      padding: 20,
-      marginBottom: 30,
-      borderWidth: 1,
-      borderColor: THEME.border,
+  // Breakdown Card
+  breakdownCard: {
+    backgroundColor: THEME.cardBg,
+    borderRadius: 20,
+    padding: 20,
+    marginHorizontal: 20,
+    marginBottom: 24,
+    borderWidth: 1,
+    borderColor: THEME.border,
   },
-  summaryRow: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      marginBottom: 12,
+  breakdownTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: THEME.textWhite,
+    marginBottom: 16,
   },
-  summaryLabel: {
-      color: THEME.textGray,
-      fontSize: 14,
+  breakdownRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 12,
   },
-  summaryValue: {
-      color: THEME.textWhite,
-      fontSize: 14,
-      fontWeight: '600',
+  breakdownLabel: {
+    fontSize: 14,
+    color: THEME.textGray,
   },
-  discountValue: {
-      color: THEME.successGreen,
-      fontSize: 14,
-      fontWeight: '600',
+  breakdownValue: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: THEME.textWhite,
   },
-  divider: {
-      height: 1,
-      backgroundColor: 'rgba(255,255,255,0.1)',
-      marginVertical: 12,
-      borderStyle: 'dashed',
-      borderWidth: 1,
-      borderColor: 'rgba(255,255,255,0.1)', // Dashed trick
+  breakdownDiscount: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: THEME.successGreen,
+  },
+  breakdownDivider: {
+    height: 1,
+    backgroundColor: THEME.border,
+    marginVertical: 14,
   },
   totalRow: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginTop: 5,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   totalLabel: {
-      color: THEME.textWhite,
-      fontSize: 16,
-      fontWeight: 'bold',
-  },
-  totalValue: {
-      color: THEME.primaryRed,
-      fontSize: 22,
-      fontWeight: '800',
-      textShadowColor: 'rgba(255, 59, 48, 0.3)',
-      textShadowOffset: {width: 0, height: 0},
-      textShadowRadius: 10,
+    fontSize: 15,
+    fontWeight: '700',
+    color: THEME.textWhite,
+    marginBottom: 2,
   },
   vatText: {
-      color: THEME.textDarkGray,
-      fontSize: 10,
-      marginTop: 2,
+    fontSize: 11,
+    color: THEME.textDarkGray,
+  },
+  totalValue: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: THEME.primaryRed,
   },
 
-  // Payment Button
-  confirmButton: {
-    backgroundColor: THEME.primaryRed,
-    paddingVertical: 18,
-    borderRadius: 30,
+  // Bottom Bar
+  bottomBar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: THEME.cardBg,
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 20,
+    borderTopWidth: 1,
+    borderTopColor: THEME.border,
+  },
+  bottomTotal: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 14,
+  },
+  bottomTotalLabel: {
+    fontSize: 14,
+    color: THEME.textGray,
+    fontWeight: '500',
+  },
+  bottomTotalValue: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: THEME.textWhite,
+  },
+  checkoutButton: {
+    backgroundColor: THEME.primaryRed,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 16,
+    borderRadius: 28,
+    gap: 10,
     shadowColor: THEME.primaryRed,
-    shadowOffset: {width: 0, height: 8},
+    shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.4,
-    shadowRadius: 12,
-    elevation: 8,
-    position: 'relative',
-    overflow: 'hidden',
+    shadowRadius: 16,
+    elevation: 12,
   },
-  confirmButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#FFF',
-    letterSpacing: 1,
-    textTransform: 'uppercase',
+  checkoutButtonText: {
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    letterSpacing: 0.5,
   },
-  btnGlow: {
-      position: 'absolute',
-      top: -10,
-      left: 20,
-      width: 50,
-      height: 100,
-      backgroundColor: 'rgba(255,255,255,0.1)',
-      transform: [{rotate: '20deg'}],
-  }
 });
 
 export default MovieTicketScreen;

@@ -5,24 +5,23 @@ import {MovieListProps} from '../types/movie';
 import {useSpinner} from '../context/SpinnerContext';
 
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {ScrollView, StatusBar, StyleSheet, Text, View, Dimensions, TouchableOpacity} from 'react-native';
-import MovieItem from '../components/MovieItem';
+import {ScrollView, StatusBar, StyleSheet, Text, View, Dimensions, TouchableOpacity, Image} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import {getFavoriteMovies} from '../services/MovieService';
-import {checkErrorFetchingData} from '../utils/function';
+import {checkErrorFetchingData, getPosterImage} from '../utils/function';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const { width } = Dimensions.get('window');
 
-// THEME CONSTANTS MATCHING PREVIOUS SCREENS
+// THEME CONSTANTS
 const THEME = {
-  background: '#10111D', // Dark cinematic background
-  cardBg: '#1F2130',     // Input/Card background
-  accent: '#FF3B30',     // Bright Red/Coral accent
+  background: '#10111D',
+  cardBg: '#1F2130',
+  accent: '#F74346',
   textWhite: '#FFFFFF',
-  textGray: '#8F90A6',   // Muted gray
+  textGray: '#8F90A6',
   textPlaceholder: '#5C5E6F',
-  error: '#FF3B30',
+  error: '#F74346',
 };
 
 export const FavoriteMovieScreen: React.FC<FavoriteScreenProps> = ({
@@ -62,67 +61,100 @@ export const FavoriteMovieScreen: React.FC<FavoriteScreenProps> = ({
 
   const isListEmpty = movies.length === 0;
 
+  const renderMovieCard = (movie: MovieListProps, index: number) => {
+    const isEven = index % 2 === 0;
+    return (
+      <TouchableOpacity
+        key={movie.movieId}
+        style={[
+          styles.movieCard,
+          isEven ? styles.movieCardLeft : styles.movieCardRight,
+        ]}
+        onPress={() =>
+          navigation.navigate('HomeStack', {
+            screen: 'MovieDetailScreen',
+            params: {
+              movieId: movie.movieId,
+            },
+          })
+        }>
+        <View style={styles.movieImageContainer}>
+          <Image
+            source={{uri: getPosterImage(movie.posterURL)}}
+            style={styles.movieImage}
+            resizeMode="cover"
+          />
+          <View style={styles.movieOverlay} />
+          <View style={styles.heartBadge}>
+            <Icon name="heart" size={16} color={THEME.accent} />
+          </View>
+        </View>
+        <View style={styles.movieInfo}>
+          <Text style={styles.movieTitle} numberOfLines={2}>
+            {movie.title}
+          </Text>
+          <View style={styles.movieMeta}>
+            <Icon name="star" size={12} color="#FFD700" />
+            <Text style={styles.movieRating}>{movie.rating}</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar backgroundColor={THEME.background} barStyle="light-content" />
       
-      {/* Decorative Glow */}
-      <View style={styles.topGlow} />
-      
-      {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.headerIconContainer}>
-            <Icon name="heart" size={24} color={THEME.accent} />
-        </View>
-        <View>
-            <Text style={styles.headerTitle}>FAVORITE MOVIES</Text>
-            <Text style={styles.headerSubtitle}>Your personal collection</Text>
-        </View>
-      </View>
-
-      {isListEmpty ? (
-        <View style={styles.emptyStateContainer}>
-          <View style={styles.emptyIconContainer}>
-             <Icon name="heart-dislike-outline" size={60} color={THEME.textPlaceholder} />
+      <SafeAreaView style={styles.safeArea}>
+        {/* Header */}
+        <View style={styles.header}>
+          <View style={styles.headerLeft}>
+            <View style={styles.iconCircle}>
+              <Icon name="heart" size={28} color={THEME.accent} />
+            </View>
+            <View style={styles.headerTextContainer}>
+              <Text style={styles.headerTitle}>My Favorites</Text>
+              <Text style={styles.headerSubtitle}>
+                {movies.length} {movies.length === 1 ? 'movie' : 'movies'}
+              </Text>
+            </View>
           </View>
-          <Text style={styles.emptyStateText}>
-            No favorite movies yet.
-          </Text>
-          <Text style={styles.emptyStateSubText}>
-            Search and tap the heart icon to add movies to your collection!
-          </Text>
-          <TouchableOpacity 
-            style={styles.browseButton}
-            onPress={() => navigation.navigate('HomeStack', { screen: 'HomeScreen' } as any)}
-          >
-             <Text style={styles.browseButtonText}>Browse Movies</Text>
-          </TouchableOpacity>
         </View>
-      ) : (
-        <ScrollView 
-            style={styles.movieList} 
+
+        {isListEmpty ? (
+          <View style={styles.emptyStateContainer}>
+            <View style={styles.emptyIconWrapper}>
+              <View style={styles.emptyIconCircle}>
+                <Icon name="heart-outline" size={64} color={THEME.textPlaceholder} />
+              </View>
+              <View style={styles.emptyGlow} />
+            </View>
+            <Text style={styles.emptyTitle}>No Favorites Yet</Text>
+            <Text style={styles.emptySubtitle}>
+              Start building your collection by adding movies you love!
+            </Text>
+            <TouchableOpacity 
+              style={styles.exploreButton}
+              onPress={() => navigation.navigate('HomeStack', { screen: 'HomeScreen' } as any)}
+            >
+              <Icon name="film-outline" size={20} color="#FFF" />
+              <Text style={styles.exploreButtonText}>Explore Movies</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <ScrollView 
+            style={styles.scrollView}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.movieListContent}
-        >
-          {movies.map(eachMovie => (
-            <MovieItem
-              movie={eachMovie}
-              navigate={() =>
-                navigation.navigate('HomeStack', {
-                  screen: 'MovieDetailScreen',
-                  params: {
-                    movieId: eachMovie.movieId,
-                  },
-                })
-              }
-              key={eachMovie.movieId}
-              hideSpinner={hideSpinner}
-              showSpinner={showSpinner}
-            />
-          ))}
-        </ScrollView>
-      )}
-    </SafeAreaView>
+            contentContainerStyle={styles.scrollContent}
+          >
+            <View style={styles.gridContainer}>
+              {movies.map((movie, index) => renderMovieCard(movie, index))}
+            </View>
+          </ScrollView>
+        )}
+      </SafeAreaView>
+    </View>
   );
 };
 
@@ -131,103 +163,190 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: THEME.background,
   },
-  topGlow: {
-    position: 'absolute',
-    top: -100,
-    left: -50,
-    width: width,
-    height: 300,
-    backgroundColor: THEME.accent,
-    opacity: 0.05,
-    borderRadius: 150,
-    transform: [{ scaleX: 1.5 }],
+  safeArea: {
+    flex: 1,
   },
+
+  // Header
   header: {
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  headerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingVertical: 20,
-    marginTop: 10,
   },
-  headerIconContainer: {
-      width: 48,
-      height: 48,
-      borderRadius: 16,
-      backgroundColor: 'rgba(255, 59, 48, 0.1)',
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginRight: 16,
-      borderWidth: 1,
-      borderColor: 'rgba(255, 59, 48, 0.2)',
+  iconCircle: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: 'rgba(247, 67, 70, 0.12)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(247, 67, 70, 0.25)',
+  },
+  headerTextContainer: {
+    justifyContent: 'center',
   },
   headerTitle: {
-    fontSize: 20,
-    fontWeight: '800',
+    fontSize: 24,
+    fontWeight: '700',
     color: THEME.textWhite,
-    letterSpacing: 0.5,
     marginBottom: 4,
   },
   headerSubtitle: {
-      fontSize: 14,
-      color: THEME.textGray,
-      fontWeight: '500',
-  },
-  
-  movieList: {
-    flex: 1,
-  },
-  movieListContent: {
-      paddingHorizontal: 20,
-      paddingBottom: 20,
+    fontSize: 14,
+    color: THEME.textGray,
+    fontWeight: '500',
   },
 
-  // Empty State Styles
+  // Grid Layout
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 20,
+  },
+  gridContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingHorizontal: 20,
+  },
+  movieCard: {
+    width: (width - 52) / 2,
+    marginBottom: 20,
+    backgroundColor: THEME.cardBg,
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
+  movieCardLeft: {
+    marginRight: 12,
+  },
+  movieCardRight: {
+    marginLeft: 0,
+  },
+  movieImageContainer: {
+    width: '100%',
+    height: 240,
+    position: 'relative',
+  },
+  movieImage: {
+    width: '100%',
+    height: '100%',
+  },
+  movieOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: '40%',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+  },
+  heartBadge: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(247, 67, 70, 0.5)',
+  },
+  movieInfo: {
+    padding: 14,
+  },
+  movieTitle: {
+    color: THEME.textWhite,
+    fontSize: 15,
+    fontWeight: '600',
+    marginBottom: 8,
+    lineHeight: 20,
+  },
+  movieMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  movieRating: {
+    color: THEME.textGray,
+    fontSize: 13,
+    fontWeight: '600',
+    marginLeft: 6,
+  },
+
+  // Empty State
   emptyStateContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 30,
-    marginTop: -50, // Visual adjustment
+    paddingHorizontal: 40,
+    marginTop: -40,
   },
-  emptyIconContainer: {
-      width: 120,
-      height: 120,
-      borderRadius: 60,
-      backgroundColor: 'rgba(255,255,255,0.03)',
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginBottom: 24,
-      borderWidth: 1,
-      borderColor: 'rgba(255,255,255,0.05)',
+  emptyIconWrapper: {
+    position: 'relative',
+    marginBottom: 32,
   },
-  emptyStateText: {
-    fontSize: 20,
+  emptyIconCircle: {
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    backgroundColor: 'rgba(255, 255, 255, 0.04)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.06)',
+    zIndex: 2,
+  },
+  emptyGlow: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    right: 10,
+    bottom: 10,
+    borderRadius: 60,
+    backgroundColor: THEME.accent,
+    opacity: 0.08,
+    zIndex: 1,
+  },
+  emptyTitle: {
+    fontSize: 24,
     fontWeight: '700',
     color: THEME.textWhite,
     marginBottom: 12,
     textAlign: 'center',
   },
-  emptyStateSubText: {
-    fontSize: 14,
+  emptySubtitle: {
+    fontSize: 15,
     color: THEME.textGray,
     textAlign: 'center',
-    lineHeight: 22,
-    marginBottom: 32,
+    lineHeight: 24,
+    marginBottom: 40,
   },
-  browseButton: {
-      backgroundColor: THEME.accent,
-      paddingHorizontal: 24,
-      paddingVertical: 12,
-      borderRadius: 24,
-      shadowColor: THEME.accent,
-      shadowOffset: {width: 0, height: 4},
-      shadowOpacity: 0.3,
-      shadowRadius: 8,
-      elevation: 6,
+  exploreButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: THEME.accent,
+    paddingHorizontal: 28,
+    paddingVertical: 16,
+    borderRadius: 28,
+    gap: 10,
+    shadowColor: THEME.accent,
+    shadowOffset: {width: 0, height: 8},
+    shadowOpacity: 0.4,
+    shadowRadius: 16,
+    elevation: 12,
   },
-  browseButtonText: {
-      color: THEME.textWhite,
-      fontSize: 14,
-      fontWeight: '700',
+  exploreButtonText: {
+    color: THEME.textWhite,
+    fontSize: 16,
+    fontWeight: '700',
+    letterSpacing: 0.3,
   },
 });

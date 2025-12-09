@@ -9,10 +9,11 @@ import {
   ScrollView,
   StyleSheet,
   StatusBar,
+  Dimensions,
 } from 'react-native';
 import {ProfileScreenProps} from '../types/screentypes';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import Icon from 'react-native-vector-icons/Ionicons'; // Switched to Ionicons
+import Icon from 'react-native-vector-icons/Ionicons';
 
 import {navigate} from '../utils/navigation';
 import {useFocusEffect} from '@react-navigation/native';
@@ -24,17 +25,19 @@ import {getClient} from '../services/ClientService';
 import {ClientProfileProps} from '../types/client';
 import {checkErrorFetchingData, getClientImage} from '../utils/function';
 
-// --- CINEMATIC DARK THEME CONFIGURATION ---
+const {width} = Dimensions.get('window');
+
+// THEME CONFIGURATION
 const THEME = {
-  background: '#10111D', // Deep Cinematic Blue/Black
-  cardBg: '#1C1D2E', // Slightly lighter panel
-  primaryRed: '#FF3B30', // Neon/Cinematic Red
+  background: '#10111D',
+  cardBg: '#1C1D2E',
+  primaryRed: '#F74346',
   textWhite: '#FFFFFF',
   textGray: '#A0A0B0',
   textDarkGray: '#5C5D6F',
   glass: 'rgba(255, 255, 255, 0.08)',
   border: 'rgba(255, 255, 255, 0.05)',
-  shadowColor: '#FF3B30',
+  shadowColor: '#F74346',
 };
 
 const ProfileScreen: React.FC<ProfileScreenProps> = ({navigation}) => {
@@ -74,214 +77,215 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({navigation}) => {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar backgroundColor={THEME.background} barStyle="light-content" />
-
-      {/* Header Title */}
-      <View style={styles.header}>
-          <Text style={styles.headerTitle}>My Profile</Text>
-      </View>
 
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{paddingBottom: 40}}>
         
-        {/* User Info Card */}
-        <View style={styles.profileCard}>
-          <View style={styles.avatarWrapper}>
-            <Image
-              source={{uri: getClientImage(client?.avatar || '')}}
-              style={styles.avatar}
-            />
-            <View style={styles.rankBadgeWrapper}>
-              <RankBadge rankName={client?.rank.name || ''} />
-            </View>
-          </View>
-
-          <View style={styles.userInfo}>
-            <Text style={styles.userName}>
-              {client?.name}
-            </Text>
-            <Text style={styles.userEmail}>{client?.email}</Text>
-            
-            <View style={styles.pointsWrapper}>
-              <Icon name="star" size={14} color={getRankColor(client?.rank.name || '')} />
-              <Text
-                style={[
-                  styles.pointsValue,
-                  {color: getRankColor(client?.rank.name || '')},
-                ]}>
-                {' '}{client?.loyalPoints.toLocaleString('vi-VN')} Points
-              </Text>
-            </View>
-          </View>
-          {/* Card Glow Effect */}
-          <View style={styles.cardGlow} />
-        </View>
-
-        {/* Account Settings Section */}
-        <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>Account Settings</Text>
-
-          <TouchableOpacity
-            onPress={() => {
-              if (client) {
-                navigation.navigate('EditProfileScreen', {
-                  clientId: client.clientId,
-                  address: client.address,
-                  avatarObject: {
-                    uri: getClientImage(client.avatar),
-                    fileName: '',
-                    type: '',
-                  },
-                  city: client.city,
-                  doB: client.doB,
-                  email: client.email,
-                  genre: client.genre,
-                  name: client.name,
-                  phoneNumber: client.phoneNumber,
-                });
-              }
-            }}
-            style={styles.menuItem}
-            activeOpacity={0.7}>
-            <View style={[styles.iconBox, {backgroundColor: 'rgba(52, 199, 89, 0.1)'}]}>
-                <Icon name="create-outline" size={20} color="#34C759" />
-            </View>
-            <Text style={styles.menuText}>Edit Profile</Text>
-            <Icon name="chevron-forward" size={20} color={THEME.textDarkGray} />
-          </TouchableOpacity>
+        {/* Hero Profile Card */}
+        <View style={styles.heroCard}>
+          <View style={styles.heroGradient} />
           
-          <TouchableOpacity
-            onPress={() => {
-              if (client) {
-                navigation.navigate('ChangePasswordScreen', {
-                  email: client.email,
-                });
-              }
-            }}
-            style={styles.menuItem}
-            activeOpacity={0.7}>
-            <View style={[styles.iconBox, {backgroundColor: 'rgba(255, 149, 0, 0.1)'}]}>
-                <Icon name="lock-closed-outline" size={20} color="#FF9500" />
+          <SafeAreaView style={styles.heroContent}>
+            {/* Avatar Section */}
+            <View style={styles.avatarSection}>
+              <View style={styles.avatarWrapper}>
+                <Image
+                  source={{uri: getClientImage(client?.avatar || '')}}
+                  style={styles.avatar}
+                />
+                <View style={styles.rankBadgeWrapper}>
+                  <RankBadge rankName={client?.rank.name || ''} />
+                </View>
+              </View>
+              
+              <View style={styles.userTextInfo}>
+                <Text style={styles.userName}>{client?.name}</Text>
+                <Text style={styles.userEmail}>{client?.email}</Text>
+              </View>
             </View>
-            <Text style={styles.menuText}>Change Password</Text>
-            <Icon name="chevron-forward" size={20} color={THEME.textDarkGray} />
-          </TouchableOpacity>
+
+            {/* Points Card */}
+            <View style={styles.pointsCard}>
+              <View style={styles.pointsIconCircle}>
+                <Icon name="star" size={24} color={getRankColor(client?.rank.name || '')} />
+              </View>
+              <View style={styles.pointsInfo}>
+                <Text style={styles.pointsLabel}>Loyalty Points</Text>
+                <Text style={[styles.pointsValue, {color: getRankColor(client?.rank.name || '')}]}>
+                  {client?.loyalPoints.toLocaleString('vi-VN')}
+                </Text>
+              </View>
+              <View style={styles.pointsGlow} />
+            </View>
+          </SafeAreaView>
         </View>
 
-        {/* Quick Links Section */}
-        <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>Quick Access</Text>
+        <View style={styles.contentContainer}>
+          {/* Quick Actions Grid */}
+          <View style={styles.quickActionsGrid}>
+            <TouchableOpacity
+              onPress={() => {
+                if (client) {
+                  navigation.navigate('EditProfileScreen', {
+                    clientId: client.clientId,
+                    address: client.address,
+                    avatarObject: {
+                      uri: getClientImage(client.avatar),
+                      fileName: '',
+                      type: '',
+                    },
+                    city: client.city,
+                    doB: client.doB,
+                    email: client.email,
+                    genre: client.genre,
+                    name: client.name,
+                    phoneNumber: client.phoneNumber,
+                  });
+                }
+              }}
+              style={styles.quickActionCard}
+              activeOpacity={0.8}>
+              <View style={[styles.quickActionIcon, {backgroundColor: 'rgba(52, 199, 89, 0.15)'}]}>
+                <Icon name="create-outline" size={24} color="#34C759" />
+              </View>
+              <Text style={styles.quickActionText}>Edit Profile</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.menuItem}
-            activeOpacity={0.7}
-            onPress={() => {
-              navigate('MainTabs', {
-                screen: 'HomeStack',
-                params: {
-                  screen: 'CinemaListScreen',
-                },
-              });
-            }}>
-             <View style={[styles.iconBox, {backgroundColor: 'rgba(0, 122, 255, 0.1)'}]}>
-                <Icon name="location-outline" size={20} color="#007AFF" />
-            </View>
-            <Text style={styles.menuText}>Browse Cinemas</Text>
-            <Icon name="chevron-forward" size={20} color={THEME.textDarkGray} />
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                if (client) {
+                  navigation.navigate('ChangePasswordScreen', {
+                    email: client.email,
+                  });
+                }
+              }}
+              style={styles.quickActionCard}
+              activeOpacity={0.8}>
+              <View style={[styles.quickActionIcon, {backgroundColor: 'rgba(255, 149, 0, 0.15)'}]}>
+                <Icon name="lock-closed-outline" size={24} color="#FF9500" />
+              </View>
+              <Text style={styles.quickActionText}>Password</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.menuItem}
-            activeOpacity={0.7}
-            onPress={() => {
-              navigate('MainTabs', {
-                screen: 'HomeStack',
-                params: {
-                  screen: 'MovieListScreen',
+            <TouchableOpacity
+              style={styles.quickActionCard}
+              activeOpacity={0.8}
+              onPress={() =>
+                navigation.navigate('CouponListScreen', {
+                  clientEmail: client?.email || '',
+                })
+              }>
+              <View style={[styles.quickActionIcon, {backgroundColor: 'rgba(255, 214, 10, 0.15)'}]}>
+                <Icon name="gift-outline" size={24} color="#FFD60A" />
+              </View>
+              <Text style={styles.quickActionText}>Coupons</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.quickActionCard}
+              activeOpacity={0.8}
+              onPress={() =>
+                navigate('MainTabs', {
+                  screen: 'HomeStack',
                   params: {
-                    searchValue: '',
+                    screen: 'MyTicketsScreen',
                   },
-                },
-              });
-            }}>
-             <View style={[styles.iconBox, {backgroundColor: 'rgba(175, 82, 222, 0.1)'}]}>
-                <Icon name="film-outline" size={20} color="#AF52DE" />
-            </View>
-            <Text style={styles.menuText}>Browse Movies</Text>
-            <Icon name="chevron-forward" size={20} color={THEME.textDarkGray} />
+                })
+              }>
+              <View style={[styles.quickActionIcon, {backgroundColor: 'rgba(247, 67, 70, 0.15)'}]}>
+                <Icon name="ticket-outline" size={24} color={THEME.primaryRed} />
+              </View>
+              <Text style={styles.quickActionText}>Tickets</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Browse Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Browse</Text>
+            
+            <TouchableOpacity
+              style={styles.menuCard}
+              activeOpacity={0.7}
+              onPress={() => {
+                navigate('MainTabs', {
+                  screen: 'HomeStack',
+                  params: {
+                    screen: 'CinemaListScreen',
+                  },
+                });
+              }}>
+              <View style={[styles.menuIconBox, {backgroundColor: 'rgba(0, 122, 255, 0.1)'}]}>
+                <Icon name="location-outline" size={22} color="#007AFF" />
+              </View>
+              <View style={styles.menuTextContainer}>
+                <Text style={styles.menuTitle}>Cinemas Near You</Text>
+                <Text style={styles.menuSubtitle}>Find theaters and showtimes</Text>
+              </View>
+              <Icon name="chevron-forward" size={20} color={THEME.textDarkGray} />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.menuCard}
+              activeOpacity={0.7}
+              onPress={() => {
+                navigate('MainTabs', {
+                  screen: 'HomeStack',
+                  params: {
+                    screen: 'MovieListScreen',
+                    params: {
+                      searchValue: '',
+                    },
+                  },
+                });
+              }}>
+              <View style={[styles.menuIconBox, {backgroundColor: 'rgba(175, 82, 222, 0.1)'}]}>
+                <Icon name="film-outline" size={22} color="#AF52DE" />
+              </View>
+              <View style={styles.menuTextContainer}>
+                <Text style={styles.menuTitle}>All Movies</Text>
+                <Text style={styles.menuSubtitle}>Explore our collection</Text>
+              </View>
+              <Icon name="chevron-forward" size={20} color={THEME.textDarkGray} />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.menuCard}
+              onPress={() =>
+                navigate('MainTabs', {
+                  screen: 'HomeStack',
+                  params: {
+                    screen: 'HomeScreen',
+                  },
+                })
+              }
+              activeOpacity={0.7}>
+              <View style={[styles.menuIconBox, {backgroundColor: 'rgba(255, 45, 85, 0.1)'}]}>
+                <Icon name="home-outline" size={22} color="#FF2D55" />
+              </View>
+              <View style={styles.menuTextContainer}>
+                <Text style={styles.menuTitle}>Home Dashboard</Text>
+                <Text style={styles.menuSubtitle}>Featured & trending</Text>
+              </View>
+              <Icon name="chevron-forward" size={20} color={THEME.textDarkGray} />
+            </TouchableOpacity>
+          </View>
+
+          {/* Logout Button */}
+          <TouchableOpacity
+            onPress={() => logout()}
+            style={styles.logoutButton}
+            activeOpacity={0.8}>
+            <Icon name="log-out-outline" size={22} color={THEME.primaryRed} />
+            <Text style={styles.logoutText}>Log Out</Text>
           </TouchableOpacity>
         </View>
-
-        {/* Menu Section */}
-        <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>My Activity</Text>
-
-          <TouchableOpacity
-            style={styles.menuItem}
-            onPress={() =>
-              navigate('MainTabs', {
-                screen: 'HomeStack',
-                params: {
-                  screen: 'HomeScreen',
-                },
-              })
-            }
-            activeOpacity={0.7}>
-             <View style={[styles.iconBox, {backgroundColor: 'rgba(255, 45, 85, 0.1)'}]}>
-                <Icon name="home-outline" size={20} color="#FF2D55" />
-            </View>
-            <Text style={styles.menuText}>Home Dashboard</Text>
-            <Icon name="chevron-forward" size={20} color={THEME.textDarkGray} />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.menuItem}
-            activeOpacity={0.7}
-            onPress={() =>
-              navigate('MainTabs', {
-                screen: 'HomeStack',
-                params: {
-                  screen: 'MyTicketsScreen',
-                },
-              })
-            }>
-             <View style={[styles.iconBox, {backgroundColor: 'rgba(255, 59, 48, 0.1)'}]}>
-                <Icon name="ticket-outline" size={20} color="#FF3B30" />
-            </View>
-            <Text style={styles.menuText}>My Tickets</Text>
-            <Icon name="chevron-forward" size={20} color={THEME.textDarkGray} />
-          </TouchableOpacity>
-          
-          <TouchableOpacity
-            style={styles.menuItem}
-            onPress={() =>
-              navigation.navigate('CouponListScreen', {
-                clientEmail: client?.email || '',
-              })
-            }
-            activeOpacity={0.7}>
-             <View style={[styles.iconBox, {backgroundColor: 'rgba(255, 214, 10, 0.1)'}]}>
-                <Icon name="gift-outline" size={20} color="#FFD60A" />
-            </View>
-            <Text style={styles.menuText}>My Coupons</Text>
-            <Icon name="chevron-forward" size={20} color={THEME.textDarkGray} />
-          </TouchableOpacity>
-        </View>
-
-        {/* Logout Button */}
-        <TouchableOpacity
-          onPress={() => logout()}
-          style={styles.logoutButton}
-          activeOpacity={0.7}>
-          <Icon name="log-out-outline" size={24} color={THEME.primaryRed} />
-          <Text style={styles.logoutText}>Log Out</Text>
-        </TouchableOpacity>
 
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -290,134 +294,192 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: THEME.background,
   },
-  header: {
-      paddingHorizontal: 20,
-      paddingVertical: 15,
-      borderBottomWidth: 1,
-      borderBottomColor: 'rgba(255,255,255,0.05)',
-  },
-  headerTitle: {
-      fontSize: 24,
-      fontWeight: 'bold',
-      color: THEME.textWhite,
-  },
   scrollView: {
     flex: 1,
-    paddingHorizontal: 20,
   },
-  
-  // Profile Card
-  profileCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 20,
-    borderRadius: 24,
-    marginTop: 20,
-    marginBottom: 30,
+
+  // Hero Card
+  heroCard: {
     backgroundColor: THEME.cardBg,
+    paddingBottom: 24,
     position: 'relative',
     overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.05)',
   },
-  cardGlow: {
-      position: 'absolute',
-      top: -20,
-      right: -20,
-      width: 100,
-      height: 100,
-      backgroundColor: THEME.primaryRed,
-      opacity: 0.1,
-      borderRadius: 50,
-      zIndex: -1,
+  heroGradient: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 200,
+    backgroundColor: THEME.primaryRed,
+    opacity: 0.1,
+  },
+  heroContent: {
+    paddingTop: 20,
+  },
+  avatarSection: {
+    alignItems: 'center',
+    marginBottom: 20,
   },
   avatarWrapper: {
     position: 'relative',
-    marginRight: 20,
+    marginBottom: 16,
   },
   avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    borderWidth: 2,
-    borderColor: 'rgba(255,255,255,0.1)',
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    borderWidth: 3,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
     backgroundColor: '#000',
   },
   rankBadgeWrapper: {
     position: 'absolute',
-    bottom: -6,
-    right: -6,
+    bottom: 0,
+    right: 0,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.5,
-    shadowRadius: 4,
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
-  userInfo: {
-    flex: 1,
-    justifyContent: 'center',
+  userTextInfo: {
+    alignItems: 'center',
   },
   userName: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 4,
+    fontSize: 24,
+    fontWeight: '700',
     color: THEME.textWhite,
+    marginBottom: 4,
   },
   userEmail: {
-      fontSize: 12,
-      color: THEME.textGray,
-      marginBottom: 10,
+    fontSize: 14,
+    color: THEME.textGray,
   },
-  pointsWrapper: {
+  pointsCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.2)',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
-    alignSelf: 'flex-start',
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    marginHorizontal: 20,
+    padding: 16,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  pointsIconCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 14,
+  },
+  pointsInfo: {
+    flex: 1,
+  },
+  pointsLabel: {
+    fontSize: 12,
+    color: THEME.textGray,
+    fontWeight: '500',
+    marginBottom: 4,
   },
   pointsValue: {
-    fontSize: 13,
-    fontWeight: 'bold',
+    fontSize: 22,
+    fontWeight: '700',
+  },
+  pointsGlow: {
+    position: 'absolute',
+    right: -30,
+    top: -30,
+    width: 100,
+    height: 100,
+    backgroundColor: THEME.primaryRed,
+    opacity: 0.1,
+    borderRadius: 50,
   },
 
-  // Sections
-  sectionContainer: {
-    marginBottom: 25,
+  // Content Container
+  contentContainer: {
+    paddingHorizontal: 20,
+    paddingTop: 24,
   },
-  sectionTitle: {
-    fontSize: 14,
-    fontWeight: '700',
-    marginBottom: 15,
-    color: THEME.textDarkGray,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-  },
-  
-  // Menu Item
-  menuItem: {
+
+  // Quick Actions Grid
+  quickActionsGrid: {
     flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    borderRadius: 16,
-    marginBottom: 12,
+    flexWrap: 'wrap',
+    marginBottom: 32,
+    gap: 12,
+  },
+  quickActionCard: {
+    width: (width - 52) / 2,
     backgroundColor: THEME.cardBg,
+    borderRadius: 20,
+    padding: 20,
+    alignItems: 'center',
     borderWidth: 1,
     borderColor: THEME.border,
   },
-  iconBox: {
-      width: 36,
-      height: 36,
-      borderRadius: 12,
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginRight: 15,
+  quickActionIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
   },
-  menuText: {
-    fontSize: 16,
-    fontWeight: '500',
-    flex: 1,
+  quickActionText: {
+    fontSize: 14,
+    fontWeight: '600',
     color: THEME.textWhite,
+    textAlign: 'center',
+  },
+
+  // Section
+  section: {
+    marginBottom: 28,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: THEME.textWhite,
+    marginBottom: 16,
+  },
+
+  // Menu Card
+  menuCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: THEME.cardBg,
+    padding: 16,
+    borderRadius: 18,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: THEME.border,
+  },
+  menuIconBox: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 14,
+  },
+  menuTextContainer: {
+    flex: 1,
+  },
+  menuTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: THEME.textWhite,
+    marginBottom: 2,
+  },
+  menuSubtitle: {
+    fontSize: 12,
+    color: THEME.textGray,
   },
 
   // Logout
@@ -425,17 +487,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: 'rgba(247, 67, 70, 0.08)',
     padding: 18,
-    borderRadius: 16,
+    borderRadius: 20,
     borderWidth: 1,
-    borderColor: 'rgba(255, 59, 48, 0.3)',
-    marginBottom: 20,
-    marginTop: 10,
-    backgroundColor: 'rgba(255, 59, 48, 0.05)',
+    borderColor: 'rgba(247, 67, 70, 0.2)',
+    marginTop: 8,
   },
   logoutText: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '700',
     marginLeft: 10,
     color: THEME.primaryRed,
   },
