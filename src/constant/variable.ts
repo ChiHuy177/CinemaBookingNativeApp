@@ -1,9 +1,7 @@
-import { DateInBookingProps } from "../types/date";
-
-
+import { DateInBookingProps } from '../types/date';
 
 export const baseURL =
-  'https://ungrumpy-alan-proapproval.ngrok-free.dev';
+  'https://deterministic-unagriculturally-maison.ngrok-free.dev';
 
 export const defaultDateForBooking = () => {
   const storeDates: DateInBookingProps[] = [];

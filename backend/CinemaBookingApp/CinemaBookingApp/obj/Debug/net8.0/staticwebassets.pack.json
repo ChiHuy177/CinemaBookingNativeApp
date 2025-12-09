@@ -1,0 +1,373 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\240906_Seohyun.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\240906_Seohyun.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\Ben_Affleck_on_the_Red_Carpet.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\Ben_Affleck_on_the_Red_Carpet.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\ChulachakChakrabongse.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\ChulachakChakrabongse.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\David_Harbour_by_Gage_Skidmore_2.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\David_Harbour_by_Gage_Skidmore_2.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\David_Lee_Warriors.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\David_Lee_Warriors.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\DoanTheVinh.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\DoanTheVinh.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\Don_Lee_by_Gage_Skidmore.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\Don_Lee_by_Gage_Skidmore.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\EdHarris.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\EdHarris.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\Ella_Rubin_by_Gage_Skidmore.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\Ella_Rubin_by_Gage_Skidmore.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\GeorgeClooney.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\GeorgeClooney.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\HaileeSteinfeld.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\HaileeSteinfeld.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\ItkronPungkiatrussamee.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\ItkronPungkiatrussamee.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\JK_Simmons_at_the_2024_Toronto_International_Film_Festival.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\JK_Simmons_at_the_2024_Toronto_International_Film_Festival.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\JackO'Connell.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\JackO'Connell.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\JaonaayJinjettWattanasin.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\JaonaayJinjettWattanasin.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\Jon_Bernthal_.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\Jon_Bernthal_.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\KANGHa-neul.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\KANGHa-neul.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\KorranidLaosubinprasoet.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\KorranidLaosubinprasoet.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\MV5BNDVmOWE3ZTYtZDZiZC00MTQ4LWFkYWUtMjgwMDhjODZkMjkzX.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\MV5BNDVmOWE3ZTYtZDZiZC00MTQ4LWFkYWUtMjgwMDhjODZkMjkzX.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\MV5BNTBmMzk2YTEtNTJkNC00OGZjLWJiM2MtMGVlNTg5NTA4YTQ2XkEyXkFqcGc@._V1_.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\MV5BNTBmMzk2YTEtNTJkNC00OGZjLWJiM2MtMGVlNTg5NTA4YTQ2XkEyXkFqcGc@._V1_.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\MV5BNzQ0YmU4MzctN2RhMi00MDg3LTgzZjctMzU5YmE2ODk0MjFl.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\MV5BNzQ0YmU4MzctN2RhMi00MDg3LTgzZjctMzU5YmE2ODk0MjFl.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\MaiaMitchell.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\MaiaMitchell.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\MegumiÔhara.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\MegumiÔhara.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\MichaelB.Jordan.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\MichaelB.Jordan.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\Michael_Cimino_by_Gage_Skidmore.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\Michael_Cimino_by_Gage_Skidmore.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\MinhAnh.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\MinhAnh.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\NapponGomarachun.webp",
+      "PackagePath": "staticwebassets\\images\\actors\\NapponGomarachun.webp"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\Odessa_A'zion_by_Gage_Skidmore.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\Odessa_A'zion_by_Gage_Skidmore.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\PARKHae-joon.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\PARKHae-joon.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\Paul_Sun-Hyung_Lee_by_Gage_Skidmore.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\Paul_Sun-Hyung_Lee_by_Gage_Skidmore.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\Peter_Stormare_2015-09-23_00.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\Peter_Stormare_2015-09-23_00.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\SandraBullock.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\SandraBullock.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\SubaruKimura.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\SubaruKimura.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\TomokazuSeki.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\TomokazuSeki.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\WasabiMizuta.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\WasabiMizuta.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\YOOHai-jin.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\YOOHai-jin.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\YumiKakazu.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\YumiKakazu.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\anhpham.webp",
+      "PackagePath": "staticwebassets\\images\\actors\\anhpham.webp"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\anhtuwilson.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\anhtuwilson.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\baongoc.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\baongoc.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\cherryhaimy.webp",
+      "PackagePath": "staticwebassets\\images\\actors\\cherryhaimy.webp"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\default.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\default.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\dinhngocdiep.webp",
+      "PackagePath": "staticwebassets\\images\\actors\\dinhngocdiep.webp"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\hodongquang.webp",
+      "PackagePath": "staticwebassets\\images\\actors\\hodongquang.webp"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\hongthu.webp",
+      "PackagePath": "staticwebassets\\images\\actors\\hongthu.webp"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\kimphuong.webp",
+      "PackagePath": "staticwebassets\\images\\actors\\kimphuong.webp"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\longdeptrai.webp",
+      "PackagePath": "staticwebassets\\images\\actors\\longdeptrai.webp"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\quachngoctuyen.jpg",
+      "PackagePath": "staticwebassets\\images\\actors\\quachngoctuyen.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\quocanh.webp",
+      "PackagePath": "staticwebassets\\images\\actors\\quocanh.webp"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\quochuyttk.webp",
+      "PackagePath": "staticwebassets\\images\\actors\\quochuyttk.webp"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\riohaonguyen.webp",
+      "PackagePath": "staticwebassets\\images\\actors\\riohaonguyen.webp"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\tinnguyen.webp",
+      "PackagePath": "staticwebassets\\images\\actors\\tinnguyen.webp"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\tuyetthu.jpeg",
+      "PackagePath": "staticwebassets\\images\\actors\\tuyetthu.jpeg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\actors\\yunobigboi.webp",
+      "PackagePath": "staticwebassets\\images\\actors\\yunobigboi.webp"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\clients\\aea7a0c9-29a6-4f82-8cd4-eae4244a4881.jpg",
+      "PackagePath": "staticwebassets\\images\\clients\\aea7a0c9-29a6-4f82-8cd4-eae4244a4881.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\clients\\avatar.jpg",
+      "PackagePath": "staticwebassets\\images\\clients\\avatar.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\clients\\default.jpg",
+      "PackagePath": "staticwebassets\\images\\clients\\default.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\combos\\combo_1.png",
+      "PackagePath": "staticwebassets\\images\\combos\\combo_1.png"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\combos\\combo_10.png",
+      "PackagePath": "staticwebassets\\images\\combos\\combo_10.png"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\combos\\combo_11.png",
+      "PackagePath": "staticwebassets\\images\\combos\\combo_11.png"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\combos\\combo_12.png",
+      "PackagePath": "staticwebassets\\images\\combos\\combo_12.png"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\combos\\combo_13.png",
+      "PackagePath": "staticwebassets\\images\\combos\\combo_13.png"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\combos\\combo_14.png",
+      "PackagePath": "staticwebassets\\images\\combos\\combo_14.png"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\combos\\combo_15.png",
+      "PackagePath": "staticwebassets\\images\\combos\\combo_15.png"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\combos\\combo_16.png",
+      "PackagePath": "staticwebassets\\images\\combos\\combo_16.png"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\combos\\combo_2.png",
+      "PackagePath": "staticwebassets\\images\\combos\\combo_2.png"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\combos\\combo_3.png",
+      "PackagePath": "staticwebassets\\images\\combos\\combo_3.png"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\combos\\combo_4.png",
+      "PackagePath": "staticwebassets\\images\\combos\\combo_4.png"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\combos\\combo_5.png",
+      "PackagePath": "staticwebassets\\images\\combos\\combo_5.png"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\combos\\combo_6.png",
+      "PackagePath": "staticwebassets\\images\\combos\\combo_6.png"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\combos\\combo_7.png",
+      "PackagePath": "staticwebassets\\images\\combos\\combo_7.png"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\combos\\combo_8.png",
+      "PackagePath": "staticwebassets\\images\\combos\\combo_8.png"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\combos\\combo_9.png",
+      "PackagePath": "staticwebassets\\images\\combos\\combo_9.png"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\posters\\19cc70f4-2f72-4946-89fe-6aaabdca6a27_20251201093203.jpg",
+      "PackagePath": "staticwebassets\\images\\posters\\19cc70f4-2f72-4946-89fe-6aaabdca6a27_20251201093203.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\posters\\avenger.jpg",
+      "PackagePath": "staticwebassets\\images\\posters\\avenger.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\posters\\buonthanbanthanh.jpg",
+      "PackagePath": "staticwebassets\\images\\posters\\buonthanbanthanh.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\posters\\default.jpg",
+      "PackagePath": "staticwebassets\\images\\posters\\default.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\posters\\demthanhhoisanquy.jpg",
+      "PackagePath": "staticwebassets\\images\\posters\\demthanhhoisanquy.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\posters\\doraemon.jpg",
+      "PackagePath": "staticwebassets\\images\\posters\\doraemon.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\posters\\gravity_bnr_v_dd_ka_tt_2000x3000_300dpi_vn_1.jpg",
+      "PackagePath": "staticwebassets\\images\\posters\\gravity_bnr_v_dd_ka_tt_2000x3000_300dpi_vn_1.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\posters\\lm8.jpg",
+      "PackagePath": "staticwebassets\\images\\posters\\lm8.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\posters\\poster_payoff_mat_danh_ke_toan_2_3.jpg",
+      "PackagePath": "staticwebassets\\images\\posters\\poster_payoff_mat_danh_ke_toan_2_3.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\posters\\poster_quai_thu_dai_nao_so_thu_3.jpg",
+      "PackagePath": "staticwebassets\\images\\posters\\poster_quai_thu_dai_nao_so_thu_3.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\posters\\poster_toi_do_6.jpg",
+      "PackagePath": "staticwebassets\\images\\posters\\poster_toi_do_6.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\posters\\ttk_poster_official_fa.jpg",
+      "PackagePath": "staticwebassets\\images\\posters\\ttk_poster_official_fa.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\posters\\untildawnssqbt.jpg",
+      "PackagePath": "staticwebassets\\images\\posters\\untildawnssqbt.jpg"
+    },
+    {
+      "Id": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\wwwroot\\images\\posters\\yd-main_poster.jpg",
+      "PackagePath": "staticwebassets\\images\\posters\\yd-main_poster.jpg"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.CinemaBookingApp.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.CinemaBookingApp.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.CinemaBookingApp.props",
+      "PackagePath": "build\\CinemaBookingApp.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.CinemaBookingApp.props",
+      "PackagePath": "buildMultiTargeting\\CinemaBookingApp.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.CinemaBookingApp.props",
+      "PackagePath": "buildTransitive\\CinemaBookingApp.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

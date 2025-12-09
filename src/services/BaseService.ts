@@ -4,9 +4,8 @@ import axios from 'axios';
 import { getEmailAndToken } from '../utils/storage';
 import { logout } from './AuthService';
 
-
 const axiosInstance = axios.create({
-  baseURL: 'https://ungrumpy-alan-proapproval.ngrok-free.dev/api',
+  baseURL: 'https://deterministic-unagriculturally-maison.ngrok-free.dev/api',
 
   // baseURL: `${baseURL}/api`,
   timeout: 10000,

@@ -1,0 +1,103 @@
+.cinema-list-container {
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+.cinema-list-header {
+  max-width: 1200px;
+  margin: 0 auto 40px;
+}
+
+.header-content h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin: 0 0 8px 0;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.cinemas-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 24px;
+}
+
+.cinema-card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+  display: flex;
+  gap: 20px;
+}
+
+.cinema-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(255, 87, 87, 0.2);
+  border-color: var(--accent-primary);
+}
+
+.cinema-icon {
+  color: var(--accent-primary);
+  flex-shrink: 0;
+}
+
+.cinema-content {
+  flex: 1;
+}
+
+.cinema-content h3 {
+  margin: 0 0 16px 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.cinema-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.detail-item svg {
+  flex-shrink: 0;
+}
+
+.city-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  background: rgba(255, 87, 87, 0.15);
+  border: 1px solid var(--accent-primary);
+  border-radius: 12px;
+  color: var(--accent-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .header-content h1 {
+    font-size: 2rem;
+  }
+
+  .cinemas-grid {
+    grid-template-columns: 1fr;
+  }
+}

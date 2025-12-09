@@ -1,0 +1,302 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{6B77E655-D8F0-4FDD-8B22-8577DF0DF485}|CinemaBookingApp\\CinemaBookingApp.csproj|c:\\mobile-programming\\project\\cinemabookingapp\\cinemabookingapp\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B77E655-D8F0-4FDD-8B22-8577DF0DF485}|CinemaBookingApp\\CinemaBookingApp.csproj|solutionrelative:cinemabookingapp\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6B77E655-D8F0-4FDD-8B22-8577DF0DF485}|CinemaBookingApp\\CinemaBookingApp.csproj|c:\\mobile-programming\\project\\cinemabookingapp\\cinemabookingapp\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B77E655-D8F0-4FDD-8B22-8577DF0DF485}|CinemaBookingApp\\CinemaBookingApp.csproj|solutionrelative:cinemabookingapp\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6B77E655-D8F0-4FDD-8B22-8577DF0DF485}|CinemaBookingApp\\CinemaBookingApp.csproj|c:\\mobile-programming\\project\\cinemabookingapp\\cinemabookingapp\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{6B77E655-D8F0-4FDD-8B22-8577DF0DF485}|CinemaBookingApp\\CinemaBookingApp.csproj|solutionrelative:cinemabookingapp\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6B77E655-D8F0-4FDD-8B22-8577DF0DF485}|CinemaBookingApp\\CinemaBookingApp.csproj|c:\\mobile-programming\\project\\cinemabookingapp\\cinemabookingapp\\repositories\\implementations\\actorrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B77E655-D8F0-4FDD-8B22-8577DF0DF485}|CinemaBookingApp\\CinemaBookingApp.csproj|solutionrelative:cinemabookingapp\\repositories\\implementations\\actorrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6B77E655-D8F0-4FDD-8B22-8577DF0DF485}|CinemaBookingApp\\CinemaBookingApp.csproj|c:\\mobile-programming\\project\\cinemabookingapp\\cinemabookingapp\\services\\implementations\\actorservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B77E655-D8F0-4FDD-8B22-8577DF0DF485}|CinemaBookingApp\\CinemaBookingApp.csproj|solutionrelative:cinemabookingapp\\services\\implementations\\actorservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6B77E655-D8F0-4FDD-8B22-8577DF0DF485}|CinemaBookingApp\\CinemaBookingApp.csproj|c:\\mobile-programming\\project\\cinemabookingapp\\cinemabookingapp\\repositories\\interfaces\\iactorrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B77E655-D8F0-4FDD-8B22-8577DF0DF485}|CinemaBookingApp\\CinemaBookingApp.csproj|solutionrelative:cinemabookingapp\\repositories\\interfaces\\iactorrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6B77E655-D8F0-4FDD-8B22-8577DF0DF485}|CinemaBookingApp\\CinemaBookingApp.csproj|c:\\mobile-programming\\project\\cinemabookingapp\\cinemabookingapp\\controllers\\actorcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B77E655-D8F0-4FDD-8B22-8577DF0DF485}|CinemaBookingApp\\CinemaBookingApp.csproj|solutionrelative:cinemabookingapp\\controllers\\actorcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6B77E655-D8F0-4FDD-8B22-8577DF0DF485}|CinemaBookingApp\\CinemaBookingApp.csproj|c:\\mobile-programming\\project\\cinemabookingapp\\cinemabookingapp\\controllers\\moviecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B77E655-D8F0-4FDD-8B22-8577DF0DF485}|CinemaBookingApp\\CinemaBookingApp.csproj|solutionrelative:cinemabookingapp\\controllers\\moviecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6B77E655-D8F0-4FDD-8B22-8577DF0DF485}|CinemaBookingApp\\CinemaBookingApp.csproj|c:\\mobile-programming\\project\\cinemabookingapp\\cinemabookingapp\\controllers\\genrecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B77E655-D8F0-4FDD-8B22-8577DF0DF485}|CinemaBookingApp\\CinemaBookingApp.csproj|solutionrelative:cinemabookingapp\\controllers\\genrecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6B77E655-D8F0-4FDD-8B22-8577DF0DF485}|CinemaBookingApp\\CinemaBookingApp.csproj|c:\\mobile-programming\\project\\cinemabookingapp\\cinemabookingapp\\controllers\\ticketcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B77E655-D8F0-4FDD-8B22-8577DF0DF485}|CinemaBookingApp\\CinemaBookingApp.csproj|solutionrelative:cinemabookingapp\\controllers\\ticketcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6B77E655-D8F0-4FDD-8B22-8577DF0DF485}|CinemaBookingApp\\CinemaBookingApp.csproj|c:\\mobile-programming\\project\\cinemabookingapp\\cinemabookingapp\\controllers\\seatcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B77E655-D8F0-4FDD-8B22-8577DF0DF485}|CinemaBookingApp\\CinemaBookingApp.csproj|solutionrelative:cinemabookingapp\\controllers\\seatcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6B77E655-D8F0-4FDD-8B22-8577DF0DF485}|CinemaBookingApp\\CinemaBookingApp.csproj|c:\\mobile-programming\\project\\cinemabookingapp\\cinemabookingapp\\controllers\\reviewcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B77E655-D8F0-4FDD-8B22-8577DF0DF485}|CinemaBookingApp\\CinemaBookingApp.csproj|solutionrelative:cinemabookingapp\\controllers\\reviewcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6B77E655-D8F0-4FDD-8B22-8577DF0DF485}|CinemaBookingApp\\CinemaBookingApp.csproj|c:\\mobile-programming\\project\\cinemabookingapp\\cinemabookingapp\\controllers\\rankcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B77E655-D8F0-4FDD-8B22-8577DF0DF485}|CinemaBookingApp\\CinemaBookingApp.csproj|solutionrelative:cinemabookingapp\\controllers\\rankcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6B77E655-D8F0-4FDD-8B22-8577DF0DF485}|CinemaBookingApp\\CinemaBookingApp.csproj|c:\\mobile-programming\\project\\cinemabookingapp\\cinemabookingapp\\controllers\\couponcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B77E655-D8F0-4FDD-8B22-8577DF0DF485}|CinemaBookingApp\\CinemaBookingApp.csproj|solutionrelative:cinemabookingapp\\controllers\\couponcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6B77E655-D8F0-4FDD-8B22-8577DF0DF485}|CinemaBookingApp\\CinemaBookingApp.csproj|c:\\mobile-programming\\project\\cinemabookingapp\\cinemabookingapp\\controllers\\combocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B77E655-D8F0-4FDD-8B22-8577DF0DF485}|CinemaBookingApp\\CinemaBookingApp.csproj|solutionrelative:cinemabookingapp\\controllers\\combocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6B77E655-D8F0-4FDD-8B22-8577DF0DF485}|CinemaBookingApp\\CinemaBookingApp.csproj|c:\\mobile-programming\\project\\cinemabookingapp\\cinemabookingapp\\migrations\\20251201081246_init.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B77E655-D8F0-4FDD-8B22-8577DF0DF485}|CinemaBookingApp\\CinemaBookingApp.csproj|solutionrelative:cinemabookingapp\\migrations\\20251201081246_init.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 9,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{0ad07096-bba9-4900-a651-0598d26f6d24}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "20251201081246_init.cs",
+              "DocumentMoniker": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\Migrations\\20251201081246_init.cs",
+              "RelativeDocumentMoniker": "CinemaBookingApp\\Migrations\\20251201081246_init.cs",
+              "ToolTip": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\Migrations\\20251201081246_init.cs",
+              "RelativeToolTip": "CinemaBookingApp\\Migrations\\20251201081246_init.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAoAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-01T08:12:46.814Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\appsettings.json",
+              "RelativeDocumentMoniker": "CinemaBookingApp\\appsettings.json",
+              "ToolTip": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\appsettings.json",
+              "RelativeToolTip": "CinemaBookingApp\\appsettings.json",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAAAAkAAABYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-12-01T08:09:52.603Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ActorRepository.cs",
+              "DocumentMoniker": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\Repositories\\Implementations\\ActorRepository.cs",
+              "RelativeDocumentMoniker": "CinemaBookingApp\\Repositories\\Implementations\\ActorRepository.cs",
+              "ToolTip": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\Repositories\\Implementations\\ActorRepository.cs",
+              "RelativeToolTip": "CinemaBookingApp\\Repositories\\Implementations\\ActorRepository.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAABoAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-01T02:49:39.963Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "IActorRepository.cs",
+              "DocumentMoniker": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\Repositories\\Interfaces\\IActorRepository.cs",
+              "RelativeDocumentMoniker": "CinemaBookingApp\\Repositories\\Interfaces\\IActorRepository.cs",
+              "ToolTip": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\Repositories\\Interfaces\\IActorRepository.cs",
+              "RelativeToolTip": "CinemaBookingApp\\Repositories\\Interfaces\\IActorRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-01T02:49:11.741Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ActorService.cs",
+              "DocumentMoniker": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\Services\\Implementations\\ActorService.cs",
+              "RelativeDocumentMoniker": "CinemaBookingApp\\Services\\Implementations\\ActorService.cs",
+              "ToolTip": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\Services\\Implementations\\ActorService.cs",
+              "RelativeToolTip": "CinemaBookingApp\\Services\\Implementations\\ActorService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-01T02:48:42.012Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\Program.cs",
+              "RelativeDocumentMoniker": "CinemaBookingApp\\Program.cs",
+              "ToolTip": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\Program.cs",
+              "RelativeToolTip": "CinemaBookingApp\\Program.cs",
+              "ViewState": "AgIAAHIAAAAAAAAAAAAAAH4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-01T02:20:14.039Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "ReviewController.cs",
+              "DocumentMoniker": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\Controllers\\ReviewController.cs",
+              "RelativeDocumentMoniker": "CinemaBookingApp\\Controllers\\ReviewController.cs",
+              "ToolTip": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\Controllers\\ReviewController.cs",
+              "RelativeToolTip": "CinemaBookingApp\\Controllers\\ReviewController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-30T14:28:28.516Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\Controllers\\AuthController.cs",
+              "RelativeDocumentMoniker": "CinemaBookingApp\\Controllers\\AuthController.cs",
+              "ToolTip": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\Controllers\\AuthController.cs",
+              "RelativeToolTip": "CinemaBookingApp\\Controllers\\AuthController.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAwAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-30T14:28:17.03Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "RankController.cs",
+              "DocumentMoniker": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\Controllers\\RankController.cs",
+              "RelativeDocumentMoniker": "CinemaBookingApp\\Controllers\\RankController.cs",
+              "ToolTip": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\Controllers\\RankController.cs",
+              "RelativeToolTip": "CinemaBookingApp\\Controllers\\RankController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-30T14:28:25.505Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "CouponController.cs",
+              "DocumentMoniker": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\Controllers\\CouponController.cs",
+              "RelativeDocumentMoniker": "CinemaBookingApp\\Controllers\\CouponController.cs",
+              "ToolTip": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\Controllers\\CouponController.cs",
+              "RelativeToolTip": "CinemaBookingApp\\Controllers\\CouponController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-30T14:28:22.773Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "GenreController.cs",
+              "DocumentMoniker": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\Controllers\\GenreController.cs",
+              "RelativeDocumentMoniker": "CinemaBookingApp\\Controllers\\GenreController.cs",
+              "ToolTip": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\Controllers\\GenreController.cs",
+              "RelativeToolTip": "CinemaBookingApp\\Controllers\\GenreController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-30T14:28:21.841Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "MovieController.cs",
+              "DocumentMoniker": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\Controllers\\MovieController.cs",
+              "RelativeDocumentMoniker": "CinemaBookingApp\\Controllers\\MovieController.cs",
+              "ToolTip": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\Controllers\\MovieController.cs",
+              "RelativeToolTip": "CinemaBookingApp\\Controllers\\MovieController.cs",
+              "ViewState": "AgIAADUAAAAAAAAAAAAcwDkAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-30T14:28:21.11Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "ActorController.cs",
+              "DocumentMoniker": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\Controllers\\ActorController.cs",
+              "RelativeDocumentMoniker": "CinemaBookingApp\\Controllers\\ActorController.cs",
+              "ToolTip": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\Controllers\\ActorController.cs",
+              "RelativeToolTip": "CinemaBookingApp\\Controllers\\ActorController.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAxwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-30T14:28:17.769Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "TicketController.cs",
+              "DocumentMoniker": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\Controllers\\TicketController.cs",
+              "RelativeDocumentMoniker": "CinemaBookingApp\\Controllers\\TicketController.cs",
+              "ToolTip": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\Controllers\\TicketController.cs",
+              "RelativeToolTip": "CinemaBookingApp\\Controllers\\TicketController.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAQwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-30T14:28:11.94Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "SeatController.cs",
+              "DocumentMoniker": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\Controllers\\SeatController.cs",
+              "RelativeDocumentMoniker": "CinemaBookingApp\\Controllers\\SeatController.cs",
+              "ToolTip": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\Controllers\\SeatController.cs",
+              "RelativeToolTip": "CinemaBookingApp\\Controllers\\SeatController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-30T14:28:10.207Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "ComboController.cs",
+              "DocumentMoniker": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\Controllers\\ComboController.cs",
+              "RelativeDocumentMoniker": "CinemaBookingApp\\Controllers\\ComboController.cs",
+              "ToolTip": "C:\\Mobile-Programming\\Project\\CinemaBookingApp\\CinemaBookingApp\\Controllers\\ComboController.cs",
+              "RelativeToolTip": "CinemaBookingApp\\Controllers\\ComboController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-30T14:28:06.201Z"
+            }
+          ]
+        },
+        {
+          "DockedWidth": 151,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
